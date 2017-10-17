@@ -1,0 +1,9 @@
+machine:
+  node:
+    version: 8.6.0
+  environment:
+    NODE_ENV: ci
+
+dependencies:
+  override:
+    - npm install

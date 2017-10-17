@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "sourceMap": false,
+    },
+    "compileOnSave": false,
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "app",
+        "server"
+    ]
+}

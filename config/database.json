@@ -1,0 +1,23 @@
+{
+    "development": {
+        "username": "root",
+        "password": "root",
+        "database": "orion",
+        "host": "localhost",
+        "dialect": "postgres"
+    },
+    "production": {
+        "username": "root",
+        "password": "root",
+        "database": "orion",
+        "host": "localhost",
+        "dialect": "postgres"
+    },
+    "ci": {
+        "username": "ubuntu",
+        "password": null,
+        "database": "circle_test",
+        "host": "localhost",
+        "dialect": "postgres"
+    }
+}

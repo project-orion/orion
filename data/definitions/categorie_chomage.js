@@ -1,0 +1,6 @@
+exports.row = {
+    text: 'La publication des effectifs de demandeurs d\'emploi inscrits se fait selon les catégories statistiques suivantes:- catégorie A : demandeurs d\'emploi tenus de faire des actes positifs de recherche d\'emploi, sans emploi ;- catégorie B : demandeurs d\'emploi tenus de faire des actes positifs de recherche d\'emploi, ayant exercé une activité réduite courte (i.e. de 78 heures ou moins au cours du mois) ;- catégorie C : demandeurs d\'emploi tenus de faire des actes positifs de recherche d\'emploi, ayant exercé une activité réduite longue (i.e. plus de 78 heures au cours du mois) ;- catégorie D : demandeurs d\'emploi non tenus de faire des actes positifs de recherche d\'emploi (en raison d\'un stage, d\'une formation, d\'une maladie…), y compris les demandeurs d\'emploi en convention de reclassement personnalisé (CRP), en contrat de transition professionnelle (CTP), sans emploi et en contrat de sécurisation professionnelle - catégorie E : demandeurs d\'emploi non tenus de faire de actes positifs de recherche d\'emploi, en emploi (par exemple : bénéficiaires de contrats aidés).',
+    source: 'INSEE',
+    link: 'https://www.insee.fr/fr/metadonnees/definition/c2010',
+    slug: 'categorie_chomage',
+}
