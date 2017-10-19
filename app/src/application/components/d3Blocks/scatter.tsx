@@ -12,7 +12,7 @@ interface Props {
         width: number,
         height: number,
     },
-    margins: {
+    padding: {
         top: number,
         right: number,
         bottom: number,
@@ -28,11 +28,11 @@ interface State {
 export class Scatter extends React.Component<Props, State> {
     // D3
 
-    dimensions: {
+    lineDimensions: {
         width: number
         height: number
     }
-    margins: {
+    padding: {
         top: number,
         right: number,
         bottom: number,
@@ -53,19 +53,21 @@ export class Scatter extends React.Component<Props, State> {
 
     refs: any
     domContainer: any
-    domLines: any
     domAxes: any
+    domLines: any
+    domClouds: any
+    domPoints: any
 
     updateAttributes() {
         let {width, height} = this.props.dimensions
-        let {top, right, bottom, left} = this.props.margins
+        let {top, right, bottom, left} = this.props.padding
 
-        this.dimensions = {
+        this.lineDimensions = {
             width: width - right - left,
             height: height - top - bottom,
         }
 
-        this.margins = this.props.margins
+        this.padding = this.props.padding
 
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
@@ -77,20 +79,20 @@ export class Scatter extends React.Component<Props, State> {
     renderAxes() {
         this.xScale = d3.scaleLinear()
             .domain([this.xmin, this.xmax])
-            .range([0, this.dimensions.width])
+            .range([0, this.lineDimensions.width])
 
         this.yScale = d3.scaleLinear()
             .domain([0, this.ymax])
-            .range([this.dimensions.height, 0])
+            .range([this.lineDimensions.height, 0])
 
         this.domAxes = this.domContainer
-            .attr('width', this.dimensions.width + this.margins.left + this.margins.right)
-            .attr('height', this.dimensions.height + this.margins.top + this.margins.bottom)
+            .attr('width', this.lineDimensions.width + this.padding.left + this.padding.right)
+            .attr('height', this.lineDimensions.height + this.padding.top + this.padding.bottom)
             .select('.axes')
-            .attr('transform', 'translate(' + this.margins.left + ',' + this.margins.top + ')')
+            .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
 
         this.domAxes.select('.x-axis')
-            .attr('transform', 'translate(0,' + this.dimensions.height + ')')
+            .attr('transform', 'translate(0,' + this.lineDimensions.height + ')')
             .call(
                 d3.axisBottom(this.xScale)
                     .ticks(5, d3.format('d'))
@@ -109,23 +111,57 @@ export class Scatter extends React.Component<Props, State> {
             .selectAll('.line')
             .data(this.datasets, (dataset: any) => dataset)
 
-        this.domLines
-            .exit()
-                .remove()
+        this.domLines.exit().remove()
 
         this.domLines
             .enter()
                 .append('path')
                 .attr('class', 'line')
-                .attr('transform', 'translate(' + this.margins.left + ',' + this.margins.top + ')')
+                .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .merge(this.domLines)
                 .attr('d', this.line)
                 .style('stroke', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
     }
 
+    renderPoints() {
+        this.domClouds = this.domContainer.select('.clouds')
+            .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
+            .selectAll('.cloud')
+            .data(this.datasets)
+
+        this.domClouds.exit().remove()
+
+        this.domClouds
+            .enter()
+                .append('g')
+                .attr('class', 'cloud')
+
+        // This loop is necessary so as to have the index of the current
+        // dataset we are displaying and thus be able to change the color
+        // of the drawn dots accordingly.
+        this.domClouds.each((datum: any, index: number) => {
+            var domPoints = this.domClouds
+                .selectAll('.line-' + index)
+                .data(datum)
+
+            domPoints.exit().remove()
+
+            domPoints.enter()
+                    .append('circle')
+                    .attr('class', 'scatter-dot line-' + index)
+                    .attr('r', 2)
+                .merge(domPoints)
+                    .attr('cx', (d: any) => this.xScale(d.x))
+                    .attr('cy', (d: any) => this.yScale(d.y))
+                    .attr('fill', this.props.colors[index % this.props.colors.length])
+            }
+        )
+    }
+
     renderD3DomElements() {
         this.renderAxes()
         this.renderLines()
+        this.renderPoints()
     }
 
     // REACT LIFECYCLE
@@ -166,6 +202,7 @@ export class Scatter extends React.Component<Props, State> {
                     <g className={'y-axis'}></g>
                 </g>
                 <g className={'lines'}></g>
+                <g className={'clouds'}></g>
             </svg>
         )
     }

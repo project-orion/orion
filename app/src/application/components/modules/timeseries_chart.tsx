@@ -21,7 +21,7 @@ interface State {
     }
 }
 
-const colorScheme = ["#FFE39F", "#ABC4A2", "#6B9FA1", "#3E769E", "#1F4B99"]
+const colorScheme = ["#2965CC", "#29A634", "#D99E0B", "#D13913", "#8F398F", "#00B3A4", "#DB2C6F", "#9BBF30", "#96622D", "#7157D9"]
 
 export function TimeseriesValuesReducer(m: Module): any {
     let i = 0
@@ -130,7 +130,7 @@ export class TimeseriesChart extends React.Component<Props, State> {
                                             width: this.state.dimensions.width,
                                             height: window.innerHeight / 2,
                                         }}
-                                        margins={{
+                                        padding={{
                                             top: 40,
                                             right: 40,
                                             bottom: 40,
