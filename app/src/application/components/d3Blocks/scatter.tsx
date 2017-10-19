@@ -73,8 +73,8 @@ export class Scatter extends React.Component<Props, State> {
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
         this.xmin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
-        this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
-        this.ymin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
+        this.ymax = 1.1 * _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
+        this.ymin = 0.9 * _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
 
         if (this.lineDimensions.width >= 0 && this.lineDimensions.height >= 0) {
             this.domContainer.select('#clip-rect')
