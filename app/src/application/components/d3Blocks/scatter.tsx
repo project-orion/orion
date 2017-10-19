@@ -153,6 +153,16 @@ export class Scatter extends React.Component<Props, State> {
                 .style('stroke', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
     }
 
+    handleMouseOver(d: any, i: any) {
+        d3.select(this as any)
+            .attr('r', 6)
+    }
+
+    handleMouseOut(d: any, i: any) {
+        d3.select(this as any)
+            .attr('r', 2)
+    }
+
     renderPoints() {
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
@@ -184,6 +194,8 @@ export class Scatter extends React.Component<Props, State> {
                     .attr('cx', (d: any) => this.xScale(d.x))
                     .attr('cy', (d: any) => this.yScale(d.y))
                     .attr('fill', this.props.colors[index % this.props.colors.length])
+                    .on('mouseover', this.handleMouseOver)
+                    .on('mouseout', this.handleMouseOut)
             }
         )
 
