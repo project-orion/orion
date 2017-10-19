@@ -131,10 +131,10 @@ export class TimeseriesChart extends React.Component<Props, State> {
                                             height: window.innerHeight / 2,
                                         }}
                                         padding={{
-                                            top: 40,
-                                            right: 40,
+                                            top: 0,
+                                            right: 0,
                                             bottom: 40,
-                                            left: 60,
+                                            left: 0,
                                         }}
                                         version={this.state.dimensions.width}
                                         colors={colorScheme}

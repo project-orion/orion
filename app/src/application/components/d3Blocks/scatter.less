@@ -1,5 +1,9 @@
 @import '~@blueprintjs/core/dist/variables.less';
 
+.scatter {
+    background-color: rgba(0,0,0,0.07);
+}
+
 .line {
     fill: none;
     stroke: @light-gray1;
@@ -16,8 +20,12 @@
         stroke: @light-gray3;
     }
     path {
-        stroke: @light-gray3;
+        stroke: none;
     }
+}
+
+.x-axis path {
+    stroke: @light-gray3;
 }
 
 .scatter-dot {

@@ -126,6 +126,7 @@ export class Scatter extends React.Component<Props, State> {
             .call(this.xAxis)
 
         this.domAxes.select('.y-axis')
+            .attr('transform', 'translate(' + this.lineDimensions.width / 2 + ', 0)')
             .call(this.yAxis)
     }
 
@@ -227,6 +228,7 @@ export class Scatter extends React.Component<Props, State> {
                 ref='container'
                 width={width}
                 height={height}
+                className={'scatter'}
             >
                 <g className={'axes'}>
                     <g className={'x-axis'}></g>
