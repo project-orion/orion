@@ -43,6 +43,7 @@ export class Scatter extends React.Component<Props, State> {
     yScale: any
     xAxis: any
     yAxis: any
+    zoom: any
     line: any
 
     datasets: any
@@ -74,6 +75,24 @@ export class Scatter extends React.Component<Props, State> {
         this.xmin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
         this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
         this.ymin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
+
+        if (this.lineDimensions.width >= 0 && this.lineDimensions.height >= 0) {
+            this.domContainer.select('#clip-rect')
+                .attr('width', this.lineDimensions.width)
+                .attr('height', this.lineDimensions.height)
+        }
+    }
+
+    zoomed() {
+        var t = d3.event.transform
+        if (!(isNaN(t.k) && isNaN(t.x) && isNaN(t.y))) {
+            var xt = t.rescaleX(this.xScale)
+            this.line.x((d: any) => xt(d.x))
+
+            this.domLines.attr('d', this.line)
+            this.domContainer.selectAll('.scatter-dot').attr('cx', (d: any) => xt(d.x))
+            this.domContainer.select('.x-axis').call(this.xAxis.scale(xt))
+        }
     }
 
     renderAxes() {
@@ -85,6 +104,17 @@ export class Scatter extends React.Component<Props, State> {
             .domain([0, this.ymax])
             .range([this.lineDimensions.height, 0])
 
+        this.xAxis = d3.axisBottom(this.xScale)
+            .ticks(5, d3.format('d'))
+
+        this.yAxis = d3.axisLeft(this.yScale)
+
+        this.zoom = d3.zoom()
+            .scaleExtent([1, 32])
+            .translateExtent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
+            .extent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
+            .on('zoom', this.zoomed.bind(this))
+
         this.domAxes = this.domContainer
             .attr('width', this.lineDimensions.width + this.padding.left + this.padding.right)
             .attr('height', this.lineDimensions.height + this.padding.top + this.padding.bottom)
@@ -93,13 +123,10 @@ export class Scatter extends React.Component<Props, State> {
 
         this.domAxes.select('.x-axis')
             .attr('transform', 'translate(0,' + this.lineDimensions.height + ')')
-            .call(
-                d3.axisBottom(this.xScale)
-                    .ticks(5, d3.format('d'))
-            )
+            .call(this.xAxis)
 
         this.domAxes.select('.y-axis')
-            .call(d3.axisLeft(this.yScale))
+            .call(this.yAxis)
     }
 
     renderLines() {
@@ -107,7 +134,9 @@ export class Scatter extends React.Component<Props, State> {
             .x((d: any) => this.xScale(d.x))
             .y((d: any) => this.yScale(d.y))
 
-        this.domLines = this.domContainer.select('.lines')
+        this.domLines = this.domContainer.select('#lines')
+            .attr('width', this.lineDimensions.width)
+            .attr('height', this.lineDimensions.height)
             .selectAll('.line')
             .data(this.datasets, (dataset: any) => dataset)
 
@@ -156,6 +185,8 @@ export class Scatter extends React.Component<Props, State> {
                     .attr('fill', this.props.colors[index % this.props.colors.length])
             }
         )
+
+        this.domContainer.call(this.zoom)
     }
 
     renderD3DomElements() {
@@ -201,7 +232,11 @@ export class Scatter extends React.Component<Props, State> {
                     <g className={'x-axis'}></g>
                     <g className={'y-axis'}></g>
                 </g>
-                <g className={'lines'}></g>
+                <g id={'lines'}>
+                    <clipPath id={'lines-clip-path'}>
+                        <rect id={'clip-rect'}></rect>
+                    </clipPath>
+                </g>
                 <g className={'clouds'}></g>
             </svg>
         )

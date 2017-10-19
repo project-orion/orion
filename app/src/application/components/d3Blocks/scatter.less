@@ -4,6 +4,7 @@
     fill: none;
     stroke: @light-gray1;
     stroke-width: 1.5px;
+    clip-path: url(#lines-clip-path);
 }
 
 .x-axis, .y-axis {
@@ -22,4 +23,8 @@
 .scatter-dot {
     stroke: @light-gray1;
     stroke-width: 0.5px;
+}
+
+.cloud {
+    clip-path: url(#lines-clip-path);
 }
