@@ -1,8 +1,8 @@
 {
     "name": "orion",
-	"version": "0.0.1",
-	"license" : "SEE LICENCE IN LICENCE",
-	"description" : "A web platform for visualizing and explaing social and political concepts.",
+    "version": "0.0.1",
+    "license": "SEE LICENCE IN LICENCE",
+    "description": "A web platform for visualizing and explaing social and political concepts.",
     "scripts": {
         "postinstall": "gulp deploy",
         "test": "gulp run-test-all",

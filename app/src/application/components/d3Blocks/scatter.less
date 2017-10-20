@@ -1,0 +1,51 @@
+@import '~@blueprintjs/core/dist/variables.less';
+
+.scatter {
+    background-color: rgba(0,0,0,0.07);
+}
+
+.line {
+    fill: none;
+    stroke: @light-gray1;
+    stroke-width: 1.5px;
+    clip-path: url(#lines-clip-path);
+}
+
+.x-axis, .y-axis {
+    text {
+        fill: @light-gray3;
+        font-size: 13px;
+    }
+    line {
+        stroke: @light-gray3;
+    }
+    path {
+        stroke: none;
+    }
+}
+
+.x-axis path {
+    stroke: @gray3;
+}
+
+.scatter-dot {
+    stroke: @light-gray1;
+    stroke-width: 0.5px;
+}
+
+.cloud {
+    clip-path: url(#lines-clip-path);
+}
+
+.tooltip {
+    pointer-events: none;
+
+    .tooltip-box {
+        fill: @dark-gray2;
+    }
+
+    .tooltip-text {
+        fill: @light-gray1;
+        font-size: 12px;
+    }
+}
