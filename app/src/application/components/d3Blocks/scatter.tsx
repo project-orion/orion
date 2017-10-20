@@ -45,6 +45,8 @@ export class Scatter extends React.Component<Props, State> {
     yAxis: any
     zoom: any
     line: any
+    dotRadius: number
+    dotRadiusHover: number
 
     datasets: any
     xmax: any
@@ -62,6 +64,9 @@ export class Scatter extends React.Component<Props, State> {
     updateAttributes() {
         let {width, height} = this.props.dimensions
         let {top, right, bottom, left} = this.props.padding
+
+        this.dotRadius = 3
+        this.dotRadiusHover = 6
 
         this.lineDimensions = {
             width: width - right - left,
@@ -153,14 +158,27 @@ export class Scatter extends React.Component<Props, State> {
                 .style('stroke', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
     }
 
-    handleMouseOver(d: any, i: any) {
+    handleMouseOver(that: any, d: any, i: any) {
         d3.select(this as any)
-            .attr('r', 6)
+            .attr('r', that.dotRadiusHover)
+
+        d3.select('.tooltip')
+            .attr('opacity', 1)
+            .attr('transform', 'translate(' + that.xScale(d.x) + ','+ that.yScale(d.y) + ')')
+
+        d3.select('.tooltip-value')
+            .html('Valeur : ' + d.y)
+            .attr('transform', 'translate(5,13)')
+        d3.select('.tooltip-timestamp')
+            .html('Date : ' + d.x)
+            .attr('transform', 'translate(5,26)')
     }
 
-    handleMouseOut(d: any, i: any) {
+    handleMouseOut(that: any, d: any, i: any) {
         d3.select(this as any)
-            .attr('r', 2)
+            .attr('r', that.dotRadius)
+        d3.select('.tooltip')
+            .attr('opacity', 0)
     }
 
     renderPoints() {
@@ -189,13 +207,14 @@ export class Scatter extends React.Component<Props, State> {
             domPoints.enter()
                     .append('circle')
                     .attr('class', 'scatter-dot line-' + index)
-                    .attr('r', 2)
+                    .attr('r', this.dotRadius)
                 .merge(domPoints)
                     .attr('cx', (d: any) => this.xScale(d.x))
                     .attr('cy', (d: any) => this.yScale(d.y))
                     .attr('fill', this.props.colors[index % this.props.colors.length])
-                    .on('mouseover', this.handleMouseOver)
-                    .on('mouseout', this.handleMouseOut)
+                    // _.partial allows binding arguments without changing 'this'
+                    .on('mouseover', _.partial(this.handleMouseOver, this))
+                    .on('mouseout', _.partial(this.handleMouseOut, this))
             }
         )
 
@@ -252,6 +271,15 @@ export class Scatter extends React.Component<Props, State> {
                     </clipPath>
                 </g>
                 <g className={'clouds'}></g>
+                <g className={'tooltip'} opacity={0}>
+                    <rect
+                        className={'tooltip-box'}
+                        width={100}
+                        height={30}
+                    />
+                    <text className={'tooltip-text tooltip-value'}></text>
+                    <text className={'tooltip-text tooltip-timestamp'}></text>
+                </g>
             </svg>
         )
     }
