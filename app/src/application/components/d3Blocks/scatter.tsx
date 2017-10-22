@@ -112,7 +112,7 @@ export class Scatter extends React.Component<Props, State> {
     }
 
     zoomed() {
-        var t = d3.event.transform
+        const t = d3.event.transform
         if (!(isNaN(t.k) && isNaN(t.x) && isNaN(t.y))) {
             this.rescaledXScale = t.rescaleX(this.xScale)
             this.line.x((d: any) => this.rescaledXScale(d.x))
@@ -189,7 +189,7 @@ export class Scatter extends React.Component<Props, State> {
             .attr('width', this.lineDimensions.width + this.padding.left + this.padding.right)
             .attr('height', this.lineDimensions.height + this.padding.top + this.padding.bottom)
             .select('.axes')
-            .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
+                .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
 
         this.domAxes.select('.x-axis')
             .attr('transform', 'translate(0,' + this.lineDimensions.height + ')')
@@ -205,11 +205,11 @@ export class Scatter extends React.Component<Props, State> {
             .x((d: any) => this.xScale(d.x))
             .y((d: any) => this.yScale(d.y))
 
-        this.domLines = this.domContainer.select('#lines')
+        this.domLines = this.domContainer.select('.lines')
             .attr('width', this.lineDimensions.width)
             .attr('height', this.lineDimensions.height)
             .selectAll('.line')
-            .data(this.datasets, (dataset: any) => dataset)
+                .data(this.datasets, (dataset: any) => dataset)
 
         this.domLines.exit().remove()
 
@@ -307,7 +307,7 @@ export class Scatter extends React.Component<Props, State> {
                     <g className={'x-axis'}></g>
                     <g className={'y-axis'}></g>
                 </g>
-                <g id={'lines'}>
+                <g className={'lines'}>
                     <clipPath id={'lines-clip-path'}>
                         <rect id={'clip-rect'}></rect>
                     </clipPath>
