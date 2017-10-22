@@ -11,6 +11,8 @@ interface Props {
     dimensions: {
         width: number,
         height: number,
+        toolbox_width: number,
+        toolbox_height: number,
     },
     padding: {
         top: number,
@@ -40,6 +42,7 @@ export class Scatter extends React.Component<Props, State> {
     }
 
     xScale: any
+    rescaledXScale: any
     yScale: any
     xAxis: any
     yAxis: any
@@ -60,6 +63,26 @@ export class Scatter extends React.Component<Props, State> {
     domLines: any
     domClouds: any
     domPoints: any
+
+    locale = d3.timeFormatLocale({
+        'dateTime': '%A, %e %B %Y г. %X',
+        'date': '%d.%m.%Y',
+        'time': '%H:%M:%S',
+        'periods': ['AM', 'PM'],
+        'days': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+        'shortDays': ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'],
+        'months': ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+        'shortMonths': ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec']
+    })
+
+    formatMillisecond = this.locale.format('.%L')
+    formatSecond = this.locale.format(':%S')
+    formatMinute = this.locale.format('%I:%M')
+    formatHour = this.locale.format('%I %p')
+    formatDay = this.locale.format('%a %d')
+    formatWeek = this.locale.format('%b %d')
+    formatMonth = this.locale.format('%b-%y')
+    formatYear = this.locale.format('%Y')
 
     updateAttributes() {
         let {width, height} = this.props.dimensions
@@ -91,26 +114,67 @@ export class Scatter extends React.Component<Props, State> {
     zoomed() {
         var t = d3.event.transform
         if (!(isNaN(t.k) && isNaN(t.x) && isNaN(t.y))) {
-            var xt = t.rescaleX(this.xScale)
-            this.line.x((d: any) => xt(d.x))
+            this.rescaledXScale = t.rescaleX(this.xScale)
+            this.line.x((d: any) => this.rescaledXScale(d.x))
 
             this.domLines.attr('d', this.line)
-            this.domContainer.selectAll('.scatter-dot').attr('cx', (d: any) => xt(d.x))
-            this.domContainer.select('.x-axis').call(this.xAxis.scale(xt))
+            this.domContainer.selectAll('.scatter-dot').attr('cx', (d: any) => this.rescaledXScale(d.x))
+            this.domContainer.select('.x-axis').call(this.xAxis.scale(this.rescaledXScale))
         }
     }
 
+    handleMouseOver(that: any, d: any, i: any) {
+        d3.select(this as any)
+            .attr('r', that.dotRadiusHover)
+
+        d3.select('.tooltip')
+            .attr('opacity', 1)
+            .attr('transform', 'translate(' +
+                Math.min(that.rescaledXScale(d.x), that.lineDimensions.width - that.props.dimensions.toolbox_width) + ',' +
+                Math.min(that.yScale(d.y), that.lineDimensions.height - that.props.dimensions.toolbox_height) + ')'
+            )
+
+        d3.select('.tooltip-value')
+            .html('Valeur : ' + d.y)
+            .attr('transform', 'translate(5,13)')
+        d3.select('.tooltip-timestamp')
+            .html('Date : ' + [d.x.getDay(), d.x.getMonth() + 1, d.x.getFullYear()].join('-'))
+            .attr('transform', 'translate(5,26)')
+    }
+
+    handleMouseOut(that: any, d: any, i: any) {
+        d3.select(this as any)
+            .attr('r', that.dotRadius)
+        d3.select('.tooltip')
+            .attr('opacity', 0)
+    }
+
+    multiFormat(date: Date) {
+        return (
+            d3.timeSecond(date) < date ? this.formatMillisecond
+            : d3.timeMinute(date) < date ? this.formatSecond
+            : d3.timeHour(date) < date ? this.formatMinute
+            : d3.timeDay(date) < date ? this.formatHour
+            : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? this.formatDay : this.formatWeek)
+            : d3.timeYear(date) < date ? this.formatMonth
+            : this.formatYear
+        )(date)
+    }
+
     renderAxes() {
-        this.xScale = d3.scaleLinear()
+        this.xScale = d3.scaleTime()
             .domain([this.xmin, this.xmax])
             .range([0, this.lineDimensions.width])
+
+        this.rescaledXScale = this.xScale
 
         this.yScale = d3.scaleLinear()
             .domain([0, this.ymax])
             .range([this.lineDimensions.height, 0])
 
         this.xAxis = d3.axisBottom(this.xScale)
-            .ticks(5, d3.format('d'))
+            .ticks(5)
+            .tickFormat(this.multiFormat.bind(this))
 
         this.yAxis = d3.axisLeft(this.yScale)
 
@@ -156,29 +220,6 @@ export class Scatter extends React.Component<Props, State> {
             .merge(this.domLines)
                 .attr('d', this.line)
                 .style('stroke', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
-    }
-
-    handleMouseOver(that: any, d: any, i: any) {
-        d3.select(this as any)
-            .attr('r', that.dotRadiusHover)
-
-        d3.select('.tooltip')
-            .attr('opacity', 1)
-            .attr('transform', 'translate(' + that.xScale(d.x) + ','+ that.yScale(d.y) + ')')
-
-        d3.select('.tooltip-value')
-            .html('Valeur : ' + d.y)
-            .attr('transform', 'translate(5,13)')
-        d3.select('.tooltip-timestamp')
-            .html('Date : ' + d.x)
-            .attr('transform', 'translate(5,26)')
-    }
-
-    handleMouseOut(that: any, d: any, i: any) {
-        d3.select(this as any)
-            .attr('r', that.dotRadius)
-        d3.select('.tooltip')
-            .attr('opacity', 0)
     }
 
     renderPoints() {
@@ -274,8 +315,8 @@ export class Scatter extends React.Component<Props, State> {
                 <g className={'tooltip'} opacity={0}>
                     <rect
                         className={'tooltip-box'}
-                        width={100}
-                        height={30}
+                        width={this.props.dimensions.toolbox_width}
+                        height={this.props.dimensions.toolbox_height}
                     />
                     <text className={'tooltip-text tooltip-value'}></text>
                     <text className={'tooltip-text tooltip-timestamp'}></text>
