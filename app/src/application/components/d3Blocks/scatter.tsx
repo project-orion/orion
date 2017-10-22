@@ -127,17 +127,17 @@ export class Scatter extends React.Component<Props, State> {
         d3.select(this as any)
             .attr('r', that.dotRadiusHover)
 
-        d3.select('.tooltip')
+        that.domContainer.select('.tooltip')
             .attr('opacity', 1)
             .attr('transform', 'translate(' +
                 Math.min(that.rescaledXScale(d.x), that.lineDimensions.width - that.props.dimensions.toolbox_width) + ',' +
                 Math.min(that.yScale(d.y), that.lineDimensions.height - that.props.dimensions.toolbox_height) + ')'
             )
 
-        d3.select('.tooltip-value')
+        that.domContainer.select('.tooltip-value')
             .html('Valeur : ' + d.y)
             .attr('transform', 'translate(5,13)')
-        d3.select('.tooltip-timestamp')
+        that.domContainer.select('.tooltip-timestamp')
             .html('Date : ' + [d.x.getDay(), d.x.getMonth() + 1, d.x.getFullYear()].join('-'))
             .attr('transform', 'translate(5,26)')
     }
@@ -145,7 +145,8 @@ export class Scatter extends React.Component<Props, State> {
     handleMouseOut(that: any, d: any, i: any) {
         d3.select(this as any)
             .attr('r', that.dotRadius)
-        d3.select('.tooltip')
+
+        that.domContainer.select('.tooltip')
             .attr('opacity', 0)
     }
 
