@@ -46,18 +46,18 @@ export class Histogram extends React.Component<Props, State> {
     stack: any
 
     datasets: any
+    inter: any
     xmax: any
     xmin: any
     ymax: any
     ymin: any
-    series: any
-    histo: any
 
     refs: any
     domContainer: any
     domAxes: any
     domStacks: any
     domPoints: any
+    barPadding: any
 
     updateAttributes() {
         let {width, height} = this.props.dimensions
@@ -70,9 +70,13 @@ export class Histogram extends React.Component<Props, State> {
 
         this.padding = this.props.padding
 
+        this.inter = this.props.data.datasets.map((a: any) => a.data)
+
+        this.datasets = this.inter[0]
+
         //this.datasets = this.props.data.datasets.map((a: any) => a.data)
-        this.xmin = 2015
-        this.xmax = 2016
+        this.xmin = 1996
+        this.xmax = 2017
         this.ymin = 0
         this.ymax = 4000
     }
@@ -107,15 +111,6 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     renderPoints() {
-        this.datasets = [
-              {month: 2015, apples: 3840},
-              {month: 2015.25, apples: 1600},
-              {month: 2015.5, apples:  640},
-              {month: 2015.75, apples:  320}
-            ];
-
-        this.histo = d3.histogram()
-            (this.datasets)
 
         this.domPoints = this.domContainer.select('.rects')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
@@ -130,9 +125,9 @@ export class Histogram extends React.Component<Props, State> {
                 .attr('r', 2)
                 .attr('width', 20)
             .merge(this.domPoints)
-                .attr('x', (d: any) => this.xScale(d.month))
-                .attr('y', (d: any) => this.yScale(d.apples))
-                .attr('height', (d:any) => this.yScale(this.ymax-d.apples))
+                .attr('x', (d: any) => this.xScale(d.x))
+                .attr('y', (d: any) => this.yScale(d.y))
+                .attr('height', (d:any) => this.yScale(this.ymax-d.y))
                 .attr('fill', 'blue')
 
         console.log(this.domPoints)
