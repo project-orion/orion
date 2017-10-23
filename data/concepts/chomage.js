@@ -9,10 +9,10 @@ exports.node = {
             data_identifiers: ['chomage_pole_emploi'],
         }, {
             type: 'timeseries',
-            data_identifiers: ['chomage_insee', 'chomage_pole_emploi'],
+            data_identifiers: ['chomage_insee'],
             options: {
                 relativisable: true,
-                data_identifiers: ['population_totale', 'population_active']
+                data_identifiers: ['population_totale']
             },
         }, {
             type: 'suggestions',

@@ -16,6 +16,7 @@ import {
 import * as actions from '../actions'
 
 import {TimeseriesChart} from '../components/modules/timeseries_chart'
+import {HistogramChart} from '../components/modules/histogram_chart'
 import {DoughnutChart} from '../components/modules/labelized_chart'
 import {Definition} from '../components/modules/definition'
 import {Suggestion} from '../components/modules/suggestion'
@@ -60,7 +61,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
                         link={m.data.link}
                     />
             case 'timeseries':
-                return <TimeseriesChart
+                return <HistogramChart
                         key={key}
                         chartjs_datasets={m.data.chartjs_datasets}
                         sources={m.data.sources}
