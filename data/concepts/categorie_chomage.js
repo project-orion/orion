@@ -4,7 +4,14 @@ exports.node = {
         {
             type: 'definition',
             data_identifiers: ['categorie_chomage'],
-        }
+        }, {
+            type: 'timeseries',
+            data_identifiers: ['chomage_catA', 'chomage_catB'],
+            options: {
+                relativisable: true,
+                data_identifiers: ['population_totale']
+            },
+        },
     ]
 }
 

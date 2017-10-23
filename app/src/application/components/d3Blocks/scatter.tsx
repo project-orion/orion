@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import './histogram.less'
+import './scatter.less'
 
 interface Props {
     version: any,
@@ -25,7 +25,7 @@ interface State {
 
 }
 
-export class Histogram extends React.Component<Props, State> {
+export class Scatter extends React.Component<Props, State> {
     // D3
 
     lineDimensions: {
@@ -43,6 +43,7 @@ export class Histogram extends React.Component<Props, State> {
     yScale: any
     xAxis: any
     yAxis: any
+    line: any
 
     datasets: any
     xmax: any
@@ -53,8 +54,9 @@ export class Histogram extends React.Component<Props, State> {
     refs: any
     domContainer: any
     domAxes: any
+    domLines: any
     domClouds: any
-    barPadding: any
+    domPoints: any
 
     updateAttributes() {
         let {width, height} = this.props.dimensions
@@ -68,22 +70,10 @@ export class Histogram extends React.Component<Props, State> {
         this.padding = this.props.padding
 
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
-
-        //this.datasets = this.props.data.datasets.map((a: any) => a.data)
-
-        /*        this.xmax = _.max(this.datasets.x)
-                this.xmin = _.max(this.datasets.x)
-                this.ymax = _.max(this.datasets.y)
-                this.ymin = _.max(this.datasets.y)
-                */
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
-        this.xmin = _.min(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
+        this.xmin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
         this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
-        this.ymin = 0
-        console.log(this.ymin)
-
-
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
+        this.ymin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
     }
 
     renderAxes() {
@@ -92,7 +82,7 @@ export class Histogram extends React.Component<Props, State> {
             .range([0, this.lineDimensions.width])
 
         this.yScale = d3.scaleLinear()
-            .domain([this.ymin, this.ymax])
+            .domain([0, this.ymax])
             .range([this.lineDimensions.height, 0])
 
         this.domAxes = this.domContainer
@@ -109,14 +99,31 @@ export class Histogram extends React.Component<Props, State> {
             )
 
         this.domAxes.select('.y-axis')
-            .call(
-                d3.axisLeft(this.yScale)
-                    .ticks(5)
-            )
+            .call(d3.axisLeft(this.yScale))
     }
 
-    renderBarSide() {
+    renderLines() {
+        this.line = d3.line()
+            .x((d: any) => this.xScale(d.x))
+            .y((d: any) => this.yScale(d.y))
 
+        this.domLines = this.domContainer.select('.lines')
+            .selectAll('.line')
+            .data(this.datasets, (dataset: any) => dataset)
+
+        this.domLines.exit().remove()
+
+        this.domLines
+            .enter()
+                .append('path')
+                .attr('class', 'line')
+                .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
+            .merge(this.domLines)
+                .attr('d', this.line)
+                .style('stroke', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
+    }
+
+    renderPointsSide() {
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
@@ -129,31 +136,32 @@ export class Histogram extends React.Component<Props, State> {
                 .append('g')
                 .attr('class', 'cloud')
 
+        // This loop is necessary so as to have the index of the current
+        // dataset we are displaying and thus be able to change the color
+        // of the drawn dots accordingly.
         this.domClouds.each((datum: any, index: number) => {
             var domPoints = this.domClouds
-                .selectAll('.rect-' + index)
+                .selectAll('.line-' + index)
                 .data(datum)
 
             domPoints.exit().remove()
 
             domPoints.enter()
-                    .append('rect')
-                    .attr('class', 'rect rect-' + index)
+                    .append('circle')
+                    .attr('class', 'scatter-dot line-' + index)
+                    .attr('r', 2)
                 .merge(domPoints)
-                    .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
-                    .attr('y', (d: any) => this.yScale(d.y))
-                    .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
-                    .attr('width', this.barPadding)
+                    .attr('cx', (d: any) => this.xScale(d.x))
+                    .attr('cy', (d: any) => this.yScale(d.y))
                     .attr('fill', this.props.colors[index % this.props.colors.length])
-                }
-            )
+            }
+        )
     }
-
-
 
     renderD3DomElements() {
         this.renderAxes()
-        this.renderBarSide()
+        this.renderLines()
+        this.renderPointsSide()
     }
 
     // REACT LIFECYCLE
@@ -193,6 +201,7 @@ export class Histogram extends React.Component<Props, State> {
                     <g className={'x-axis'}></g>
                     <g className={'y-axis'}></g>
                 </g>
+                <g className={'lines'}></g>
                 <g className={'clouds'}></g>
             </svg>
         )
