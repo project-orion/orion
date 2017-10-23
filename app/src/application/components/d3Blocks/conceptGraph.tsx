@@ -5,6 +5,8 @@ import * as ReactDOM from 'react-dom'
 
 import './conceptGraph.less'
 
+import * as actions from '../../actions'
+
 interface Props {
     version: any,
     nodes: any,
@@ -108,6 +110,8 @@ export class ConceptGraph extends React.Component<Props, State> {
     height: number
     simulation: any
 
+    interceptClickHandler: any
+
     nodes: any
     links: any
     labels: any
@@ -124,9 +128,22 @@ export class ConceptGraph extends React.Component<Props, State> {
     highlightedLinks: any
     highlightedLabels: any
 
+    // Generic function for binding methods to already existing functions.
+    // For instance, it can be used to bind the 'on' of a dispatcher
+    // to an already existing event listener (see in interceptClick).
+    rebind(target: any, source: any, method: any) {
+        return (
+            (...args: any[]) => {
+                let value = method.apply(source, args)
+                return value === source ? target : value
+            }
+        )
+    }
+
     // This function is called whenever new data comes in through the React props
     // (React will call this function through componentDidMount and componentDidUpdate).
     // It updates our local parameters and simulates the forces we defined previously.
+
     updateSimulation() {
         let {nodes, links, labels, width, height, searchedConcept} = this.props
 
@@ -164,20 +181,78 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.simulation.force('link').links(this.links)
 
         function ticked() {
-            this.domLinks
-                .attr('x1', (d: any) => d.source.x)
-                .attr('y1', (d: any) => d.source.y)
-                .attr('x2', (d: any) => d.target.x)
-                .attr('y2', (d: any) => d.target.y)
+            if (this.domLinks && this.domNodes && this.domLabels) {
+                this.domLinks
+                    .attr('x1', (d: any) => d.source.x)
+                    .attr('y1', (d: any) => d.source.y)
+                    .attr('x2', (d: any) => d.target.x)
+                    .attr('y2', (d: any) => d.target.y)
 
-            this.domNodes
-                .attr('cx', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.x)))
-                .attr('cy', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.y)))
+                this.domNodes
+                    .attr('cx', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.x)))
+                    .attr('cy', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.y)))
 
-            this.domLabels
-                .attr('x', (d: any) => d.x)
-                .attr('y', (d: any) => d.y)
-         }
+                this.domLabels
+                    .attr('x', (d: any) => d.x)
+                    .attr('y', (d: any) => d.y)
+            }
+        }
+
+        this.interceptClickHandler = this.interceptClick()
+
+        d3.dragDisable(window)
+    }
+
+    interceptClick() {
+        let dispatcher: any = d3.dispatch(
+            'customClick',
+            'customDragStarted',
+            'customDragging',
+            'customDragEnd',
+            'customDoubleClick'
+        )
+
+        let customClick : any = (selection: any): any => {
+            let lastMouseDownLocation: any
+            let lastMouseDownTime: any
+            let lastMouseDownArguments: any
+
+            // The click has to be localized so that one knows it's not a drag.
+            let movementTolerance = 5
+            let doubleClickSpeed = 200
+            let windowTimeout: any
+
+            let distance = (a: any, b: any): number => Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2)
+
+            selection.on('mousedown', (...args: any[]) => {
+                lastMouseDownLocation = d3.mouse(document.body)
+                lastMouseDownTime = +new Date()
+                lastMouseDownArguments = args
+            })
+
+            selection.on('mouseup', (...args: any[]) => {
+                if (distance(lastMouseDownLocation, d3.mouse(document.body)) > movementTolerance) {
+                    return
+                } else {
+                    if (windowTimeout) {
+                        window.clearTimeout(windowTimeout)
+                        windowTimeout = null
+                        dispatcher.apply('customDoubleClick', this as any, lastMouseDownArguments)
+                    } else {
+                        windowTimeout = window.setTimeout((() => {
+                            return () => {
+                                dispatcher.apply('customClick', this as any, lastMouseDownArguments)
+                                windowTimeout = null
+                            }
+                        })(), doubleClickSpeed)
+                    }
+                }
+            })
+        }
+
+        customClick['on'] = this.rebind(customClick, dispatcher, dispatcher['on'])
+
+        return customClick
     }
 
     // This function draws elements (in this specific case, circles) in the
@@ -204,29 +279,42 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .attr('cy', (d: any) => d.y)
                 .attr('r', (d: any) => 30 / (d.distanceToRoot + 1))
                 .attr('opacity',
-                    (d: any) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3)
-                .on('click', this.selectNode)
-                .call(d3.drag()
-                    .on('start', dragstarted.bind(this))
-                    .on('drag', dragged.bind(this))
-                    .on('end', dragended.bind(this)))
-
-        function dragstarted(d: any) {
-            if (!d3.event.active) this.simulation.alphaTarget(0.2).restart()
-            d.fx = d.x
-            d.fy = d.y
-        }
-
-        function dragged(d: any) {
-            d.fx = d3.event.x
-            d.fy = d3.event.y
-        }
-
-        function dragended(d: any) {
-            if (!d3.event.active) this.simulation.alphaTarget(0)
-            d.fx = null
-            d.fy = null
-        }
+                    (d: any) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3
+                )
+                .call(this.interceptClickHandler
+                    .on('customClick', (d: any, index: any) => {
+                        console.log('customclick')
+                    })
+                    .on('customDoubleClick', (d: any, index: any) => {
+                        console.log('customdblclick')
+                    })
+                )
+        //         .call(d3.drag()
+        //             .on('start', dragstarted.bind(this))
+        //             .on('drag', dragged.bind(this))
+        //             .on('end', dragended.bind(this)))
+        //
+        // function dragstarted(d: any) {
+        //     // if (d3.event.defaultPrevented) return
+        //     console.log('dragstarted')
+        //     // console.log(d)
+        //     if (!d3.event.active) this.simulation.alphaTarget(0.2).restart()
+        //     d.fx = d.x
+        //     d.fy = d.y
+        // }
+        //
+        // function dragged(d: any) {
+        //     // console.log(event)
+        //     d.fx = d3.event.x
+        //     d.fy = d3.event.y
+        // }
+        //
+        // function dragended(d: any) {
+        //     console.log('dragended')
+        //     if (!d3.event.active) this.simulation.alphaTarget(0)
+        //     d.fx = null
+        //     d.fy = null
+        // }
     }
 
     // Same use as renderNodes, this time for labels...
@@ -308,25 +396,25 @@ export class ConceptGraph extends React.Component<Props, State> {
                     this.highlightedLinks[link.key] = 1
                     this.highlightedLabels[link.source.key] = 1
                 }
-            });
+            })
         }
     }
 
     selectNode(node: any) {
         if (node.key === this.state.selected) {
-            this.setState({selected: null});
+            this.setState({selected: null})
         } else {
-            this.setState({selected: node.key});
+            this.setState({selected: node.key})
         }
     }
 
     // REACT LIFECYCLE
 
     constructor(props: Props) {
-        super(props);
+        super(props)
         this.state = {selected: null}
 
-        this.selectNode = this.selectNode.bind(this);
+        this.selectNode = this.selectNode.bind(this)
     }
 
     // This function is called right after the first render() of our component.

@@ -2,6 +2,14 @@ import {Action, Concept} from './types'
 
 const serverUrl = (process.env.NODE_ENV == 'production') ? 'http://09f503be.ngrok.io/' : 'http://localhost:3001/'
 
+export function changeSelectedConceptNav(conceptId: number): Action {
+    return {
+        type: 'CHANGE_SELECTED_CONCEPT_NAV',
+        value: conceptId,
+    }
+}
+
+
 export function fetchConcept(url: string, container: string): Action {
     return {
         type: 'FETCH_CONCEPT',

@@ -12,6 +12,7 @@ export interface AppState {
     conceptGraph: {
         nodes: concept_nodesAttribute[],
         links: concept_linksAttribute[],
+        selectedConceptId: number,
     }
     dispatch?: any,
 }

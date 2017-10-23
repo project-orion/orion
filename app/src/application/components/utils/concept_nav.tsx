@@ -1,6 +1,8 @@
 import * as React from 'react'
 import Measure from 'react-measure'
-import {Breadcrumb} from '@blueprintjs/core'
+import {
+    Button,
+} from '@blueprintjs/core'
 
 import {ConceptGraph} from '../d3Blocks/conceptGraph'
 
@@ -14,6 +16,7 @@ interface Props {
 interface State {
     searchedConcept?: string,
     dimensions: any,
+    toggle: boolean,
 }
 
 export class ConceptNav extends React.Component<Props, State> {
@@ -24,6 +27,7 @@ export class ConceptNav extends React.Component<Props, State> {
                 width: 0,
                 height: 0,
             },
+            toggle: false,
         }
     }
 
@@ -31,6 +35,13 @@ export class ConceptNav extends React.Component<Props, State> {
         this.setState({
             ...this.state,
             searchedConcept: event.target.value,
+        })
+    }
+
+    toggle() {
+        this.setState({
+            ...this.state,
+            toggle: !this.state.toggle,
         })
     }
 
@@ -58,6 +69,12 @@ export class ConceptNav extends React.Component<Props, State> {
                                 padding: 0
                             }}
                         >
+                            <Button
+                                className={'pt-minimal'}
+                                onClick={this.toggle}
+                                text={'Toggle'}
+                            />
+
                             <div className='pt-input-group concept_nav_bar'>
                                 <span className={'pt-icon pt-icon-search'}></span>
                                 <input

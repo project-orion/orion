@@ -32,6 +32,7 @@ const initialAppState: AppState = {
     conceptGraph: {
         nodes: [],
         links: [],
+        selectedConceptId: null,
     },
     containers: {
         app: initialAppContainerState,
@@ -50,6 +51,15 @@ export function reducer(state = initialAppState, action: Action): AppState {
                         ...state.containers[action.container],
                         loading: state.containers[action.container].loading + 1,
                     }
+                }
+            }
+
+        case 'CHANGE_SELECTED_CONCEPT_NAV':
+            return {
+                ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    selectedConceptId: action.value,
                 }
             }
 
@@ -105,6 +115,7 @@ export function reducer(state = initialAppState, action: Action): AppState {
                 conceptGraph: {
                     nodes,
                     links,
+                    selectedConceptId: null,
                 },
                 containers: {
                     ...state.containers,
