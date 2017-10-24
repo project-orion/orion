@@ -57,7 +57,11 @@ export class Histogram extends React.Component<Props, State> {
     barPadding: any
     change: boolean
 
+    inter:any
+    inter2:any
+
     updateAttributes() {
+
         let {width, height} = this.props.dimensions
         let {top, right, bottom, left} = this.props.padding
 
@@ -70,13 +74,26 @@ export class Histogram extends React.Component<Props, State> {
 
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
 
-        //this.datasets = this.props.data.datasets.map((a: any) => a.data)
+        var data1 = this.datasets[0]
 
-        /*        this.xmax = _.max(this.datasets.x)
-                this.xmin = _.max(this.datasets.x)
-                this.ymax = _.max(this.datasets.y)
-                this.ymin = _.max(this.datasets.y)
-                */
+        var data2 = this.datasets[1]
+
+        this.inter = _.map(data1, function(row: any){
+            var row2 = _.find(data2, function(q: any){ return q.x == row.x });
+            row.y2 = row2? row2.y:'';
+            return row;
+        })
+
+        this.inter2 = _.map(data2, function(row: any){
+            var row2 = _.find(data1, function(q: any){ return q.x == row.x });
+            row.y2 = row2? row2.y:'';
+            return row;
+        })
+
+        this.datasets[0] = this.inter
+        this.datasets[1] = this.inter2
+
+
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
         this.xmin = _.min(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
         this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))*2
@@ -116,7 +133,6 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     renderBarSide() {
-        console.log("renderBarSide")
         this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
@@ -158,7 +174,6 @@ export class Histogram extends React.Component<Props, State> {
 
 
     renderBarStack() {
-        console.log("renderBarStack")
         this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.1)-2, 1])
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
@@ -185,7 +200,7 @@ export class Histogram extends React.Component<Props, State> {
                     .attr('class', 'rect rect-' + index)
                 .merge(domPoints)
                     .attr('x', (d: any) => this.xScale(d.x))
-                    .attr('y', (d: any) => this.yScale(d.y - (index-1)*3000))
+                    .attr('y', (d: any) => this.yScale(d.y - (index-1)*d.y2))
                     .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
                     .attr('width', this.barPadding)
                     .attr('fill', this.props.colors[index % this.props.colors.length])
@@ -208,7 +223,7 @@ export class Histogram extends React.Component<Props, State> {
                 .selectAll('.rect-' + index)
                 .transition()
                 .duration(500)
-                    .attr("y", (d:any) => this.yScale(d.y - (index-1)*3000))
+                    .attr("y", (d:any) => this.yScale(d.y - (index-1)*d.y2))
                     .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
                     .attr("height", (d:any) => this.yScale(this.ymax-d.y+this.ymin))
                 .transition()
@@ -249,15 +264,12 @@ export class Histogram extends React.Component<Props, State> {
             if(stacking){
                 this.renderBarStack()
             }else {
-                console.log("transitionGrouped")
                 this.renderBarSide()
             }
         }else{
             if(stacking){
-                console.log("transitionStacked")
                 this.transitionStacked()
             }else {
-                console.log("transitionGrouped")
                 this.transitionGrouped()
             }
         }
