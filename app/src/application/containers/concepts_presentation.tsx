@@ -61,12 +61,22 @@ export class ConceptsPresentation extends React.Component<Props, any> {
                         link={m.data.link}
                     />
             case 'timeseries':
-                return <HistogramChart
-                        key={key}
-                        chartjs_datasets={m.data.chartjs_datasets}
-                        sources={m.data.sources}
-                        options={m.options}
-                    />
+                if (m.options.histogram){
+                    return <HistogramChart
+                            key={key}
+                            chartjs_datasets={m.data.chartjs_datasets}
+                            sources={m.data.sources}
+                            options={m.options}
+                        />
+                }else{
+                    return <TimeseriesChart
+                            key={key}
+                            chartjs_datasets={m.data.chartjs_datasets}
+                            sources={m.data.sources}
+                            options={m.options}
+                        />
+                }
+
             case 'suggestions':
                 return <Suggestion
                         key={key}

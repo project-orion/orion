@@ -100,14 +100,10 @@ export class Histogram extends React.Component<Props, State> {
         this.xmin = _.min(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
         if(this.state.stacking){
             this.ymax = _.mean(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))*this.numberDatasets*1.1
-            console.log(this.ymax)
         }else{
             this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))*1.1
-            console.log(this.ymax)
         }
         this.ymin = 0
-
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
     }
 
     renderAxes() {
@@ -140,7 +136,7 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     renderBarSide() {
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/(.1 + this.numberDatasets))-2, 1])
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.03/this.numberDatasets)-1, 1])
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
@@ -154,7 +150,6 @@ export class Histogram extends React.Component<Props, State> {
                 .attr('class', 'cloud')
 
         this.domClouds.each((datum: any, index: number) => {
-            console.log(index)
             var domPoints = this.domClouds
                 .selectAll('.rect-' + index)
                 .data(datum)
@@ -182,7 +177,7 @@ export class Histogram extends React.Component<Props, State> {
 
 
     renderBarStack() {
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.1)-2, 1])
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.03)-1, 1])
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
@@ -224,7 +219,7 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     transitionStacked() {
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.1)-2, 1])
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.03)-1, 1])
         this.xScale = d3.scaleLinear()
             .domain([this.xmin, this.xmax])
             .range([0, this.lineDimensions.width])
@@ -256,7 +251,7 @@ export class Histogram extends React.Component<Props, State> {
         }
 
     transitionGrouped() {
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/(.1 + this.numberDatasets))-2, 1])
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.03/this.numberDatasets)-1, 1])
         this.xScale = d3.scaleLinear()
             .domain([this.xmin, this.xmax])
             .range([0, this.lineDimensions.width])
