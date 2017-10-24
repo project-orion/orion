@@ -22,7 +22,7 @@ interface Props {
 }
 
 interface State {
-
+    stacking: boolean,
 }
 
 export class Histogram extends React.Component<Props, State> {
@@ -78,7 +78,7 @@ export class Histogram extends React.Component<Props, State> {
                 */
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
         this.xmin = _.min(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
-        this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
+        this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))*2
         this.ymin = 0
         console.log(this.ymin)
 
@@ -116,7 +116,8 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     renderBarSide() {
-
+        console.log("renderBarSide")
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
@@ -145,31 +146,82 @@ export class Histogram extends React.Component<Props, State> {
                     .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
                     .attr('width', this.barPadding)
                     .attr('fill', this.props.colors[index % this.props.colors.length])
+                    .on('click', this.changeMode)
+                }
+            )
+    }
+
+    changeMode() {
+        console.log("changeMode")
+        this.setState({stacking: !this.state.stacking})
+    }
+
+
+    renderBarStack() {
+        console.log("renderBarStack")
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.1)-2, 1])
+        this.domClouds = this.domContainer.select('.clouds')
+            .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
+            .selectAll('.cloud')
+            .data(this.datasets)
+
+        this.domClouds.exit().remove()
+
+        this.domClouds
+            .enter()
+                .append('g')
+                .attr('class', 'cloud')
+                .on('click', this.changeMode)
+
+        this.domClouds.each((datum: any, index: number) => {
+            var domPoints = this.domClouds
+                .selectAll('.rect-' + index)
+                .data(datum)
+
+            domPoints.exit().remove()
+
+            domPoints.enter()
+                    .append('rect')
+                    .attr('class', 'rect rect-' + index)
+                .merge(domPoints)
+                    .attr('x', (d: any) => this.xScale(d.x))
+                    .attr('y', (d: any) => this.yScale(d.y - (index-1)*3000))
+                    .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                    .attr('width', this.barPadding)
+                    .attr('fill', this.props.colors[index % this.props.colors.length])
                 }
             )
     }
 
 
 
-    renderD3DomElements() {
+    renderD3DomElements(stacking: boolean) {
+        console.log("renderD3DomElements")
         this.renderAxes()
-        this.renderBarSide()
+        if(stacking){
+            this.renderBarStack()
+        }else {
+            this.renderBarSide()
+        }
     }
 
     // REACT LIFECYCLE
 
     constructor(props: Props) {
         super(props)
+        this.state = {stacking: false}
+        this.changeMode = this.changeMode.bind(this);
     }
 
     componentDidMount() {
         this.domContainer = d3.select(this.refs.container)
+        this.setState({stacking: false})
         this.updateAttributes()
-        this.renderD3DomElements()
+        this.renderD3DomElements(this.state.stacking)
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextProps.version === this.props.version) {
+        if (nextProps.version === this.props.version && nextState.stacking === this.state.stacking) {
             return false
         }
         return true
@@ -177,7 +229,7 @@ export class Histogram extends React.Component<Props, State> {
 
     componentDidUpdate() {
         this.updateAttributes()
-        this.renderD3DomElements()
+        this.renderD3DomElements(this.state.stacking)
     }
 
     render() {
