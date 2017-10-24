@@ -45,6 +45,9 @@ export class Histogram extends React.Component<Props, State> {
     yAxis: any
 
     datasets: any
+    newdatasets: any
+    totalDataset: any
+    numberDatasets: any
     xmax: any
     xmin: any
     ymax: any
@@ -73,34 +76,30 @@ export class Histogram extends React.Component<Props, State> {
         this.padding = this.props.padding
 
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
+        this.numberDatasets = this.datasets.length
 
 
+        this.totalDataset = []
 
-        var data1 = this.datasets[0]
+        for (var i=0; i <this.datasets[0].length ; i++ ){
+            var x = this.datasets[0][i].x
+            var y = []
+            for (var j=0; j < this.numberDatasets; j++){
+                var row = _.find(this.datasets[j], function(q: any){ return q.x == x });
+                y.push(row.y)
+            }
+            this.totalDataset.push({x:x,y:y})
+        }
 
-        var data2 = this.datasets[1]
-
-        this.inter = _.map(data1, function(row: any){
-            var row2 = _.find(data2, function(q: any){ return q.x == row.x });
-            row.y2 = row2? row2.y:'';
-            return row;
-        })
-
-        this.inter2 = _.map(data2, function(row: any){
-            var row2 = _.find(data1, function(q: any){ return q.x == row.x });
-            row.y2 = row2? row2.y:'';
-            return row;
-        })
-
-        this.datasets[0] = this.inter
-        this.datasets[1] = this.inter2
-
+        this.newdatasets = []
+        for (var j=0; j < this.numberDatasets; j++){
+            this.newdatasets.push(this.totalDataset)
+        }
 
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
         this.xmin = _.min(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
         this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))*2
         this.ymin = 0
-
 
         this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
     }
@@ -135,11 +134,11 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     renderBarSide() {
-        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/(.1 + this.numberDatasets))-2, 1])
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
-            .data(this.datasets)
+            .data(this.newdatasets)
 
         this.domClouds.exit().remove()
 
@@ -149,6 +148,7 @@ export class Histogram extends React.Component<Props, State> {
                 .attr('class', 'cloud')
 
         this.domClouds.each((datum: any, index: number) => {
+            console.log(index)
             var domPoints = this.domClouds
                 .selectAll('.rect-' + index)
                 .data(datum)
@@ -160,8 +160,8 @@ export class Histogram extends React.Component<Props, State> {
                     .attr('class', 'rect rect-' + index)
                 .merge(domPoints)
                     .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
-                    .attr('y', (d: any) => this.yScale(d.y))
-                    .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                    .attr('y', (d: any) => this.yScale(d.y[index]))
+                    .attr('height', (d:any) => this.yScale(this.ymax-d.y[index]+this.ymin))
                     .attr('width', this.barPadding)
                     .attr('fill', this.props.colors[index % this.props.colors.length])
                     .on('click', this.changeMode)
@@ -180,7 +180,7 @@ export class Histogram extends React.Component<Props, State> {
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
-            .data(this.datasets)
+            .data(this.newdatasets)
 
         this.domClouds.exit().remove()
 
@@ -191,6 +191,13 @@ export class Histogram extends React.Component<Props, State> {
                 .on('click', this.changeMode)
 
         this.domClouds.each((datum: any, index: number) => {
+            var prevsum = (d:any) =>{
+                var s = 0
+                for(var k = 0; k<index; k++){
+                    s+=d.y[k]
+                }
+                return s
+            }
             var domPoints = this.domClouds
                 .selectAll('.rect-' + index)
                 .data(datum)
@@ -202,8 +209,8 @@ export class Histogram extends React.Component<Props, State> {
                     .attr('class', 'rect rect-' + index)
                 .merge(domPoints)
                     .attr('x', (d: any) => this.xScale(d.x))
-                    .attr('y', (d: any) => this.yScale(d.y + (index)*d.y2))
-                    .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                    .attr('y', (d: any) => this.yScale(d.y[0] + prevsum(d)))
+                    .attr('height', (d:any) => this.yScale(this.ymax-d.y[0]+this.ymin))
                     .attr('width', this.barPadding)
                     .attr('fill', this.props.colors[index % this.props.colors.length])
                 }
@@ -211,7 +218,7 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     transitionStacked() {
-
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/1.1)-2, 1])
         this.xScale = d3.scaleLinear()
             .domain([this.xmin, this.xmax])
             .range([0, this.lineDimensions.width])
@@ -221,22 +228,29 @@ export class Histogram extends React.Component<Props, State> {
             .range([this.lineDimensions.height, 0])
 
         this.domClouds.each((datum: any, index: number) => {
+            var prevsum = (d:any) =>{
+                var s = 0
+                for(var k = 0; k<index; k++){
+                    s+=d.y[k]
+                }
+                return s
+            }
             var domPoints = this.domClouds
                 .selectAll('.rect-' + index)
                 .transition()
                 .duration(500)
                 .delay(function(d:any, i:any) { return i * 10; })
-                    .attr("y", (d:any) => this.yScale(d.y + (index)*d.y2))
-                    .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
-                    .attr("height", (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                    .attr("y", (d:any) => this.yScale(d.y[index] + prevsum(d)))
+                    .attr("height", (d:any) => this.yScale(this.ymax-d.y[index]+this.ymin))
                 .transition()
                     .attr("x", (d: any) => this.xScale(d.x))
-                    .attr("width", this.barPadding*2);
+                    .attr("width", this.barPadding);
                 }
             )
         }
 
     transitionGrouped() {
+        this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/(.1 + this.numberDatasets))-2, 1])
         this.xScale = d3.scaleLinear()
             .domain([this.xmin, this.xmax])
             .range([0, this.lineDimensions.width])
@@ -254,8 +268,8 @@ export class Histogram extends React.Component<Props, State> {
                     .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
                     .attr('width', this.barPadding)
                 .transition()
-                    .attr('y', (d: any) => this.yScale(d.y))
-                    .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                    .attr('y', (d: any) => this.yScale(d.y[index]))
+                    .attr('height', (d:any) => this.yScale(this.ymax-d.y[index]+this.ymin))
                 }
             )
         }
