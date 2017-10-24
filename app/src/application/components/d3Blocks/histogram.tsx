@@ -74,6 +74,8 @@ export class Histogram extends React.Component<Props, State> {
 
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
 
+
+
         var data1 = this.datasets[0]
 
         var data2 = this.datasets[1]
@@ -200,7 +202,7 @@ export class Histogram extends React.Component<Props, State> {
                     .attr('class', 'rect rect-' + index)
                 .merge(domPoints)
                     .attr('x', (d: any) => this.xScale(d.x))
-                    .attr('y', (d: any) => this.yScale(d.y - (index-1)*d.y2))
+                    .attr('y', (d: any) => this.yScale(d.y + (index)*d.y2))
                     .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
                     .attr('width', this.barPadding)
                     .attr('fill', this.props.colors[index % this.props.colors.length])
@@ -223,7 +225,8 @@ export class Histogram extends React.Component<Props, State> {
                 .selectAll('.rect-' + index)
                 .transition()
                 .duration(500)
-                    .attr("y", (d:any) => this.yScale(d.y - (index-1)*d.y2))
+                .delay(function(d:any, i:any) { return i * 10; })
+                    .attr("y", (d:any) => this.yScale(d.y + (index)*d.y2))
                     .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
                     .attr("height", (d:any) => this.yScale(this.ymax-d.y+this.ymin))
                 .transition()
@@ -247,6 +250,7 @@ export class Histogram extends React.Component<Props, State> {
                 .selectAll('.rect-' + index)
                 .transition()
                     .duration(500)
+                    .delay(function(d:any, i:any) { return i * 10; })
                     .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
                     .attr('width', this.barPadding)
                 .transition()

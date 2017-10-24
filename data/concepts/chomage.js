@@ -16,7 +16,7 @@ exports.node = {
             },
         }, {
             type: 'suggestions',
-            data_identifiers: ['apprenti'],
+            data_identifiers: ['apprenti','categories-du-chomage'],
         }
     ]
 }
