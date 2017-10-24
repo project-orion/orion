@@ -55,6 +55,7 @@ export class Histogram extends React.Component<Props, State> {
     domAxes: any
     domClouds: any
     barPadding: any
+    change: boolean
 
     updateAttributes() {
         let {width, height} = this.props.dimensions
@@ -80,7 +81,6 @@ export class Histogram extends React.Component<Props, State> {
         this.xmin = _.min(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
         this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))*2
         this.ymin = 0
-        console.log(this.ymin)
 
 
         this.barPadding = _.max([Math.ceil(this.lineDimensions.width/this.datasets[0].length/2.2)-2, 1])
@@ -152,7 +152,7 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     changeMode() {
-        console.log("changeMode")
+        this.change = true
         this.setState({stacking: !this.state.stacking})
     }
 
@@ -193,16 +193,75 @@ export class Histogram extends React.Component<Props, State> {
             )
     }
 
+    transitionStacked() {
+
+        this.xScale = d3.scaleLinear()
+            .domain([this.xmin, this.xmax])
+            .range([0, this.lineDimensions.width])
+
+        this.yScale = d3.scaleLinear()
+            .domain([this.ymin, this.ymax])
+            .range([this.lineDimensions.height, 0])
+
+        this.domClouds.each((datum: any, index: number) => {
+            var domPoints = this.domClouds
+                .selectAll('.rect-' + index)
+                .transition()
+                .duration(500)
+                    .attr("y", (d:any) => this.yScale(d.y - (index-1)*3000))
+                    .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
+                    .attr("height", (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                .transition()
+                    .attr("x", (d: any) => this.xScale(d.x))
+                    .attr("width", this.barPadding*2);
+                }
+            )
+        }
+
+    transitionGrouped() {
+        this.xScale = d3.scaleLinear()
+            .domain([this.xmin, this.xmax])
+            .range([0, this.lineDimensions.width])
+
+        this.yScale = d3.scaleLinear()
+            .domain([this.ymin, this.ymax])
+            .range([this.lineDimensions.height, 0])
+
+        this.domClouds.each((datum: any, index: number) => {
+            var domPoints = this.domClouds
+                .selectAll('.rect-' + index)
+                .transition()
+                    .duration(500)
+                    .attr('x', (d: any) => this.xScale(d.x) + index*this.barPadding)
+                    .attr('width', this.barPadding)
+                .transition()
+                    .attr('y', (d: any) => this.yScale(d.y))
+                    .attr('height', (d:any) => this.yScale(this.ymax-d.y+this.ymin))
+                }
+            )
+        }
+
 
 
     renderD3DomElements(stacking: boolean) {
-        console.log("renderD3DomElements")
         this.renderAxes()
-        if(stacking){
-            this.renderBarStack()
-        }else {
-            this.renderBarSide()
+        if(!this.change){
+            if(stacking){
+                this.renderBarStack()
+            }else {
+                console.log("transitionGrouped")
+                this.renderBarSide()
+            }
+        }else{
+            if(stacking){
+                console.log("transitionStacked")
+                this.transitionStacked()
+            }else {
+                console.log("transitionGrouped")
+                this.transitionGrouped()
+            }
         }
+
     }
 
     // REACT LIFECYCLE
@@ -211,6 +270,7 @@ export class Histogram extends React.Component<Props, State> {
         super(props)
         this.state = {stacking: false}
         this.changeMode = this.changeMode.bind(this);
+        this.change = false
     }
 
     componentDidMount() {
