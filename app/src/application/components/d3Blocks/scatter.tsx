@@ -43,7 +43,12 @@ export class Scatter extends React.Component<Props, State> {
     yScale: any
     xAxis: any
     yAxis: any
+
+    zoom: any
     line: any
+    dotRadius: number
+    dotRadiusHover: number
+
 
     datasets: any
     xmax: any
@@ -62,6 +67,10 @@ export class Scatter extends React.Component<Props, State> {
         let {width, height} = this.props.dimensions
         let {top, right, bottom, left} = this.props.padding
 
+
+        this.dotRadius = 3
+        this.dotRadiusHover = 6
+
         this.lineDimensions = {
             width: width - right - left,
             height: height - top - bottom,
@@ -72,8 +81,27 @@ export class Scatter extends React.Component<Props, State> {
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
         this.xmin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
-        this.ymax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
-        this.ymin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
+
+        this.ymax = 1.1 * _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
+        this.ymin = 0.9 * _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
+
+        if (this.lineDimensions.width >= 0 && this.lineDimensions.height >= 0) {
+            this.domContainer.select('#clip-rect')
+                .attr('width', this.lineDimensions.width)
+                .attr('height', this.lineDimensions.height)
+        }
+    }
+
+    zoomed() {
+        var t = d3.event.transform
+        if (!(isNaN(t.k) && isNaN(t.x) && isNaN(t.y))) {
+            var xt = t.rescaleX(this.xScale)
+            this.line.x((d: any) => xt(d.x))
+
+            this.domLines.attr('d', this.line)
+            this.domContainer.selectAll('.scatter-dot').attr('cx', (d: any) => xt(d.x))
+            this.domContainer.select('.x-axis').call(this.xAxis.scale(xt))
+        }
     }
 
     renderAxes() {
@@ -85,6 +113,18 @@ export class Scatter extends React.Component<Props, State> {
             .domain([0, this.ymax])
             .range([this.lineDimensions.height, 0])
 
+
+        this.xAxis = d3.axisBottom(this.xScale)
+            .ticks(5, d3.format('d'))
+
+        this.yAxis = d3.axisLeft(this.yScale)
+
+        this.zoom = d3.zoom()
+            .scaleExtent([1, 32])
+            .translateExtent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
+            .extent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
+            .on('zoom', this.zoomed.bind(this))
+      
         this.domAxes = this.domContainer
             .attr('width', this.lineDimensions.width + this.padding.left + this.padding.right)
             .attr('height', this.lineDimensions.height + this.padding.top + this.padding.bottom)
@@ -93,13 +133,12 @@ export class Scatter extends React.Component<Props, State> {
 
         this.domAxes.select('.x-axis')
             .attr('transform', 'translate(0,' + this.lineDimensions.height + ')')
-            .call(
-                d3.axisBottom(this.xScale)
-                    .ticks(5, d3.format('d'))
-            )
+            .call(this.xAxis)
 
         this.domAxes.select('.y-axis')
-            .call(d3.axisLeft(this.yScale))
+            .attr('transform', 'translate(' + this.lineDimensions.width / 2 + ', 0)')
+            .call(this.yAxis)
+
     }
 
     renderLines() {
@@ -107,7 +146,9 @@ export class Scatter extends React.Component<Props, State> {
             .x((d: any) => this.xScale(d.x))
             .y((d: any) => this.yScale(d.y))
 
-        this.domLines = this.domContainer.select('.lines')
+        this.domLines = this.domContainer.select('#lines')
+            .attr('width', this.lineDimensions.width)
+            .attr('height', this.lineDimensions.height)
             .selectAll('.line')
             .data(this.datasets, (dataset: any) => dataset)
 
@@ -123,7 +164,30 @@ export class Scatter extends React.Component<Props, State> {
                 .style('stroke', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
     }
 
-    renderPointsSide() {
+    handleMouseOver(that: any, d: any, i: any) {
+        d3.select(this as any)
+            .attr('r', that.dotRadiusHover)
+
+        d3.select('.tooltip')
+            .attr('opacity', 1)
+            .attr('transform', 'translate(' + that.xScale(d.x) + ','+ that.yScale(d.y) + ')')
+
+        d3.select('.tooltip-value')
+            .html('Valeur : ' + d.y)
+            .attr('transform', 'translate(5,13)')
+        d3.select('.tooltip-timestamp')
+            .html('Date : ' + d.x)
+            .attr('transform', 'translate(5,26)')
+    }
+
+    handleMouseOut(that: any, d: any, i: any) {
+        d3.select(this as any)
+            .attr('r', that.dotRadius)
+        d3.select('.tooltip')
+            .attr('opacity', 0)
+    }
+
+    renderPoints() {
         this.domClouds = this.domContainer.select('.clouds')
             .attr('transform', 'translate(' + this.padding.left + ',' + this.padding.top + ')')
             .selectAll('.cloud')
@@ -149,19 +213,24 @@ export class Scatter extends React.Component<Props, State> {
             domPoints.enter()
                     .append('circle')
                     .attr('class', 'scatter-dot line-' + index)
-                    .attr('r', 2)
+                    .attr('r', this.dotRadius)
                 .merge(domPoints)
                     .attr('cx', (d: any) => this.xScale(d.x))
                     .attr('cy', (d: any) => this.yScale(d.y))
                     .attr('fill', this.props.colors[index % this.props.colors.length])
+                    // _.partial allows binding arguments without changing 'this'
+                    .on('mouseover', _.partial(this.handleMouseOver, this))
+                    .on('mouseout', _.partial(this.handleMouseOut, this))
             }
         )
+
+        this.domContainer.call(this.zoom)
     }
 
     renderD3DomElements() {
         this.renderAxes()
         this.renderLines()
-        this.renderPointsSide()
+        this.renderPoints()
     }
 
     // REACT LIFECYCLE
@@ -196,13 +265,27 @@ export class Scatter extends React.Component<Props, State> {
                 ref='container'
                 width={width}
                 height={height}
+                className={'scatter'}
             >
                 <g className={'axes'}>
                     <g className={'x-axis'}></g>
                     <g className={'y-axis'}></g>
                 </g>
-                <g className={'lines'}></g>
+                <g id={'lines'}>
+                    <clipPath id={'lines-clip-path'}>
+                        <rect id={'clip-rect'}></rect>
+                    </clipPath>
+                </g>
                 <g className={'clouds'}></g>
+                <g className={'tooltip'} opacity={0}>
+                    <rect
+                        className={'tooltip-box'}
+                        width={100}
+                        height={30}
+                    />
+                    <text className={'tooltip-text tooltip-value'}></text>
+                    <text className={'tooltip-text tooltip-timestamp'}></text>
+                </g>
             </svg>
         )
     }
