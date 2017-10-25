@@ -43,10 +43,12 @@ export class Scatter extends React.Component<Props, State> {
     yScale: any
     xAxis: any
     yAxis: any
+
     zoom: any
     line: any
     dotRadius: number
     dotRadiusHover: number
+
 
     datasets: any
     xmax: any
@@ -65,6 +67,7 @@ export class Scatter extends React.Component<Props, State> {
         let {width, height} = this.props.dimensions
         let {top, right, bottom, left} = this.props.padding
 
+
         this.dotRadius = 3
         this.dotRadiusHover = 6
 
@@ -78,6 +81,7 @@ export class Scatter extends React.Component<Props, State> {
         this.datasets = this.props.data.datasets.map((a: any) => a.data)
         this.xmax = _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.x).x))
         this.xmin = _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.x).x))
+
         this.ymax = 1.1 * _.max(_.map(this.datasets, (dataset: any) => _.maxBy(dataset, (entry: any) => entry.y).y))
         this.ymin = 0.9 * _.max(_.map(this.datasets, (dataset: any) => _.minBy(dataset, (entry: any) => entry.y).y))
 
@@ -109,6 +113,7 @@ export class Scatter extends React.Component<Props, State> {
             .domain([0, this.ymax])
             .range([this.lineDimensions.height, 0])
 
+
         this.xAxis = d3.axisBottom(this.xScale)
             .ticks(5, d3.format('d'))
 
@@ -119,7 +124,7 @@ export class Scatter extends React.Component<Props, State> {
             .translateExtent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
             .extent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
             .on('zoom', this.zoomed.bind(this))
-
+      
         this.domAxes = this.domContainer
             .attr('width', this.lineDimensions.width + this.padding.left + this.padding.right)
             .attr('height', this.lineDimensions.height + this.padding.top + this.padding.bottom)
@@ -133,6 +138,7 @@ export class Scatter extends React.Component<Props, State> {
         this.domAxes.select('.y-axis')
             .attr('transform', 'translate(' + this.lineDimensions.width / 2 + ', 0)')
             .call(this.yAxis)
+
     }
 
     renderLines() {
