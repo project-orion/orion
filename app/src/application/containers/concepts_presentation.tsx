@@ -92,7 +92,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
         const conceptWithModuleList = concepts.map((concept: Concept) =>
             <div
                 key={concept.loadedTime}
-                className={'block-2'}
+                className={'left-of-panel block-2'}
             >
                 <h3 className={'concept-header'}>
                     {concept.attributes.name}

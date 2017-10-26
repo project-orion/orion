@@ -9,6 +9,11 @@ export function changeSelectedConceptNav(conceptId: number): Action {
     }
 }
 
+export function toggleNavPanel(): Action {
+    return {
+        type: 'TOGGLE_NAV_PANEL',
+    }
+}
 
 export function fetchConcept(url: string, container: string): Action {
     return {

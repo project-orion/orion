@@ -38,10 +38,17 @@ const initialAppState: AppState = {
         app: initialAppContainerState,
         cp1: initialCp1State,
     },
+    toggled: false,
 }
 
 export function reducer(state = initialAppState, action: Action): AppState {
     switch (action.type) {
+        case 'TOGGLE_NAV_PANEL':
+            return {
+                ...state,
+                toggled: !state.toggled,
+            }
+
         case 'LOADING':
             return {
                 ...state,

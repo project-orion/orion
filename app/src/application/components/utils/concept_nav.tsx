@@ -5,18 +5,18 @@ import {
 } from '@blueprintjs/core'
 
 import {ConceptGraph} from '../d3Blocks/conceptGraph'
-
+import * as actions from '../../actions'
 import {Concept} from '../../types'
 
 interface Props {
     nodes: any,
     links: any,
+    dispatch: any,
 }
 
 interface State {
     searchedConcept?: string,
     dimensions: any,
-    toggle: boolean,
 }
 
 export class ConceptNav extends React.Component<Props, State> {
@@ -27,7 +27,6 @@ export class ConceptNav extends React.Component<Props, State> {
                 width: 0,
                 height: 0,
             },
-            toggle: false,
         }
     }
 
@@ -35,13 +34,6 @@ export class ConceptNav extends React.Component<Props, State> {
         this.setState({
             ...this.state,
             searchedConcept: event.target.value,
-        })
-    }
-
-    toggle() {
-        this.setState({
-            ...this.state,
-            toggle: !this.state.toggle,
         })
     }
 
@@ -71,7 +63,7 @@ export class ConceptNav extends React.Component<Props, State> {
                         >
                             <Button
                                 className={'pt-minimal'}
-                                onClick={this.toggle}
+                                onClick={() => this.props.dispatch(actions.toggleNavPanel())}
                                 text={'Toggle'}
                             />
 

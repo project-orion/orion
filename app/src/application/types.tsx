@@ -15,6 +15,7 @@ export interface AppState {
         selectedConceptId: number,
     }
     dispatch?: any,
+    toggled: boolean,
 }
 
 export interface ContainerState {

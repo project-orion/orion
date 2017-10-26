@@ -39,6 +39,7 @@ export class App extends React.Component<AppState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'app'))
+        this.props.dispatch(actions.fetchConcept('concepts/chomage/', 'cp1'))
     }
 
     render () {
@@ -63,21 +64,41 @@ export class App extends React.Component<AppState, any> {
             </div>
         )
 
+        const classToggled = (this.props.toggled) ? ' toggled' : ''
+
         return (
             <div>
                 <NavBar
                     right_text={navbar_button}
                 />
 
-                <ConceptNav
-                    nodes={conceptGraph.nodes}
-                    links={conceptGraph.links}
-                />
-
-                <BrowserRouter>
-                    <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
-                </BrowserRouter>
+                <div id={'app-container'}>
+                    <div
+                        id={'concept-nav-panel'}
+                        className={classToggled}
+                    >
+                        <ConceptNav
+                            nodes={conceptGraph.nodes}
+                            links={conceptGraph.links}
+                            dispatch={this.props.dispatch}
+                        />
+                    </div>
+                    <div className={'left-of-panel' + classToggled}>
+                        <BrowserRouter>
+                            <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
+                        </BrowserRouter>
+                    </div>
+                </div>
             </div>
         )
     }
 }
+
+// <ConceptNav
+//     nodes={conceptGraph.nodes}
+//     links={conceptGraph.links}
+// />
+//
+// <BrowserRouter>
+//     <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
+// </BrowserRouter>
