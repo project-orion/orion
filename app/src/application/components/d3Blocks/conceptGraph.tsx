@@ -23,7 +23,7 @@ interface State {
 
 export function ConceptGraphReducer(action: any){
     // Parcours des composantes connexes du graphe.
-    // On fait l'hypothèse qu'elle on au plus un node de type 'root'.
+    // On fait l'hypothèse qu'elles ont au plus un node de type 'root'.
     let childrenDict: any = {}
 
     _.each(action.value.links, (link: any) => {
@@ -140,10 +140,40 @@ export class ConceptGraph extends React.Component<Props, State> {
         )
     }
 
+    initSimulation() {
+        let {width, height} = this.props
+
+        this.width = width
+        this.height = height
+
+        this.simulation = d3.forceSimulation()
+            .force('link', d3.forceLink().id((d: any) => d.key).distance(60))
+            .force('charge', d3.forceManyBody().strength(-200))
+            .force('y2', d3.forceY().strength((d: any) => (5 - d.distanceToRoot) / 10).y(this.height / 3))
+            .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(2 * this.height / 3))
+    }
+
+    ticked() {
+        if (this.domLinks && this.domNodes && this.domLabels) {
+            this.domLinks
+                .attr('x1', (d: any) => d.source.x)
+                .attr('y1', (d: any) => d.source.y)
+                .attr('x2', (d: any) => d.target.x)
+                .attr('y2', (d: any) => d.target.y)
+
+            this.domNodes
+                .attr('cx', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.x)))
+                .attr('cy', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.y)))
+
+            this.domLabels
+                .attr('x', (d: any) => d.x)
+                .attr('y', (d: any) => d.y)
+        }
+    }
+
     // This function is called whenever new data comes in through the React props
     // (React will call this function through componentDidMount and componentDidUpdate).
     // It updates our local parameters and simulates the forces we defined previously.
-
     updateSimulation() {
         let {nodes, links, labels, width, height, searchedConcept} = this.props
 
@@ -171,32 +201,8 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.width = width
         this.height = height
 
-        this.simulation = d3.forceSimulation()
-            .force('link', d3.forceLink().id((d: any) => d.key).distance(60))
-            .force('charge', d3.forceManyBody().strength(-200))
-            .force('y2', d3.forceY().strength((d: any) => (5 - d.distanceToRoot) / 10).y(this.height / 3))
-            .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(2 * this.height / 3))
-
-        this.simulation.nodes(this.nodes).on('tick', ticked.bind(this))
+        this.simulation.nodes(this.nodes).on('tick', this.ticked.bind(this))
         this.simulation.force('link').links(this.links)
-
-        function ticked() {
-            if (this.domLinks && this.domNodes && this.domLabels) {
-                this.domLinks
-                    .attr('x1', (d: any) => d.source.x)
-                    .attr('y1', (d: any) => d.source.y)
-                    .attr('x2', (d: any) => d.target.x)
-                    .attr('y2', (d: any) => d.target.y)
-
-                this.domNodes
-                    .attr('cx', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.x)))
-                    .attr('cy', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.y)))
-
-                this.domLabels
-                    .attr('x', (d: any) => d.x)
-                    .attr('y', (d: any) => d.y)
-            }
-        }
 
         this.interceptClickHandler = this.interceptClick()
 
@@ -261,12 +267,12 @@ export class ConceptGraph extends React.Component<Props, State> {
     // Before drawing new elements, it will make sure to remove from the DOM
     //  elements which may have been created previously.
     renderNodes() {
-        // Create circles in the DOM with our data.
+        // Create or update circles in the DOM with our data.
         this.domNodes = this.domContainer
             .selectAll('circle')
             .data(this.nodes, (d: any) => d.key)
 
-        // Remove former circles of the DOM if they exist.
+        // Remove circles that are no longer needed from the DOM.
         this.domNodes.exit().remove()
 
         // Change DOM nodes' attributes and events handling.
@@ -428,6 +434,7 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.width = this.props.width
         this.height = this.props.height
 
+        this.initSimulation()
         this.updateSimulation()
         this.calculateHighlights(this.state.selected)
         this.renderD3DomElements()
@@ -460,21 +467,27 @@ export class ConceptGraph extends React.Component<Props, State> {
     // at this stage, only the container is created. One thus updates the simulation
     // and re-renders all possible DOM components which will populate the container.
     componentDidUpdate() {
+        const previousCC = this.cc
+
         this.updateSimulation()
-        this.calculateHighlights(this.state.selected)
+        // this.calculateHighlights(this.state.selected)
         this.renderD3DomElements()
 
         // In particular, this part of the code is used to define forces which will
         // separate (untanggle) our graphs on the page.
-        let totalConnexComponents: number = this.cc.length
+        const totalConnexComponents: number = this.cc.length
 
         if (this.width > 0) {
+            _.each(previousCC, (c: number, i: number) => {
+                this.simulation.force('x' + i, null)
+            })
+
             _.each(this.cc, (c: number, i: number) => {
                 this.simulation
                     .force('x' + i, this.isolate(d3.forceX(), (d: any) => (d.connexComponent == c), i, totalConnexComponents))
             })
 
-            this.simulation.alphaTarget(0).restart()
+            this.simulation.alphaTarget(0.2).restart()
         }
     }
 

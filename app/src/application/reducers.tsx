@@ -38,7 +38,7 @@ const initialAppState: AppState = {
         app: initialAppContainerState,
         cp1: initialCp1State,
     },
-    toggled: false,
+    toggled: true,
 }
 
 export function reducer(state = initialAppState, action: Action): AppState {

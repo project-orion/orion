@@ -93,12 +93,3 @@ export class App extends React.Component<AppState, any> {
         )
     }
 }
-
-// <ConceptNav
-//     nodes={conceptGraph.nodes}
-//     links={conceptGraph.links}
-// />
-//
-// <BrowserRouter>
-//     <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
-// </BrowserRouter>

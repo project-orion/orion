@@ -56,7 +56,6 @@ export class ConceptNav extends React.Component<Props, State> {
                     ({ measureRef } : any) =>
                         <div
                             ref={measureRef}
-                            className={'block-2'}
                             style={{
                                 padding: 0
                             }}
