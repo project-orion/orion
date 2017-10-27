@@ -1,6 +1,8 @@
 import {Action, Concept} from './types'
 
-const serverUrl = (process.env.NODE_ENV == 'production') ? 'http://09f503be.ngrok.io/' : 'http://localhost:3001/'
+const DB_CONFIG = require('../../../config/database.json')
+
+const serverUrl = (process.env.NODE_ENV == 'production') ? DB_CONFIG['production']['url'] : DB_CONFIG['development']['url']
 
 export function fetchConcept(url: string, container: string): Action {
     return {

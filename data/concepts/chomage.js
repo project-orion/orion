@@ -12,11 +12,11 @@ exports.node = {
             data_identifiers: ['chomage_insee', 'chomage_pole_emploi'],
             options: {
                 relativisable: true,
-                data_identifiers: ['population_totale', 'population_active']
+                data_identifiers: ['population_totale']
             },
         }, {
             type: 'suggestions',
-            data_identifiers: ['apprenti'],
+            data_identifiers: ['apprenti','categories-du-chomage'],
         }
     ]
 }
