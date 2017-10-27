@@ -13,9 +13,8 @@ import {
 } from '../types'
 import * as actions from '../actions'
 
-import {ConceptBar} from '../components/utils/concept_bar'
-import {ConceptNav} from '../components/utils/concept_nav'
-import {NavBar} from '../components/utils/navbar'
+import {NavPanel} from '../components/utils/NavPanel'
+import {NavBar} from '../components/utils/NavBar'
 import {ConceptsPresentation} from './concepts_presentation'
 
 const mapReduxStateToReactProps = (state : AppState): AppState => {
@@ -77,10 +76,13 @@ export class App extends React.Component<AppState, any> {
                         id={'concept-nav-panel'}
                         className={classToggled}
                     >
-                        <ConceptNav
+                        <NavPanel
                             nodes={conceptGraph.nodes}
                             links={conceptGraph.links}
+                            graph={conceptGraph.graph}
                             dispatch={this.props.dispatch}
+                            toggled={this.props.toggled}
+                            selectedConceptNode={conceptGraph.selectedConceptNode}
                         />
                     </div>
                     <div className={'left-of-panel' + classToggled}>

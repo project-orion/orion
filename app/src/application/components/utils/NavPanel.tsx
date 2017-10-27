@@ -4,14 +4,18 @@ import {
     Button,
 } from '@blueprintjs/core'
 
-import {ConceptGraph} from '../d3Blocks/conceptGraph'
+import {ConceptGraph} from '../d3Blocks/ConceptGraph'
+import {ConceptNav} from '../d3Blocks/ConceptNav'
 import * as actions from '../../actions'
 import {Concept} from '../../types'
 
 interface Props {
     nodes: any,
     links: any,
+    graph: any,
     dispatch: any,
+    toggled: boolean,
+    selectedConceptNode: any,
 }
 
 interface State {
@@ -19,7 +23,7 @@ interface State {
     dimensions: any,
 }
 
-export class ConceptNav extends React.Component<Props, State> {
+export class NavPanel extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -38,9 +42,8 @@ export class ConceptNav extends React.Component<Props, State> {
     }
 
     render() {
-        const {nodes, links} = this.props;
-        const {searchedConcept} = this.state;
-
+        const {nodes, links, toggled, selectedConceptNode} = this.props
+        const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
 
         return (
@@ -77,15 +80,30 @@ export class ConceptNav extends React.Component<Props, State> {
                                 />
                             </div>
 
-                            <ConceptGraph
-                                version={nodes.length + this.state.dimensions.width + length}
-                                searchedConcept={searchedConcept}
-                                nodes={nodes}
-                                links={links}
-                                labels={nodes}
-                                width={this.state.dimensions.width}
-                                height={window.innerHeight / 2}
-                            />
+                            <div className={(toggled) ? 'hide' : ''}>
+                                <ConceptNav
+                                    dimensions={{
+                                        width: this.state.dimensions.width,
+                                        height: window.innerHeight / 2,
+                                    }}
+                                    graph={this.props.graph}
+                                    selectedConceptNode={selectedConceptNode}
+                                />
+                            </div>
+
+                            <div className={(!toggled) ? 'hide' : ''}>
+                                <ConceptGraph
+                                    version={nodes.length + this.state.dimensions.width + length}
+                                    searchedConcept={searchedConcept}
+                                    nodes={nodes}
+                                    links={links}
+                                    labels={nodes}
+                                    dimensions={{
+                                        width: this.state.dimensions.width,
+                                        height: window.innerHeight / 2,
+                                    }}
+                                />
+                            </div>
                         </div>
                 }
             </Measure>

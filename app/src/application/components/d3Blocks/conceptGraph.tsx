@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import './conceptGraph.less'
+import './ConceptGraph.less'
 
 import * as actions from '../../actions'
 
@@ -12,8 +12,10 @@ interface Props {
     nodes: any,
     links: any,
     labels: any,
-    width: number,
-    height: number,
+    dimensions: {
+        width: number,
+        height: number,
+    }
     searchedConcept: string,
 }
 
@@ -64,6 +66,9 @@ export function ConceptGraphReducer(action: any){
         currentConnexComponent++
     }
 
+    // This loop is intended to catch nodes which would not be labelized
+    // as 'root' in the db and yet have no parent.
+    // TODO: it seems that their children don't have a connexComponent at the moment.
     nodesDict = _.mapValues(nodesDict, (node: any) => {
         if (node.distanceToRoot == null) {
             node.connexComponent = currentConnexComponent
@@ -92,12 +97,15 @@ export function ConceptGraphReducer(action: any){
         }
     })
 
+    const roots = _.filter(nodes, (node: any) => node.rootConcept)
+
     return {
-        nodes : nodes,
-        links : links,
+        nodes,
+        links,
+        roots,
+        childrenDict,
     }
 }
-
 
 
 export class ConceptGraph extends React.Component<Props, State> {
@@ -141,7 +149,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     }
 
     initSimulation() {
-        let {width, height} = this.props
+        let {width, height} = this.props.dimensions
 
         this.width = width
         this.height = height
@@ -175,7 +183,8 @@ export class ConceptGraph extends React.Component<Props, State> {
     // (React will call this function through componentDidMount and componentDidUpdate).
     // It updates our local parameters and simulates the forces we defined previously.
     updateSimulation() {
-        let {nodes, links, labels, width, height, searchedConcept} = this.props
+        let {width, height} = this.props.dimensions
+        let {nodes, links, labels, searchedConcept} = this.props
 
         // Internalize parameters so that they gan be fed to a d3 simulation
         // (which will eventually alter these variables, which is the reason why
@@ -431,8 +440,8 @@ export class ConceptGraph extends React.Component<Props, State> {
     componentDidMount() {
         this.domContainer = d3.select(this.refs.container)
 
-        this.width = this.props.width
-        this.height = this.props.height
+        this.width = this.props.dimensions.width
+        this.height = this.props.dimensions.height
 
         this.initSimulation()
         this.updateSimulation()
@@ -492,7 +501,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     }
 
     render() {
-        let {width, height} = this.props
+        let {width, height} = this.props.dimensions
 
         return (
             <svg

@@ -4,10 +4,10 @@ const DB_CONFIG = require('../../../config/database.json')
 
 const serverUrl = (process.env.NODE_ENV == 'production') ? DB_CONFIG['production']['url'] : DB_CONFIG['development']['url']
 
-export function changeSelectedConceptNav(conceptId: number): Action {
+export function changeSelectedConceptNav(conceptNode: any): Action {
     return {
         type: 'CHANGE_SELECTED_CONCEPT_NAV',
-        value: conceptId,
+        value: conceptNode,
     }
 }
 

@@ -5,17 +5,13 @@ import {
     Action,
     AppState,
     ContainerState,
+    ConceptGraph,
 } from './types'
 
-import {
-    TimeseriesValuesReducer,
-} from './components/modules/timeseries_chart'
-import {
-    LabelizedValuesReducer,
-} from './components/modules/labelized_chart'
-import {
-    ConceptGraphReducer,
-} from './components/d3Blocks/conceptGraph'
+import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
+import {LabelizedValuesReducer} from './components/modules/labelized_chart'
+import {ConceptGraphReducer} from './components/d3Blocks/ConceptGraph'
+import {ConceptNavReducer} from './components/d3Blocks/ConceptNav'
 
 const initialCp1State: ContainerState = {
     containerId: 'cp1',
@@ -28,17 +24,52 @@ const initialAppContainerState: ContainerState = {
     loading: 0,
 }
 
+// const selectedGraphNodeTest: any = {
+//     connexComponent: 4,
+//     createdAt: "2017-10-18T09:05:35.492Z",
+//     distanceToRoot: 1,
+//     id: 8,
+//     index: 7,
+//     key: "chomage",
+//     name: "Chomage",
+//     rootConcept: null,
+//     slug: "chomage",
+//     updatedAt: "2017-10-18T09:05:35.492Z",
+//     vx: 0.00003803722385971042,
+//     vy: 0.00002060345658589924,
+//     x: 315.3480145453016,
+//     y: 201.07288720990252
+// }
+
+const selectedGraphNodeTest: any = {
+    connexComponent: 4,
+    createdAt: "2017-10-18T09:05:35.525Z",
+    distanceToRoot: 0,
+    id: 15,
+    index: 14,
+    key: "emploi",
+    name: "Emploi",
+    rootConcept: true,
+    slug: "emploi",
+    updatedAt: "2017-10-18T09:05:35.525Z",
+    vx: 0.000011318360215728518,
+    vy: -0.0000020253524838587112,
+    x: 841.3230662574604,
+    y: 132.77765830847156
+}
+
 const initialAppState: AppState = {
     conceptGraph: {
         nodes: [],
         links: [],
-        selectedConceptId: null,
+        graph: {},
+        selectedConceptNode: null,
     },
     containers: {
         app: initialAppContainerState,
         cp1: initialCp1State,
     },
-    toggled: true,
+    toggled: false,
 }
 
 export function reducer(state = initialAppState, action: Action): AppState {
@@ -66,7 +97,7 @@ export function reducer(state = initialAppState, action: Action): AppState {
                 ...state,
                 conceptGraph: {
                     ...state.conceptGraph,
-                    selectedConceptId: action.value,
+                    selectedConceptNode: action.value,
                 }
             }
 
@@ -115,14 +146,16 @@ export function reducer(state = initialAppState, action: Action): AppState {
             }
 
         case 'FETCH_CONCEPT_GRAPH_SUCCESS':
-            let {nodes, links} = ConceptGraphReducer(action)
+            let {nodes, links, roots, childrenDict} = ConceptGraphReducer(action)
+            let graph: ConceptGraph = ConceptNavReducer(nodes, links, roots, childrenDict)
 
             return {
                 ...state,
                 conceptGraph: {
                     nodes,
                     links,
-                    selectedConceptId: null,
+                    graph,
+                    selectedConceptNode: selectedGraphNodeTest,
                 },
                 containers: {
                     ...state.containers,

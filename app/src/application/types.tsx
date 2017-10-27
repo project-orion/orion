@@ -5,6 +5,14 @@ import {
     definition_valuesAttribute,
 } from '../../../models/db'
 
+export interface ConceptGraphNode extends ConceptAttributes {
+    children: ConceptGraphNode[],
+}
+
+export interface ConceptGraph {
+    [index: number]: ConceptGraphNode,
+}
+
 export interface AppState {
     containers?: {
         [id: string]: ContainerState
@@ -12,7 +20,8 @@ export interface AppState {
     conceptGraph: {
         nodes: concept_nodesAttribute[],
         links: concept_linksAttribute[],
-        selectedConceptId: number,
+        graph: ConceptGraph,
+        selectedConceptNode: any,
     }
     dispatch?: any,
     toggled: boolean,
