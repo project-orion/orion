@@ -16,13 +16,18 @@ gulp.task('copy-config', (callback) => {
         .pipe(gulp.dest(path.join(DIR_FOLD, '/config')))
 })
 
+gulp.task('copy-secret', (callback) => {
+  return gulp.src(path.join(__dirname, '/../secret/*'))
+        .pipe(gulp.dest(path.join(DIR_FOLD, '/secret')))
+})
+
 gulp.task('build-models', (callback) => {
     return gulp.src(path.join(__dirname, '/../models/*'))
         .pipe(ts())
         .pipe(gulp.dest(path.join(DIR_FOLD, '/models')))
 })
 
-gulp.task('build', ['build-models', 'copy-config'],  (callback) => {
+gulp.task('build', ['build-models', 'copy-config', 'copy-secret'],  (callback) => {
     return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject())
