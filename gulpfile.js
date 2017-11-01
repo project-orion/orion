@@ -240,7 +240,7 @@ gulp.task('build-tests', () => {
         .pipe(gulp.dest(DIST_FOLD))
 })
 
-gulp.task('run-test-all', ['build-tests', 'copy-config', 'copy-secret', 'copy-model-definition'], () => {
+gulp.task('run-test-all', ['build-tests', 'copy-config', 'copy-model-definition'], () => {
     return gulp.src('.')
         .pipe(mocha())
 })
