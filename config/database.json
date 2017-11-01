@@ -1,20 +1,5 @@
 {
-    "development": {
-        "url": "http://localhost:3001/",
-        "username": "root",
-        "password": "root",
-        "database": "orion",
-        "host": "localhost",
-        "dialect": "postgres"
-    },
-    "production": {
-        "url": "http://09f503be.ngrok.io/",
-        "username": "root",
-        "password": "root",
-        "database": "orion",
-        "host": "localhost",
-        "dialect": "postgres"
-    },
+    
     "ci": {
         "username": "ubuntu",
         "password": null,

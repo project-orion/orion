@@ -34,7 +34,7 @@ module.exports = {
         filename: 'app.bundle.js',
     },
     resolve: {
-        extensions: ['.js', '.ts', '.tsx']
+        extensions: ['.js', '.ts', '.tsx', '.json']
     },
     module: {
         loaders: [
