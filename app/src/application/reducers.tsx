@@ -10,8 +10,8 @@ import {
 
 import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
 import {LabelizedValuesReducer} from './components/modules/labelized_chart'
-import {ConceptGraphReducer} from './components/d3Blocks/ConceptGraph'
-import {ConceptNavReducer} from './components/d3Blocks/ConceptNav'
+import {ConceptGraphReducer} from './components/d3Blocks/conceptGraph'
+import {ConceptNavReducer} from './components/d3Blocks/conceptNav'
 
 const initialCp1State: ContainerState = {
     containerId: 'cp1',

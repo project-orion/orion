@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import './ConceptGraph.less'
+import './conceptGraph.less'
 
 import * as actions from '../../actions'
 
@@ -194,13 +194,13 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.cc = (_.map(_.uniqBy(filterNodes, 'connexComponent'), (n: any) => n.connexComponent)).sort()
 
         if (this.cc.length > 0) {
-            this.nodes = _.filter(this.props.nodes, (n: any) => this.cc.indexOf(n.connexComponent) != -1)
-            this.links = _.filter(this.props.links, (l: any) => this.cc.indexOf(l.connexComponent) != -1)
-            this.labels = _.filter(this.props.nodes, (n: any) => this.cc.indexOf(n.connexComponent) != -1)
+            this.nodes = _.filter(nodes, (n: any) => this.cc.indexOf(n.connexComponent) != -1)
+            this.links = _.filter(links, (l: any) => this.cc.indexOf(l.connexComponent) != -1)
+            this.labels = _.filter(nodes, (n: any) => this.cc.indexOf(n.connexComponent) != -1)
         } else if (!searchedConcept) {
-            this.nodes = nodes
-            this.links = links
-            this.labels = labels
+            this.nodes = _.cloneDeep(nodes)
+            this.links = _.cloneDeep(links)
+            this.labels = _.cloneDeep(labels)
         } else {
             this.nodes = []
             this.links = []
@@ -289,7 +289,7 @@ export class ConceptGraph extends React.Component<Props, State> {
             .enter()
                 .append('circle')
                 .classed('node', true)
-                .merge(this.domNodes)
+            .merge(this.domNodes)
                 .attr('cx', (d: any) => d.x)
                 .attr('cy', (d: any) => d.y)
                 .attr('r', (d: any) => 30 / (d.distanceToRoot + 1))

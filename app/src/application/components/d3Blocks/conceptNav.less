@@ -1,0 +1,29 @@
+@import '~@blueprintjs/core/dist/variables.less';
+
+.conceptNode {
+    text {
+        text-anchor: start;
+        fill: @light-gray5;
+    }
+}
+.conceptCircle {
+    r: 8px;
+}
+
+.toggle {
+    &:hover {
+        .conceptCircle {
+            fill: @light-gray1;
+        }
+    }
+
+    .conceptCircle {
+        fill: @light-gray5;
+    }
+}
+
+.notoggle {
+    .conceptCircle {
+        fill: @gray1;
+    }
+}

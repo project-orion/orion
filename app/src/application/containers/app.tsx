@@ -13,8 +13,8 @@ import {
 } from '../types'
 import * as actions from '../actions'
 
-import {NavPanel} from '../components/utils/NavPanel'
-import {NavBar} from '../components/utils/NavBar'
+import {NavPanel} from '../components/utils/navPanel'
+import {NavBar} from '../components/utils/navBar'
 import {ConceptsPresentation} from './concepts_presentation'
 
 const mapReduxStateToReactProps = (state : AppState): AppState => {

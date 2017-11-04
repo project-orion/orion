@@ -1,11 +1,12 @@
+import * as _ from 'lodash'
 import * as React from 'react'
 import Measure from 'react-measure'
 import {
     Button,
 } from '@blueprintjs/core'
 
-import {ConceptGraph} from '../d3Blocks/ConceptGraph'
-import {ConceptNav} from '../d3Blocks/ConceptNav'
+import {ConceptGraph} from '../d3Blocks/conceptGraph'
+import {ConceptNav} from '../d3Blocks/conceptNav'
 import * as actions from '../../actions'
 import {Concept} from '../../types'
 
@@ -26,6 +27,9 @@ interface State {
 export class NavPanel extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
+
+
+        
         this.state = {
             dimensions: {
                 width: 0,
@@ -86,8 +90,11 @@ export class NavPanel extends React.Component<Props, State> {
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,
                                     }}
-                                    graph={this.props.graph}
+                                    graph={_.cloneDeep(this.props.graph)}
+                                    nodes={_.cloneDeep(nodes)}
+                                    links={_.cloneDeep(links)}
                                     selectedConceptNode={selectedConceptNode}
+                                    displayedNodes={[selectedConceptNode]}
                                 />
                             </div>
 
@@ -95,9 +102,9 @@ export class NavPanel extends React.Component<Props, State> {
                                 <ConceptGraph
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
-                                    nodes={nodes}
-                                    links={links}
-                                    labels={nodes}
+                                    nodes={_.cloneDeep(nodes)}
+                                    links={_.cloneDeep(links)}
+                                    labels={_.cloneDeep(nodes)}
                                     dimensions={{
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,
