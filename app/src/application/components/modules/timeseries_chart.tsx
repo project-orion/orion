@@ -40,9 +40,8 @@ export function TimeseriesValuesReducer(m: Module): any {
             label: dataset.info.name,
             fill: false,
             data: _.orderBy(_.map(dataset.values, (value: any) => {
-                let d = new Date(value.timestamp)
                 return {
-                    x: d.getFullYear() + d.getMonth() / 12,
+                    x: new Date(value.timestamp),
                     y: value.value,
                 }
             }), 'x'),
@@ -129,6 +128,8 @@ export class TimeseriesChart extends React.Component<Props, State> {
                                         dimensions={{
                                             width: this.state.dimensions.width,
                                             height: window.innerHeight / 2,
+                                            toolbox_width: 120,
+                                            toolbox_height: 30,
                                         }}
                                         padding={{
                                             top: 0,
