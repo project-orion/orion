@@ -17,6 +17,7 @@ interface Props {
         height: number,
     }
     searchedConcept: string,
+    dispatch: any
 }
 
 interface State {
@@ -270,6 +271,17 @@ export class ConceptGraph extends React.Component<Props, State> {
         return customClick
     }
 
+    customClick(d: any) {
+        console.log('customclick')
+    }
+
+    customDoubleClick(d: any) {
+        // TODO: associate correct container instead of default cp1
+        this.props.dispatch(actions.fetchConcept('concepts/' + d.slug, 'cp1'))
+        this.props.dispatch(actions.toggleNavPanel())
+        this.props.dispatch(actions.changeSelectedConceptNav(d))
+    }
+
     // This function draws elements (in this specific case, circles) in the
     // container. The container itself is defined at the very end of the first
     // lifecycle of our React component (and called domContainer here).
@@ -279,7 +291,7 @@ export class ConceptGraph extends React.Component<Props, State> {
         // Create or update circles in the DOM with our data.
         this.domNodes = this.domContainer
             .selectAll('circle')
-            .data(this.nodes, (d: any) => d.key)
+            .data(this.nodes, (d: any) => d.id)
 
         // Remove circles that are no longer needed from the DOM.
         this.domNodes.exit().remove()
@@ -297,12 +309,8 @@ export class ConceptGraph extends React.Component<Props, State> {
                     (d: any) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3
                 )
                 .call(this.interceptClickHandler
-                    .on('customClick', (d: any, index: any) => {
-                        console.log('customclick')
-                    })
-                    .on('customDoubleClick', (d: any, index: any) => {
-                        console.log('customdblclick')
-                    })
+                    .on('customClick', this.customClick.bind(this))
+                    .on('customDoubleClick', this.customDoubleClick.bind(this))
                 )
         //         .call(d3.drag()
         //             .on('start', dragstarted.bind(this))
@@ -336,7 +344,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     renderLabels() {
         this.domLabels = this.domContainer
             .selectAll('text')
-            .data(this.labels, (d: any) => d.name)
+            .data(this.labels, (d: any) => d.id)
 
         this.domLabels.exit().remove()
 
@@ -354,7 +362,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     renderLinks() {
         this.domLinks = this.domContainer
             .selectAll('line')
-            .data(this.links, (d: any) => d.key)
+            .data(this.links, (d: any) => d.id)
 
         this.domLinks.exit().remove()
 

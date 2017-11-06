@@ -83,7 +83,17 @@ export class ConceptNav extends React.Component<Props, State> {
     updateHierarchy() {
         if(this.props.selectedConceptNode && this.props.selectedConceptNode.connexComponent) {
             this.graph = this.props.graph
+
+            //TODO: kinda dirty node selection, can improve
+            let selectedNode
             this.hierarchy = d3.hierarchy(this.graph[this.props.selectedConceptNode.connexComponent])
+            this.hierarchy.each((node: any) => {
+                if (node.data.id == this.props.selectedConceptNode.id) {
+                    selectedNode = node
+                }
+            })
+
+            this.hierarchy = selectedNode
 
             this.toggle(this.hierarchy)
         }

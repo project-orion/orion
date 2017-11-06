@@ -29,7 +29,7 @@ export class NavPanel extends React.Component<Props, State> {
         super(props)
 
 
-        
+
         this.state = {
             dimensions: {
                 width: 0,
@@ -49,6 +49,8 @@ export class NavPanel extends React.Component<Props, State> {
         const {nodes, links, toggled, selectedConceptNode} = this.props
         const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
+        const toggleButtonTextIcon = (toggled) ?
+            <span className={'pt-icon-caret-left'}></span> : <span className={'pt-icon-caret-right'}></span>
 
         return (
             <Measure
@@ -70,8 +72,10 @@ export class NavPanel extends React.Component<Props, State> {
                             <Button
                                 className={'pt-minimal'}
                                 onClick={() => this.props.dispatch(actions.toggleNavPanel())}
-                                text={'Toggle'}
-                            />
+                            >
+                                Toggle
+                                {toggleButtonTextIcon}
+                            </Button>
 
                             <div className='pt-input-group concept_nav_bar'>
                                 <span className={'pt-icon pt-icon-search'}></span>
@@ -102,13 +106,14 @@ export class NavPanel extends React.Component<Props, State> {
                                 <ConceptGraph
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
-                                    nodes={_.cloneDeep(nodes)}
-                                    links={_.cloneDeep(links)}
-                                    labels={_.cloneDeep(nodes)}
+                                    nodes={nodes}
+                                    links={links}
+                                    labels={nodes}
                                     dimensions={{
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,
                                     }}
+                                    dispatch={this.props.dispatch}
                                 />
                             </div>
                         </div>

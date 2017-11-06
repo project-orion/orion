@@ -38,7 +38,7 @@ export class App extends React.Component<AppState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'app'))
-        this.props.dispatch(actions.fetchConcept('concepts/chomage/', 'cp1'))
+        // this.props.dispatch(actions.fetchConcept('concepts/chomage/', 'cp1'))
     }
 
     render () {
