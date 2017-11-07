@@ -22,6 +22,7 @@ export interface AppState {
         links: concept_linksAttribute[],
         graph: ConceptGraph,
         selectedConceptNode: any,
+        displayedSlugs: string[],
     }
     dispatch?: any,
     toggled: boolean,

@@ -156,10 +156,11 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.height = height
 
         this.simulation = d3.forceSimulation()
-            .force('link', d3.forceLink().id((d: any) => d.key).distance(60))
+            .force('link', d3.forceLink().id((d: any) => d.key).distance(70))
             .force('charge', d3.forceManyBody().strength(-200))
             .force('y2', d3.forceY().strength((d: any) => (5 - d.distanceToRoot) / 10).y(this.height / 3))
-            .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(2 * this.height / 3))
+            // .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(2 * this.height / 3))
+            .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(this.height))
     }
 
     ticked() {
@@ -212,7 +213,11 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.height = height
 
         this.simulation.nodes(this.nodes).on('tick', this.ticked.bind(this))
-        this.simulation.force('link').links(this.links)
+        this.simulation.force('link')
+            .links(this.links)
+            .distance(60 + (this.cc.length > 0 ? (50 / this.cc.length ) : 0))
+        this.simulation.force('charge')
+            .strength(-200 - (this.cc.length > 0 ? (100 / this.cc.length ) : 0))
 
         this.interceptClickHandler = this.interceptClick()
 
@@ -273,13 +278,16 @@ export class ConceptGraph extends React.Component<Props, State> {
 
     customClick(d: any) {
         console.log('customclick')
+        this.selectNode(d)
     }
 
     customDoubleClick(d: any) {
+        // It is important that this action is dispatched first as it erases
+        // the list of displayed slugs from the Redux state.
+        this.props.dispatch(actions.changeSelectedConceptNav(d))
         // TODO: associate correct container instead of default cp1
         this.props.dispatch(actions.fetchConcept('concepts/' + d.slug, 'cp1'))
         this.props.dispatch(actions.toggleNavPanel())
-        this.props.dispatch(actions.changeSelectedConceptNav(d))
     }
 
     // This function draws elements (in this specific case, circles) in the
@@ -300,13 +308,16 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.domNodes = this.domNodes
             .enter()
                 .append('circle')
-                .classed('node', true)
             .merge(this.domNodes)
                 .attr('cx', (d: any) => d.x)
                 .attr('cy', (d: any) => d.y)
                 .attr('r', (d: any) => 30 / (d.distanceToRoot + 1))
                 .attr('opacity',
                     (d: any) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3
+                )
+                .attr('class', (d: any) =>
+                    'node ' +
+                    ((this.props.searchedConcept && d.slug.startsWith(this.props.searchedConcept)) ? 'searchedNode' : '')
                 )
                 .call(this.interceptClickHandler
                     .on('customClick', this.customClick.bind(this))

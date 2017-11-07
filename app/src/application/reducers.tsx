@@ -30,6 +30,7 @@ const initialAppState: AppState = {
         links: [],
         graph: {},
         selectedConceptNode: null,
+        displayedSlugs: [],
     },
     containers: {
         app: initialAppContainerState,
@@ -64,7 +65,9 @@ export function reducer(state = initialAppState, action: Action): AppState {
                 conceptGraph: {
                     ...state.conceptGraph,
                     selectedConceptNode: action.value,
-                }
+                    displayedSlugs: [],
+                },
+                containers: initialAppState.containers,
             }
 
         case 'FETCH_SLUG_SUCCESS':
@@ -92,6 +95,10 @@ export function reducer(state = initialAppState, action: Action): AppState {
 
             return {
                 ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    displayedSlugs: state.conceptGraph.displayedSlugs.concat([action.value.slug]),
+                },
                 containers: {
                     ...state.containers,
                     [action.container]: {

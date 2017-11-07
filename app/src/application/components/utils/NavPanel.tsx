@@ -17,6 +17,7 @@ interface Props {
     dispatch: any,
     toggled: boolean,
     selectedConceptNode: any,
+    displayedSlugs: string[],
 }
 
 interface State {
@@ -27,8 +28,6 @@ interface State {
 export class NavPanel extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
-
-
 
         this.state = {
             dimensions: {
@@ -46,11 +45,13 @@ export class NavPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {nodes, links, toggled, selectedConceptNode} = this.props
+        const {nodes, links, toggled, selectedConceptNode, displayedSlugs} = this.props
         const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
         const toggleButtonTextIcon = (toggled) ?
             <span className={'pt-icon-caret-left'}></span> : <span className={'pt-icon-caret-right'}></span>
+
+        console.log(displayedSlugs)
 
         return (
             <Measure
@@ -99,6 +100,8 @@ export class NavPanel extends React.Component<Props, State> {
                                     links={_.cloneDeep(links)}
                                     selectedConceptNode={selectedConceptNode}
                                     displayedNodes={[selectedConceptNode]}
+                                    displayedSlugs={displayedSlugs}
+                                    dispatch={this.props.dispatch}
                                 />
                             </div>
 

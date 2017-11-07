@@ -83,6 +83,7 @@ export class App extends React.Component<AppState, any> {
                             dispatch={this.props.dispatch}
                             toggled={this.props.toggled}
                             selectedConceptNode={conceptGraph.selectedConceptNode}
+                            displayedSlugs={conceptGraph.displayedSlugs}
                         />
                     </div>
                     <div className={'left-of-panel' + classToggled}>

@@ -6,24 +6,35 @@
         fill: @light-gray5;
     }
 }
+
 .conceptCircle {
     r: 8px;
+    fill: @gray1;
+    stroke: @gray1;
+    stroke-width: 0;
 }
 
 .toggle {
-    &:hover {
-        .conceptCircle {
-            fill: @light-gray1;
-        }
+    .conceptCircle {
+        stroke-width: 3;
+        fill: @light-gray3;
     }
 
-    .conceptCircle {
-        fill: @light-gray5;
+    &:hover {
+        .conceptCircle {
+            stroke: @gray3;
+        }
     }
 }
 
-.notoggle {
+.displayedSlug {
     .conceptCircle {
-        fill: @gray1;
+        fill: @green3;
+    }
+
+    &:hover {
+        .conceptCircle {
+            fill: @green5;
+        }
     }
 }

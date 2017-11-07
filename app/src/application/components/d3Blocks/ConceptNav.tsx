@@ -17,6 +17,8 @@ interface Props {
     links: any,
     selectedConceptNode: any,
     displayedNodes: any,
+    displayedSlugs: string[],
+    dispatch: any,
 }
 
 interface State {
@@ -52,6 +54,8 @@ export class ConceptNav extends React.Component<Props, State> {
     domContainer: any
     domRoot: any
     transitionDuration: number
+
+    interceptClickHandler: any
 
     graph: any
     nodes: any
@@ -110,6 +114,85 @@ export class ConceptNav extends React.Component<Props, State> {
         }
     }
 
+    rebind(target: any, source: any, method: any) {
+        return (
+            (...args: any[]) => {
+                let value = method.apply(source, args)
+                return value === source ? target : value
+            }
+        )
+    }
+
+    interceptClick() {
+        let dispatcher: any = d3.dispatch(
+            'customClick',
+            'customDragStarted',
+            'customDragging',
+            'customDragEnd',
+            'customDoubleClick'
+        )
+
+        let customClick : any = (selection: any): any => {
+            let lastMouseDownLocation: any
+            let lastMouseDownTime: any
+            let lastMouseDownArguments: any
+
+            // The click has to be localized so that one knows it's not a drag.
+            let movementTolerance = 5
+            let doubleClickSpeed = 200
+            let windowTimeout: any
+
+            let distance = (a: any, b: any): number => Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2)
+
+            selection.on('mousedown', (...args: any[]) => {
+                lastMouseDownLocation = d3.mouse(document.body)
+                lastMouseDownTime = +new Date()
+                lastMouseDownArguments = args
+            })
+
+            selection.on('mouseup', (...args: any[]) => {
+                if (distance(lastMouseDownLocation, d3.mouse(document.body)) > movementTolerance) {
+                    return
+                } else {
+                    if (windowTimeout) {
+                        window.clearTimeout(windowTimeout)
+                        windowTimeout = null
+                        dispatcher.apply('customDoubleClick', this as any, lastMouseDownArguments)
+                    } else {
+                        windowTimeout = window.setTimeout((() => {
+                            return () => {
+                                dispatcher.apply('customClick', this as any, lastMouseDownArguments)
+                                windowTimeout = null
+                            }
+                        })(), doubleClickSpeed)
+                    }
+                }
+            })
+        }
+
+        customClick['on'] = this.rebind(customClick, dispatcher, dispatcher['on'])
+
+        return customClick
+    }
+
+    customClick(d: any) {
+        console.log('customclick')
+        if (d.children) {
+            this.hierarchy.each((node: any) => {
+                if (node.data.id == d.data.id) {
+                    this.toggle(node)
+                }
+            })
+            this.renderTree()
+        }
+    }
+
+    customDoubleClick(d: any) {
+        console.log('customDoubleClick')
+        // TODO: associate correct container instead of default cp1
+        this.props.dispatch(actions.fetchConcept('concepts/' + d.data.slug, 'cp1'))
+    }
+
     renderTree() {
         let x = (node: any) => 40 + 20 * node.depth
         let y = (node: any) => 25 * (this.displayedNodes - node.index)
@@ -135,9 +218,18 @@ export class ConceptNav extends React.Component<Props, State> {
             let nodeEnter = node
                 .enter()
                     .append('g')
-                    .attr('class', (d: any) => 'conceptNode ' + (d.children ? 'toggle' : 'notoggle'))
+                    .attr('class', (d: any) => {
+                        console.log(d)
+                        console.log(this.props.displayedSlugs)
+                        return 'conceptNode ' +
+                        (d.children ? 'toggle ' : 'notoggle ') +
+                        (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : 'notdisplayedSlug ')
+                    })
                     .attr('transform', (d: any) => 'translate(' + x(d) + ',' + y(d) + ')')
-                    .on('click', this.click.bind(this))
+                    .call(this.interceptClickHandler
+                        .on('customClick', this.customClick.bind(this))
+                        .on('customDoubleClick', this.customDoubleClick.bind(this))
+                    )
 
             nodeEnter.append('circle')
                     .attr('class', (d: any) => 'conceptCircle')
@@ -149,7 +241,13 @@ export class ConceptNav extends React.Component<Props, State> {
                     .text((d: any) => d.data.name)
                     .style('fill-opacity', 0)
 
-            let nodeUpdate = nodeEnter.merge(node).transition()
+            let nodeUpdate = nodeEnter.merge(node)
+                .attr('class', (d: any) =>
+                    'conceptNode ' +
+                    (d.children ? 'toggle ' : 'notoggle ') +
+                    (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : 'notdisplayedSlug ')
+                )
+                .transition()
                 .duration(this.transitionDuration)
                 .attr('transform', (d: any) => 'translate(' + x(d) + ',' + y(d) + ')')
 
@@ -200,6 +298,7 @@ export class ConceptNav extends React.Component<Props, State> {
     componentDidMount() {
         this.domContainer = d3.select(this.refs.conceptNavContainer)
         this.transitionDuration = 250
+        this.interceptClickHandler = this.interceptClick()
 
         this.nodes = this.props.nodes
         this.links = this.props.links
