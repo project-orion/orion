@@ -10,6 +10,7 @@ interface Props {
     nodes: any,
     width: number,
     height: number,
+    colors: string[],
 }
 
 interface State {
@@ -51,9 +52,6 @@ export class Component extends React.Component<Props, State> {
     }
 
     renderNodes() {
-
-        var color = d3.scaleOrdinal(d3.schemeCategory20c);
-
         function dragstarted(d: any) {
             if (!d3.event.active) this.simulation.alphaTarget(0.1).restart()
             d.fx = d.x
@@ -85,14 +83,13 @@ export class Component extends React.Component<Props, State> {
         this.circles.exit().remove();
         // enter + update
 
-
         this.circles = this.circles.enter().append('circle')
             .classed('bubble-graph-node', true)
             .merge(this.circles)
             .attr('cx', (d: any) => d.x)
             .attr('cy', (d: any) => d.y)
             .attr('r', (d: any) => Math.sqrt(Math.sqrt(d.data1.value/18624475))*50)
-            .attr('fill',function(d: any) { return color(Math.floor(d.data2.value).toString()); })
+            .attr('fill', (d: any, i: number) => this.props.colors[i % this.props.colors.length])
             .attr('stroke', '#FFF')
             .attr('stroke-width', 1)
             .attr('opacity', (d: any) => 1)
@@ -130,16 +127,14 @@ export class Component extends React.Component<Props, State> {
 
 
     selectNode(node: any) {
-            this.setState({selected: node});
-
+            this.setState({selected: node})
     }
 
     unselectNode(node: any) {
-            this.setState({selected: null});
-
+            this.setState({selected: null})
     }
-    // REACT LIFECYCLE
 
+    // REACT LIFECYCLE
     constructor(props: Props) {
         super(props);
         this.state = {selected: null}

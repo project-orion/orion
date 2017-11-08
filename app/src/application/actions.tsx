@@ -17,7 +17,15 @@ export function toggleNavPanel(): Action {
     }
 }
 
-export function fetchConcept(url: string, container: string): Action {
+export function removeConcept(container: string, index: number): Action {
+    return {
+        type: 'REMOVE_CONCEPT',
+        value: index,
+        container,
+    }
+}
+
+export function fetchConcept(url: string, container: string, index: number=null): Action {
     return {
         type: 'FETCH_CONCEPT',
         promise: (dispatch, getState) => {
@@ -26,7 +34,7 @@ export function fetchConcept(url: string, container: string): Action {
             fetch(serverUrl + url).then((res: any) => {
                 return res.json()
             }).then( (json: Concept) => {
-                dispatch(receivedSlug(json, container))
+                dispatch(receivedSlug(json, container, index))
             }).catch( (err: any) => {
                 console.log(err);
                 dispatch(fetchFailed(err, container))
@@ -40,20 +48,18 @@ export function fetchConceptGraph(url: string, container: string): Action {
     return {
         type: 'FETCH_CONCEPT_LIST',
         promise: (dispatch, getState) => {
-                dispatch(loading(container))
+            dispatch(loading(container))
 
-                fetch(serverUrl + url).then((res: any) => {
-                    return res.json()
-                })
-                .then( (json: Concept[]) => {
-                    dispatch(receivedConceptGraph(json, container));
-                    })
-                .catch( (err: any) => {
-                    console.log(err)
-                    dispatch(fetchFailed(err, container))
-                    })
-                }
+            fetch(serverUrl + url).then((res: any) => res.json())
+            .then((json: Concept[]) => {
+                dispatch(receivedConceptGraph(json, container));
+            })
+            .catch((err: any) => {
+                console.log(err)
+                dispatch(fetchFailed(err, container))
+            })
         }
+    }
 }
 
 export function fetchDataset(url: string, container: string): Action {
@@ -62,11 +68,11 @@ export function fetchDataset(url: string, container: string): Action {
         promise: (dispatch, getState) => {
             dispatch(loading(container))
 
-            fetch(serverUrl + url).then((res: any) => {
-                return res.json()
-            }).then( (json: any[]) => {
+            fetch(serverUrl + url).then((res: any) => res.json())
+            .then( (json: any[]) => {
                 dispatch(receivedDataset(json, container))
-            }).catch( (err: any) => {
+            })
+            .catch( (err: any) => {
                 console.log(err)
                 dispatch(fetchFailed(err, container))
             })
@@ -81,10 +87,13 @@ export function loading(container: string): Action {
     }
 }
 
-export function receivedSlug(response: Concept, container: string): Action {
+export function receivedSlug(response: Concept, container: string, index: number=null): Action {
     return {
         type: 'FETCH_SLUG_SUCCESS',
-        value: response,
+        value: {
+            ...response,
+            index,
+        },
         container: container,
     }
 }

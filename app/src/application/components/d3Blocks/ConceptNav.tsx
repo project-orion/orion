@@ -54,6 +54,7 @@ export class ConceptNav extends React.Component<Props, State> {
     domContainer: any
     domRoot: any
     transitionDuration: number
+    selectedNodeId: number
 
     interceptClickHandler: any
 
@@ -75,12 +76,24 @@ export class ConceptNav extends React.Component<Props, State> {
             d.toggled = true
             d.visible = true
             d.children.forEach(this.hierachicalToggle.bind(this))
+
+            this.hierarchy.each((node: any) => {
+                if (node.data.id == d.data.id) {
+                    node.toggled = true
+                }
+            })
         } else {
             d.toggled = false
             d.each((node: any) => {
                 node.visible = false
             })
             d.visible = true
+
+            this.hierarchy.each((node: any) => {
+                if (node.data.id == d.data.id) {
+                    node.toggled = false
+                }
+            })
         }
     }
 
@@ -89,17 +102,22 @@ export class ConceptNav extends React.Component<Props, State> {
             this.graph = this.props.graph
 
             //TODO: kinda dirty node selection, can improve
+            //The present if allows to not untoggle all nodes when changing the displayed nodes
+            //(for instance when one double-clicks on a node to have it displayed).
             let selectedNode
-            this.hierarchy = d3.hierarchy(this.graph[this.props.selectedConceptNode.connexComponent])
-            this.hierarchy.each((node: any) => {
-                if (node.data.id == this.props.selectedConceptNode.id) {
-                    selectedNode = node
-                }
-            })
+            if (this.selectedNodeId != this.props.selectedConceptNode.id) {
+                this.selectedNodeId = this.props.selectedConceptNode.id
+                this.hierarchy = d3.hierarchy(this.graph[this.props.selectedConceptNode.connexComponent])
+                this.hierarchy.each((node: any) => {
+                    if (node.data.id == this.props.selectedConceptNode.id) {
+                        selectedNode = node
+                    }
+                })
 
-            this.hierarchy = selectedNode
+                this.hierarchy = selectedNode
+                this.toggle(this.hierarchy)
+            }
 
-            this.toggle(this.hierarchy)
         }
     }
 
@@ -114,6 +132,7 @@ export class ConceptNav extends React.Component<Props, State> {
         }
     }
 
+    // TODO: factorize this part of the code with conceptGraph
     rebind(target: any, source: any, method: any) {
         return (
             (...args: any[]) => {
@@ -189,18 +208,38 @@ export class ConceptNav extends React.Component<Props, State> {
 
     customDoubleClick(d: any) {
         console.log('customDoubleClick')
-        // TODO: associate correct container instead of default cp1
-        this.props.dispatch(actions.fetchConcept('concepts/' + d.data.slug, 'cp1'))
+        let index = this.props.displayedSlugs.indexOf(d.data.slug)
+
+        if (index != -1) {
+            // Meaning one wants to get rid of this slug on the right panel...
+            this.props.dispatch(actions.removeConcept('cp1', index))
+        } else {
+            // Meaning that one wants to insert the concept in the right panel...
+            let displayedSlugsPlusSelected: any = []
+
+            this.hierarchy.eachBefore((node: any) => {
+                if (this.props.displayedSlugs.indexOf(node.data.slug) != -1 || node.data.id == d.data.id) {
+                    displayedSlugsPlusSelected.push(node)
+                }
+            })
+
+            let indexFirstDisplayedSlugAbove = displayedSlugsPlusSelected.indexOf(d)
+
+            // TODO: associate correct container instead of default cp1
+            this.props.dispatch(actions.fetchConcept('concepts/' + d.data.slug, 'cp1', indexFirstDisplayedSlugAbove))
+        }
     }
 
     renderTree() {
+        console.log('renderTree')
+        console.log(this.hierarchy)
         let x = (node: any) => 40 + 20 * node.depth
-        let y = (node: any) => 25 * (this.displayedNodes - node.index)
+        let y = (node: any) => 40 + 25 * node.index
 
         if (this.hierarchy) {
             this.nodes = []
 
-            this.hierarchy.eachAfter((node: any) => {
+            this.hierarchy.eachBefore((node: any) => {
                 this.nodes.push(node)
             })
 
@@ -218,13 +257,11 @@ export class ConceptNav extends React.Component<Props, State> {
             let nodeEnter = node
                 .enter()
                     .append('g')
-                    .attr('class', (d: any) => {
-                        console.log(d)
-                        console.log(this.props.displayedSlugs)
-                        return 'conceptNode ' +
+                    .attr('class', (d: any) =>
+                        'conceptNode ' +
                         (d.children ? 'toggle ' : 'notoggle ') +
                         (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : 'notdisplayedSlug ')
-                    })
+                    )
                     .attr('transform', (d: any) => 'translate(' + x(d) + ',' + y(d) + ')')
                     .call(this.interceptClickHandler
                         .on('customClick', this.customClick.bind(this))
@@ -260,7 +297,6 @@ export class ConceptNav extends React.Component<Props, State> {
             // Transition exiting nodes to the parent's new position.
             var nodeExit = node.exit().transition()
                 .duration(this.transitionDuration)
-                // .attr('transform', (d: any) => 'translate(' + x(d) + ',' + y(d) + ')')
                 .style('fill-opacity', 0)
                 .remove()
         }

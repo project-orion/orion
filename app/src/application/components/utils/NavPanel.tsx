@@ -51,8 +51,6 @@ export class NavPanel extends React.Component<Props, State> {
         const toggleButtonTextIcon = (toggled) ?
             <span className={'pt-icon-caret-left'}></span> : <span className={'pt-icon-caret-right'}></span>
 
-        console.log(displayedSlugs)
-
         return (
             <Measure
                 bounds

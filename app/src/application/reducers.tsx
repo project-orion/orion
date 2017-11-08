@@ -47,6 +47,28 @@ export function reducer(state = initialAppState, action: Action): AppState {
                 toggled: !state.toggled,
             }
 
+        case 'REMOVE_CONCEPT':
+            var displayedSlugs = _.cloneDeep(state.conceptGraph.displayedSlugs)
+            var concepts = _.cloneDeep(state.containers[action.container].concepts)
+
+            displayedSlugs.splice(action.value, 1)
+            concepts.splice(action.value, 1)
+
+            return {
+                ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    displayedSlugs,
+                },
+                containers: {
+                    ...state.containers,
+                    [action.container]: {
+                        ...state.containers[action.container],
+                        concepts,
+                    }
+                }
+            }
+
         case 'LOADING':
             return {
                 ...state,
@@ -93,27 +115,38 @@ export function reducer(state = initialAppState, action: Action): AppState {
                 }
             })
 
+            var displayedSlugs = _.cloneDeep(state.conceptGraph.displayedSlugs)
+            var concepts = _.cloneDeep(state.containers[action.container].concepts)
+            var newConcept = {
+                attributes: {
+                    ...action.value,
+                    modules,
+                },
+                loadedTime: Date.now(),
+            }
+
+            if (action.value.index && action.value.index != -1) {
+                console.log('splice')
+                displayedSlugs.splice(action.value.index, 0, action.value.slug)
+                concepts.splice(action.value.index, 0, newConcept)
+            } else {
+                console.log('push')
+                displayedSlugs.push(action.value.slug)
+                concepts.push(newConcept)
+            }
+
             return {
                 ...state,
                 conceptGraph: {
                     ...state.conceptGraph,
-                    displayedSlugs: state.conceptGraph.displayedSlugs.concat([action.value.slug]),
+                    displayedSlugs,
                 },
                 containers: {
                     ...state.containers,
                     [action.container]: {
                         ...state.containers[action.container],
                         loading: state.containers[action.container].loading - 1,
-                        concepts: [
-                            ...state.containers[action.container].concepts,
-                            {
-                                attributes: {
-                                    ...action.value,
-                                    modules,
-                                },
-                                loadedTime: Date.now(),
-                            }
-                        ]
+                        concepts,
                     }
                 }
             }

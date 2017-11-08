@@ -275,8 +275,6 @@ export class Histogram extends React.Component<Props, State> {
             )
         }
 
-
-
     renderD3DomElements(stacking: boolean) {
         this.renderAxes()
         if(!this.change){
@@ -296,7 +294,6 @@ export class Histogram extends React.Component<Props, State> {
     }
 
     // REACT LIFECYCLE
-
     constructor(props: Props) {
         super(props)
         this.state = {stacking: false}
