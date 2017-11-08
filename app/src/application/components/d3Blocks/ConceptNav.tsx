@@ -195,7 +195,6 @@ export class ConceptNav extends React.Component<Props, State> {
     }
 
     customClick(d: any) {
-        console.log('customclick')
         if (d.children) {
             this.hierarchy.each((node: any) => {
                 if (node.data.id == d.data.id) {
@@ -207,7 +206,6 @@ export class ConceptNav extends React.Component<Props, State> {
     }
 
     customDoubleClick(d: any) {
-        console.log('customDoubleClick')
         let index = this.props.displayedSlugs.indexOf(d.data.slug)
 
         if (index != -1) {
@@ -231,8 +229,6 @@ export class ConceptNav extends React.Component<Props, State> {
     }
 
     renderTree() {
-        console.log('renderTree')
-        console.log(this.hierarchy)
         let x = (node: any) => 40 + 20 * node.depth
         let y = (node: any) => 40 + 25 * node.index
 
@@ -254,13 +250,19 @@ export class ConceptNav extends React.Component<Props, State> {
             let node = this.domContainer.selectAll('g.conceptNode')
                 .data(filteredNodes, (node: any) => node.data.id)
 
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit()
+                .style('fill-opacity', 0)
+                .remove()
+
             let nodeEnter = node
                 .enter()
                     .append('g')
                     .attr('class', (d: any) =>
                         'conceptNode ' +
                         (d.children ? 'toggle ' : 'notoggle ') +
-                        (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : 'notdisplayedSlug ')
+                        (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : ' ') +
+                        (d.toggled ? 'toggled ' : ' ')
                     )
                     .attr('transform', (d: any) => 'translate(' + x(d) + ',' + y(d) + ')')
                     .call(this.interceptClickHandler
@@ -282,7 +284,8 @@ export class ConceptNav extends React.Component<Props, State> {
                 .attr('class', (d: any) =>
                     'conceptNode ' +
                     (d.children ? 'toggle ' : 'notoggle ') +
-                    (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : 'notdisplayedSlug ')
+                    (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : ' ') +
+                    (d.toggled ? 'toggled ' : ' ')
                 )
                 .transition()
                 .duration(this.transitionDuration)
@@ -293,12 +296,6 @@ export class ConceptNav extends React.Component<Props, State> {
 
             nodeUpdate.select('text')
                 .style('fill-opacity', 1)
-
-            // Transition exiting nodes to the parent's new position.
-            var nodeExit = node.exit().transition()
-                .duration(this.transitionDuration)
-                .style('fill-opacity', 0)
-                .remove()
         }
     }
 

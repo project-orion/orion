@@ -9,21 +9,27 @@
 
 .conceptCircle {
     r: 8px;
-    fill: @gray1;
-    stroke: @gray1;
+    fill: @gray3;
+    stroke: @light-gray1;
     stroke-width: 0;
 }
 
 .toggle {
     .conceptCircle {
         stroke-width: 3;
-        fill: @light-gray3;
     }
 
     &:hover {
         .conceptCircle {
-            stroke: @gray3;
+            fill: @gray5;
+            stroke: @light-gray5;
         }
+    }
+}
+
+.toggle.toggled {
+    .conceptCircle {
+        stroke-width: 0;
     }
 }
 
