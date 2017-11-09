@@ -15,7 +15,7 @@ import * as actions from '../actions'
 
 import {NavPanel} from '../components/utils/navPanel'
 import {NavBar} from '../components/utils/navBar'
-import {ConceptsPresentation} from './concepts_presentation'
+import {ConceptsPresentation} from './conceptsPresentation'
 
 const mapReduxStateToReactProps = (state : AppState): AppState => {
     return state

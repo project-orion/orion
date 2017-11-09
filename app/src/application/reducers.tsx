@@ -126,11 +126,9 @@ export function reducer(state = initialAppState, action: Action): AppState {
             }
 
             if (action.value.index && action.value.index != -1) {
-                console.log('splice')
                 displayedSlugs.splice(action.value.index, 0, action.value.slug)
                 concepts.splice(action.value.index, 0, newConcept)
             } else {
-                console.log('push')
                 displayedSlugs.push(action.value.slug)
                 concepts.push(newConcept)
             }
