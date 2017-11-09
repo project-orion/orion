@@ -1,8 +1,7 @@
 const path = require('path')
 
 const Sequelize = require('sequelize')
-const ENV = process.env.NODE_ENV || 'development';
-const DB_CONFIG = require(path.join(__dirname, '/../config/database.json'))[ENV]
+const DB_CONFIG = require(path.join(__dirname, '../config')).default('database')
 
 const possibleModules = [
     'timeseries',
@@ -29,6 +28,7 @@ const sequelize = new Sequelize(
     {
         host: DB_CONFIG.host,
         dialect: DB_CONFIG.dialect
+        // logging: false //Change if debugging is needed.
     }
 )
 

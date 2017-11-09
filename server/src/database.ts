@@ -5,8 +5,8 @@
 
 import * as Sequelize from 'sequelize'
 import * as path from 'path'
-const ENV = process.env.NODE_ENV || 'development';
-const DB_CONFIG = require(path.join(__dirname, '/../../config/database.json'))[ENV]
+import config from './../../config'
+const DB_CONFIG = config('database')
 
 // Start a new Sequelize instance which will be globally used
 // over the backend.

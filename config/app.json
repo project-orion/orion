@@ -1,0 +1,6 @@
+//Specific config relative to app and backend
+{
+    "development": {
+        "serverURL": "localhost:3001"
+    }
+}

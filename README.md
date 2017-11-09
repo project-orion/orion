@@ -1,5 +1,7 @@
 # Orion
 
+![ci badge](https://circleci.com/gh/project-orion/orion.svg?style=shield&circle-token=e50843b98b7da48e495b6013ed5bba93176c9acd)
+
 ## Code structure
 * Front end code is located under `./app`; it builds a webpack bundle
 * Backend code is located under `./server`; it builds an expressJS server
@@ -42,3 +44,5 @@ This command will populate your local Postgres instance with data; it will then 
 ## Running the app locally
 If you have already installed Postgres, simply start it using `postgres -D /usr/local/var/postgres`.
 Then start the local backend by running `npm run start-server` from `./` and finally start the local front-end by running `cd app/ && npm start`.
+
+Then start the local backend by running `npm run start-server` from `./` and finally start the local front-end by running `cd app/ && npm start`

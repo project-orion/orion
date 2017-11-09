@@ -1,8 +1,7 @@
 import {Action, Concept} from './types'
 
-const DB_CONFIG = require('../../../config/database.json')
-
-const serverUrl = (process.env.NODE_ENV == 'production') ? DB_CONFIG['production']['url'] : DB_CONFIG['development']['url']
+import config from './config'
+const serverUrl = config('app').serverURL
 
 export function changeSelectedConceptNav(conceptNode: any): Action {
     return {

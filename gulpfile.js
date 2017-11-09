@@ -14,10 +14,11 @@ const sourcemaps = require('gulp-sourcemaps')
 const SequelizeAuto = require('sequelize-auto')
 const Sequelize = require('sequelize')
 const ENV = process.env.NODE_ENV || 'development';
-const DB_CONFIG = require(path.join(__dirname, '/config/database.json'))[ENV]
+const DB_CONFIG = require('./config').default('database')
 
 const DIST_FOLD = path.join(__dirname, '/dist/')
 const CONFIG_FOLD = path.join(__dirname, '/config/')
+const SECRET_FOLD = path.join(__dirname, '/secret')
 const DATA_FOLD = path.join(__dirname, '/data/')
 
 const MODELS_FOLD = path.join(__dirname, '/models/')
@@ -36,7 +37,7 @@ const TESTS_FOLD = path.join(__dirname, '/test/')
 const schema = require('./data/schema')
 
 const options = {
-    logging: true // Change this line if a verbose script is needed.
+    logging: false // Change this line if a verbose script is needed.
 }
 
 // Creates our models and force-sync them with the database.
@@ -96,6 +97,7 @@ gulp.task('insert-conceptGraph', (callback) => {
                         })
                     ),
                     Promise.all(
+                        (data.suggestions ?
                         data.suggestions.map((slug_to) => {
                             return schema.ConceptSuggestedLinks.create(
                                 {
@@ -105,6 +107,7 @@ gulp.task('insert-conceptGraph', (callback) => {
                                 options
                             )
                         })
+                        : [])
                     )
                 ])
             })
@@ -250,7 +253,7 @@ gulp.task('build-tests', () => {
         .pipe(gulp.dest(DIST_FOLD))
 })
 
-gulp.task('run-test-all', ['build-tests', 'copy-config', 'copy-model-definition'], () => {
+gulp.task('run-test-all', ['build-tests', 'copy-config', 'copy-secret', 'copy-config-function', 'copy-model-definition'], () => {
     return gulp.src('.')
         .pipe(mocha())
 })
@@ -283,6 +286,16 @@ gulp.task('deploy', (callback) => {
 gulp.task('copy-config', () => {
     return gulp.src(CONFIG_FOLD + '/**/*.json')
         .pipe(gulp.dest(path.join(DIST_FOLD, '/config')))
+})
+
+gulp.task('copy-secret', () => {
+    return gulp.src(SECRET_FOLD + '/**/*.json')
+        .pipe(gulp.dest(path.join(DIST_FOLD, '/secret')))
+})
+
+gulp.task('copy-config-function', () => {
+    return gulp.src(path.join(__dirname, '/config.js'))
+        .pipe(gulp.dest(DIST_FOLD))
 })
 
 gulp.task('copy-model-definition', () => {
