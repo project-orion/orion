@@ -36,7 +36,7 @@ const TESTS_FOLD = path.join(__dirname, '/test/')
 const schema = require('./data/schema')
 
 const options = {
-    logging: false // Change this line if a verbose script is needed.
+    logging: true // Change this line if a verbose script is needed.
 }
 
 // Creates our models and force-sync them with the database.
@@ -87,6 +87,17 @@ gulp.task('insert-conceptGraph', (callback) => {
                     Promise.all(
                         data.links.map((slug_to) => {
                             return schema.ConceptLinks.create(
+                                {
+                                    slug_from: data.node.slug,
+                                    slug_to: slug_to,
+                                },
+                                options
+                            )
+                        })
+                    ),
+                    Promise.all(
+                        data.suggestions.map((slug_to) => {
+                            return schema.ConceptSuggestedLinks.create(
                                 {
                                     slug_from: data.node.slug,
                                     slug_to: slug_to,

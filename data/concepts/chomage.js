@@ -14,13 +14,15 @@ exports.node = {
                 relativisable: true,
                 data_identifiers: ['population_totale']
             },
-        }, {
-            type: 'suggestions',
-            data_identifiers: ['apprenti','categories-du-chomage'],
         }
     ]
 }
 
 exports.links = [
     'emploi'
+]
+
+exports.suggestions = [
+    'apprenti',
+    'categories-du-chomage'
 ]

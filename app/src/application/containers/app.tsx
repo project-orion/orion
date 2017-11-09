@@ -68,7 +68,8 @@ export class App extends React.Component<AppState, any> {
         return (
             <div>
                 <NavBar
-                    right_text={navbar_button}
+                    // right_text={navbar_button}
+                    left_text={'Visualisation et documentation de données socio-politiques'}
                 />
 
                 <div id={'app-container'}>
