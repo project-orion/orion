@@ -3,7 +3,7 @@ import * as React from 'react'
 import {Doughnut} from 'react-chartjs-2'
 
 import {
-    Module,
+    module,
 } from '../../types'
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 const colorScheme = ["#2965CC", "#29A634", "#D99E0B", "#D13913", "#8F398F", "#00B3A4", "#DB2C6F", "#9BBF30", "#96622D", "#7157D9"]
 
-export function LabelizedValuesReducer(m: Module): any {
+export function LabelizedValuesReducer(m: module): any {
     let i = 0
     let colors: string[] = []
     let labels: string[] = []

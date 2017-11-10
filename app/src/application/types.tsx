@@ -6,23 +6,52 @@ import {
     definition_valuesAttribute,
 } from '../../../models/db'
 
-export interface ConceptGraphNode extends ConceptAttributes {
-    children: ConceptGraphNode[],
+export interface extendedConceptNodeAttribute extends concept_nodesAttribute {
+    key: string,
+    depth: number,
+    connexComponent: number,
 }
 
-export interface ConceptGraph {
-    [index: number]: ConceptGraphNode,
+export interface conceptLinksAttribute {
+    key: number,
+    target: string,
+    source: string,
+    connexComponent: number,
 }
 
-export interface AppState {
+export interface conceptSuggestedLinksAttribute {
+    key: number,
+    target: string,
+    source: string,
+    connexComponent: number,
+}
+
+export interface conceptGraphNodeData extends concept_nodesAttribute {
+    connexComponent: number,
+    suggested: boolean,
+}
+
+export interface conceptGraphNode {
+    children?: conceptGraphNode[],
+    data: conceptGraphNodeData,
+    depth: number,
+    height: number,
+    parent: conceptGraphNode,
+}
+
+export interface conceptGraph {
+    [index: number]: conceptGraphNode,
+}
+
+export interface appState {
     containers?: {
-        [id: string]: ContainerState
+        [id: string]: containerState
     },
     conceptGraph: {
-        nodes: concept_nodesAttribute[],
-        links: concept_linksAttribute[],
-        suggestedLinks: concept_suggested_linksAttribute[],
-        graph: ConceptGraph,
+        nodes: extendedConceptNodeAttribute[],
+        links: conceptLinksAttribute[],
+        suggestedLinks: conceptSuggestedLinksAttribute[],
+        graph: conceptGraph,
         selectedConceptNode: any,
         displayedSlugs: string[],
     }
@@ -30,34 +59,34 @@ export interface AppState {
     toggled: boolean,
 }
 
-export interface ContainerState {
+export interface containerState {
     loading: number,
     dispatch?: any,
     containerId: string,
 
     // The following props depend on the container.
-    concepts?: Concept[],
+    concepts?: concept[],
 }
 
-export interface Concept {
-    attributes: ConceptAttributes,
+export interface concept {
+    attributes: conceptAttributes,
     loadedTime: number,
 }
 
-interface ConceptAttributes extends concept_nodesAttribute {
-    modules?: Module[],
+interface conceptAttributes extends concept_nodesAttribute {
+    modules?: module[],
 }
 
-export interface Module extends modulesAttribute {
+export interface module extends modulesAttribute {
     data?: any,
 }
 
-export interface Action {
+export interface action {
     type: string,
     promise?: (dispatch: any, getState: any) => any,
     value?: any,
     container?: string,
 }
 
-export type ColumnSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+export type columnSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
 '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16'

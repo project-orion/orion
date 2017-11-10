@@ -7,6 +7,9 @@ import './conceptNav.less'
 
 import * as actions from '../../actions'
 import * as interceptClick from './utils/interceptClick'
+import {
+    conceptGraphNode
+} from './../../types'
 
 interface Props {
     dimensions: {
@@ -25,32 +28,6 @@ interface Props {
 interface State {
     selectedGraph: any,
 }
-
-export function ConceptNavReducer(nodes: any, links: any, roots: any, childrenDict: any) {
-    let graph: any = {}
-
-    nodes = _.mapKeys(nodes, (value: any, index: number) => value.slug)
-
-    // Recursive function which nests children with their parent.
-    let enrichNodeWithChildren = (parentsSuggestedConcepts: string[]=null, slug: string): any => {
-        let c = childrenDict[slug] ? childrenDict[slug].directChildren : []
-        let sc = childrenDict[slug] && childrenDict[slug].suggestedChildren ? childrenDict[slug].suggestedChildren : []
-
-        return {
-            ...nodes[slug],
-            suggested: parentsSuggestedConcepts ? parentsSuggestedConcepts.indexOf(slug) != -1 : false,
-            children: _.map(c.concat(sc), enrichNodeWithChildren.bind(this, sc)),
-        }
-    }
-
-    // Apply recursion to every connex component of the concept graph.
-    _.each(roots, (root: any) => {
-        graph[root.connexComponent] = enrichNodeWithChildren(null, root.slug)
-    })
-
-    return graph
-}
-
 
 export class ConceptNav extends React.Component<Props, State> {
     // D3
@@ -102,16 +79,17 @@ export class ConceptNav extends React.Component<Props, State> {
     }
 
     updateHierarchy() {
-        if(this.props.selectedConceptNode && this.props.selectedConceptNode.connexComponent) {
+        if (this.props.selectedConceptNode && this.props.selectedConceptNode.connexComponent) {
             this.graph = this.props.graph
 
-            //TODO: kinda dirty node selection, can improve
             //The present if allows to not untoggle all nodes when changing the displayed nodes
             //(for instance when one double-clicks on a node to have it displayed).
             let selectedNode
+
             if (this.selectedNodeId != this.props.selectedConceptNode.id) {
                 this.selectedNodeId = this.props.selectedConceptNode.id
-                this.hierarchy = d3.hierarchy(this.graph[this.props.selectedConceptNode.connexComponent])
+                this.hierarchy = this.graph[this.props.selectedConceptNode.connexComponent]
+
                 this.hierarchy.each((node: any) => {
                     if (node.data.id == this.props.selectedConceptNode.id) {
                         selectedNode = node
@@ -121,7 +99,6 @@ export class ConceptNav extends React.Component<Props, State> {
                 this.hierarchy = selectedNode
                 this.toggle(this.hierarchy)
             }
-
         }
     }
 
@@ -251,18 +228,13 @@ export class ConceptNav extends React.Component<Props, State> {
         let selectedGraph: any
 
         if (props.selectedConceptNode && props.selectedConceptNode.id) {
-            let selectedGraphInit = props.graph[props.selectedConceptNode.connexComponent]
+            let hierarchy = props.graph[props.selectedConceptNode.connexComponent]
 
-            let nodeList = [selectedGraphInit]
-            while (true) {
-                let currentNode = nodeList.pop()
-                if (currentNode.id == props.selectedConceptNode.id) {
-                    selectedGraph = currentNode
-                    break
-                } else {
-                    _.each(currentNode.children, (node: any) => {nodeList.push(node)})
+            hierarchy.each((node: any) => {
+                if (node.data.id == props.selectedConceptNode.id) {
+                    selectedGraph = node
                 }
-            }
+            })
         }
 
         return selectedGraph

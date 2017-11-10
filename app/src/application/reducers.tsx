@@ -1,30 +1,29 @@
 import * as _ from 'lodash'
 
 import {
-    Module,
-    Action,
-    AppState,
-    ContainerState,
-    ConceptGraph,
+    module,
+    action,
+    appState,
+    containerState,
+    conceptGraph,
 } from './types'
 
 import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
 import {LabelizedValuesReducer} from './components/modules/labelized_chart'
-import {ConceptGraphReducer} from './components/d3Blocks/conceptGraph'
-import {ConceptNavReducer} from './components/d3Blocks/conceptNav'
+import {navPanelReducer} from './components/utils/navPanel'
 
-const initialCp1State: ContainerState = {
+const initialCp1State: containerState = {
     containerId: 'cp1',
     concepts: [],
     loading: 0,
 }
 
-const initialAppContainerState: ContainerState = {
+const initialAppContainerState: containerState = {
     containerId: 'app',
     loading: 0,
 }
 
-const initialAppState: AppState = {
+const initialAppState: appState = {
     conceptGraph: {
         nodes: [],
         links: [],
@@ -40,7 +39,7 @@ const initialAppState: AppState = {
     toggled: true,
 }
 
-export function reducer(state = initialAppState, action: Action): AppState {
+export function reducer(state = initialAppState, action: action): appState {
     switch (action.type) {
         case 'TOGGLE_NAV_PANEL':
             return {
@@ -95,7 +94,7 @@ export function reducer(state = initialAppState, action: Action): AppState {
 
         case 'FETCH_SLUG_SUCCESS':
             // Parse modules using specific reducers
-            const modules = action.value.modules.map((m: Module) => {
+            const modules = action.value.modules.map((m: module) => {
                 switch (m.type) {
                     case 'definition':
                         return {
@@ -151,8 +150,7 @@ export function reducer(state = initialAppState, action: Action): AppState {
             }
 
         case 'FETCH_CONCEPT_GRAPH_SUCCESS':
-            let {nodes, links, suggestedLinks, roots, childrenDict} = ConceptGraphReducer(action)
-            let graph: ConceptGraph = ConceptNavReducer(nodes, links, roots, childrenDict)
+            let {nodes, links, suggestedLinks, graph} = navPanelReducer(action)
 
             return {
                 ...state,

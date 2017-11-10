@@ -1,22 +1,25 @@
-import {Action, Concept} from './types'
+import {
+    action,
+    concept,
+} from './types'
 
 import config from './config'
 const serverUrl = config('app').serverURL
 
-export function changeSelectedConceptNav(conceptNode: any): Action {
+export function changeSelectedConceptNav(conceptNode: any): action {
     return {
         type: 'CHANGE_SELECTED_CONCEPT_NAV',
         value: conceptNode,
     }
 }
 
-export function toggleNavPanel(): Action {
+export function toggleNavPanel(): action {
     return {
         type: 'TOGGLE_NAV_PANEL',
     }
 }
 
-export function removeConcept(container: string, index: number): Action {
+export function removeConcept(container: string, index: number): action {
     return {
         type: 'REMOVE_CONCEPT',
         value: index,
@@ -24,7 +27,7 @@ export function removeConcept(container: string, index: number): Action {
     }
 }
 
-export function fetchConcept(url: string, container: string, index: number=null): Action {
+export function fetchConcept(url: string, container: string, index: number=null): action {
     return {
         type: 'FETCH_CONCEPT',
         promise: (dispatch, getState) => {
@@ -32,7 +35,7 @@ export function fetchConcept(url: string, container: string, index: number=null)
 
             fetch(serverUrl + url).then((res: any) => {
                 return res.json()
-            }).then( (json: Concept) => {
+            }).then( (json: concept) => {
                 dispatch(receivedSlug(json, container, index))
             }).catch( (err: any) => {
                 console.log(err);
@@ -43,14 +46,14 @@ export function fetchConcept(url: string, container: string, index: number=null)
     }
 }
 
-export function fetchConceptGraph(url: string, container: string): Action {
+export function fetchConceptGraph(url: string, container: string): action {
     return {
         type: 'FETCH_CONCEPT_LIST',
         promise: (dispatch, getState) => {
             dispatch(loading(container))
 
             fetch(serverUrl + url).then((res: any) => res.json())
-            .then((json: Concept[]) => {
+            .then((json: concept[]) => {
                 dispatch(receivedConceptGraph(json, container));
             })
             .catch((err: any) => {
@@ -61,7 +64,7 @@ export function fetchConceptGraph(url: string, container: string): Action {
     }
 }
 
-export function fetchDataset(url: string, container: string): Action {
+export function fetchDataset(url: string, container: string): action {
     return {
         type: 'FETCH_DATASET',
         promise: (dispatch, getState) => {
@@ -79,14 +82,14 @@ export function fetchDataset(url: string, container: string): Action {
     }
 }
 
-export function loading(container: string): Action {
+export function loading(container: string): action {
     return {
         type: 'LOADING',
         container: container,
     }
 }
 
-export function receivedSlug(response: Concept, container: string, index: number=null): Action {
+export function receivedSlug(response: concept, container: string, index: number=null): action {
     return {
         type: 'FETCH_SLUG_SUCCESS',
         value: {
@@ -97,7 +100,7 @@ export function receivedSlug(response: Concept, container: string, index: number
     }
 }
 
-export function receivedConceptGraph(response: Concept[], container: string): Action {
+export function receivedConceptGraph(response: concept[], container: string): action {
     return {
         type: 'FETCH_CONCEPT_GRAPH_SUCCESS',
         value: response,
@@ -105,7 +108,7 @@ export function receivedConceptGraph(response: Concept[], container: string): Ac
     }
 }
 
-export function receivedDataset(response: Concept[], container: string): Action {
+export function receivedDataset(response: concept[], container: string): action {
     return {
         type: 'FETCH_DATASET_SUCCESS',
         value: response,
@@ -113,7 +116,7 @@ export function receivedDataset(response: Concept[], container: string): Action 
     }
 }
 
-export function fetchFailed(err: any, container: string): Action {
+export function fetchFailed(err: any, container: string): action {
     return {
         type: 'FETCH_FAILURE',
         value: err,

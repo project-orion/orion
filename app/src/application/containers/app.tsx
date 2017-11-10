@@ -9,7 +9,7 @@ import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 import {
-    AppState,
+    appState,
 } from '../types'
 import * as actions from '../actions'
 
@@ -17,7 +17,7 @@ import {NavPanel} from '../components/utils/navPanel'
 import {NavBar} from '../components/utils/navBar'
 import {ConceptsPresentation} from './conceptsPresentation'
 
-const mapReduxStateToReactProps = (state : AppState): AppState => {
+const mapReduxStateToReactProps = (state : appState): appState => {
     return state
 }
 
@@ -26,8 +26,8 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class App extends React.Component<AppState, any> {
-    constructor(props: AppState) {
+export class App extends React.Component<appState, any> {
+    constructor(props: appState) {
         super(props)
     }
 

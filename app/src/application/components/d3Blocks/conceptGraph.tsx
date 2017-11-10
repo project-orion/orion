@@ -7,6 +7,14 @@ import './conceptGraph.less'
 
 import * as actions from '../../actions'
 import * as interceptClick from './utils/interceptClick'
+import {
+    concept_nodesAttribute,
+    concept_linksAttribute,
+    concept_suggested_linksAttribute,
+} from './../../../../../models/db'
+import {
+    action
+} from './../../types'
 
 interface Props {
     version: any,
@@ -24,129 +32,6 @@ interface Props {
 interface State {
     selected: boolean,
 }
-
-export function ConceptGraphReducer(action: any){
-    // Parcours des composantes connexes du graphe.
-    // On fait l'hypothèse qu'elles ont au plus un node de type 'root'.
-    let childrenDict: any = {}
-
-    _.each(action.value.links, (link: any) => {
-        if (childrenDict[link.slug_to]) {
-            childrenDict[link.slug_to].directChildren.push(link.slug_from)
-        } else {
-            childrenDict[link.slug_to] = {
-                directChildren: [link.slug_from]
-            }
-        }
-    })
-
-    console.log(childrenDict)
-
-    _.each(action.value.suggestedLinks, (link: any) => {
-        if (childrenDict[link.slug_to]) {
-            if (childrenDict[link.slug_to].suggestedChildren) {
-                childrenDict[link.slug_to].suggestedChildren.push(link.slug_from)
-            } else {
-                childrenDict[link.slug_to] = {
-                    ...childrenDict[link.slug_to],
-                    suggestedChildren: [link.slug_from]
-                }
-
-            }
-        } else {
-            childrenDict[link.slug_to] = {
-                suggestedChildren: [link.slug_from]
-            }
-        }
-    })
-
-    console.log(childrenDict)
-
-    let nodesDict: any = _.mapKeys(action.value.nodes, (value: any, key: any) => value.slug)
-    nodesDict = _.mapValues(nodesDict, (node: any) => {
-        return {
-            ...node,
-            distanceToRoot: null,
-            connexComponent: null,
-        }
-    })
-
-    let currentConnexComponent: number = 0
-    let rootList: any = _.filter(action.value.nodes, (node: any) => node.rootConcept)
-    while (rootList.length > 0) {
-        let nodesList: any = [{
-            slug: rootList.pop().slug,
-            distance: 0,
-        }]
-        while (nodesList.length > 0) {
-            let currentNode: any = nodesList.pop()
-            nodesDict[currentNode.slug].connexComponent = currentConnexComponent
-            nodesDict[currentNode.slug].distanceToRoot = currentNode.distance
-
-            if (childrenDict[currentNode.slug]) {
-                _.each(childrenDict[currentNode.slug].directChildren, (slug: string) => {
-                    nodesList.push({
-                        slug,
-                        distance: currentNode.distance + 1,
-                    })
-                })
-            }
-        }
-        currentConnexComponent++
-    }
-
-    // This loop is intended to catch nodes which would not be labelized
-    // as 'root' in the db and yet have no parent.
-    // TODO: it seems that their children don't have a connexComponent at the moment.
-    nodesDict = _.mapValues(nodesDict, (node: any) => {
-        if (node.distanceToRoot == null) {
-            node.connexComponent = currentConnexComponent
-            node.distanceToRoot = 0
-            currentConnexComponent++
-            return node
-        } else {
-            return node
-        }
-    })
-
-    const links = action.value.links.map((link: any) => {
-        return {
-            connexComponent: nodesDict[link.slug_from].connexComponent,
-            source: link.slug_from,
-            target: link.slug_to,
-            key: link.id,
-            size: 2,
-        }
-    })
-
-    const suggestedLinks = _.map(action.value.suggestedLinks, (link: any) => {
-        return {
-            connexComponent: nodesDict[link.slug_from].connexComponent,
-            source: link.slug_from,
-            target: link.slug_to,
-            key: link.id,
-            size: 2,
-        }
-    }) as any
-
-    const nodes = _.map(_.values(nodesDict), (node: any) => {
-        return {
-            ...node,
-            key: node.slug,
-        }
-    })
-
-    const roots = _.filter(nodes, (node: any) => node.rootConcept)
-
-    return {
-        nodes,
-        links,
-        suggestedLinks,
-        roots,
-        childrenDict,
-    }
-}
-
 
 export class ConceptGraph extends React.Component<Props, State> {
     // D3
@@ -191,9 +76,9 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.simulation = d3.forceSimulation()
             .force('link', d3.forceLink().id((d: any) => d.key).distance(70))
             .force('charge', d3.forceManyBody().strength(-200))
-            .force('y2', d3.forceY().strength((d: any) => (5 - d.distanceToRoot) / 10).y(this.height / 3))
-            // .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(2 * this.height / 3))
-            .force('y3', d3.forceY().strength((d: any) => d.distanceToRoot / 10).y(this.height))
+            .force('y2', d3.forceY().strength((d: any) => (5 - d.depth) / 10).y(this.height / 3))
+            // .force('y3', d3.forceY().strength((d: any) => d.depth / 10).y(2 * this.height / 3))
+            .force('y3', d3.forceY().strength((d: any) => d.depth / 10).y(this.height))
     }
 
     ticked() {
@@ -205,8 +90,8 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .attr('y2', (d: any) => d.target.y)
 
             this.domNodes
-                .attr('cx', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.x)))
-                .attr('cy', (d: any) => Math.max(30 / (d.distanceToRoot + 1), Math.min(this.width - 30 / (d.distanceToRoot + 1), d.y)))
+                .attr('cx', (d: any) => Math.max(30 / (d.depth + 1), Math.min(this.width - 30 / (d.depth + 1), d.x)))
+                .attr('cy', (d: any) => Math.max(30 / (d.depth + 1), Math.min(this.width - 30 / (d.depth + 1), d.y)))
 
             this.domLabels
                 .attr('x', (d: any) => d.x)
@@ -291,7 +176,7 @@ export class ConceptGraph extends React.Component<Props, State> {
             .merge(this.domNodes)
                 .attr('cx', (d: any) => d.x)
                 .attr('cy', (d: any) => d.y)
-                .attr('r', (d: any) => 30 / (d.distanceToRoot + 1))
+                .attr('r', (d: any) => 30 / (d.depth + 1))
                 .attr('opacity',
                     (d: any) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3
                 )
@@ -362,7 +247,7 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .insert('line', 'circle')
                 .classed('link', true)
                 .merge(this.domLinks)
-                .attr('stroke-width', (d: any) => d.size)
+                .attr('stroke-width', (d: any) => 2)
                 .attr('x1', (d: any) => d.source.x)
                 .attr('x2', (d: any) => d.target.x)
                 .attr('y1', (d: any) => d.source.y)

@@ -1,17 +1,17 @@
 import * as React from 'react'
 import {Breadcrumb} from '@blueprintjs/core'
 
-import {Concept} from '../../types'
+import {concept} from '../../types'
 
 interface Props {
-    concepts: Concept[],
+    concepts: concept[],
 }
 
 export class ConceptBar extends React.Component<Props, any> {
     render() {
         const {concepts} = this.props;
 
-        const breadcrumbs = concepts.map((concept: Concept) => {
+        const breadcrumbs = concepts.map((concept: concept) => {
                 return (
                     <li key={concept.attributes.id + concept.loadedTime}>
                         <Breadcrumb

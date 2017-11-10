@@ -5,7 +5,7 @@ import Measure from 'react-measure'
 import {Histogram} from '../d3Blocks/histogram'
 
 import {
-    Module,
+    module,
 } from '../../types'
 
 interface Props {
@@ -23,7 +23,7 @@ interface State {
 
 const colorScheme = ["#2965CC", "#29A634", "#D99E0B", "#D13913", "#8F398F", "#00B3A4", "#DB2C6F", "#9BBF30", "#96622D", "#7157D9"]
 
-export function TimeseriesValuesReducer(m: Module): any {
+export function TimeseriesValuesReducer(m: module): any {
     let i = 0
     let colors: any = {}
 
