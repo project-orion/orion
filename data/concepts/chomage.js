@@ -23,6 +23,5 @@ exports.links = [
 ]
 
 exports.suggestions = [
-    'apprenti',
-    'categories-du-chomage'
+    'apprenti'
 ]

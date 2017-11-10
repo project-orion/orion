@@ -29,20 +29,23 @@ interface State {
 export function ConceptNavReducer(nodes: any, links: any, roots: any, childrenDict: any) {
     let graph: any = {}
 
+    nodes = _.mapKeys(nodes, (value: any, index: number) => value.slug)
+
     // Recursive function which nests children with their parent.
-    let enrichNodeWithChildren = (slug: string): any => {
+    let enrichNodeWithChildren = (parentsSuggestedConcepts: string[]=null, slug: string): any => {
+        let c = childrenDict[slug] ? childrenDict[slug].directChildren : []
+        let sc = childrenDict[slug] && childrenDict[slug].suggestedChildren ? childrenDict[slug].suggestedChildren : []
+
         return {
             ...nodes[slug],
-            children: _.map(childrenDict[slug], enrichNodeWithChildren),
+            suggested: parentsSuggestedConcepts ? parentsSuggestedConcepts.indexOf(slug) != -1 : false,
+            children: _.map(c.concat(sc), enrichNodeWithChildren.bind(this, sc)),
         }
     }
 
-    // Index nodes by slug.
-    nodes = _.mapKeys(nodes, (value: any, index: number) => value.slug)
-
     // Apply recursion to every connex component of the concept graph.
     _.each(roots, (root: any) => {
-        graph[root.connexComponent] = enrichNodeWithChildren(root.slug)
+        graph[root.connexComponent] = enrichNodeWithChildren(null, root.slug)
     })
 
     return graph
@@ -204,7 +207,8 @@ export class ConceptNav extends React.Component<Props, State> {
                         'conceptNode ' +
                         (d.children ? 'toggle ' : 'notoggle ') +
                         (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : ' ') +
-                        (d.toggled ? 'toggled ' : ' ')
+                        (d.toggled ? 'toggled ' : ' ') +
+                        (d.data.suggested ? 'suggested ' : ' ')
                     )
                     .attr('transform', (d: any) => 'translate(' + x(d) + ',' + y(d) + ')')
                     .call(this.interceptClickHandler
@@ -227,7 +231,8 @@ export class ConceptNav extends React.Component<Props, State> {
                     'conceptNode ' +
                     (d.children ? 'toggle ' : 'notoggle ') +
                     (this.props.displayedSlugs.indexOf(d.data.slug) != -1 ? 'displayedSlug ' : ' ') +
-                    (d.toggled ? 'toggled ' : ' ')
+                    (d.toggled ? 'toggled ' : ' ') +
+                    (d.data.suggested ? 'suggested ' : ' ')
                 )
                 .transition()
                 .duration(this.transitionDuration)
@@ -272,6 +277,7 @@ export class ConceptNav extends React.Component<Props, State> {
 
     componentDidMount() {
         this.domContainer = d3.select(this.refs.conceptNavContainer)
+
         this.transitionDuration = 250
         this.interceptClickHandler = this.interceptClick()
 
@@ -309,7 +315,19 @@ export class ConceptNav extends React.Component<Props, State> {
                     ref='conceptNavContainer'
                     width={width}
                     height={height}
-                ></svg>
+                >
+                    <defs>
+                        <pattern id='blue_hash' width='5' height='5' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'>
+                            <rect width='4' height='5' transform='translate(0,0)'></rect>
+                        </pattern>
+                        <pattern id='green_hash' width='5' height='5' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'>
+                            <rect width='4' height='5' transform='translate(0,0)'></rect>
+                        </pattern>
+                        <pattern id='green_hash_hover' width='5' height='5' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'>
+                            <rect width='4' height='5' transform='translate(0,0)'></rect>
+                        </pattern>
+                    </defs>
+                </svg>
             </div>
         )
     }

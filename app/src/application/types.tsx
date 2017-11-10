@@ -1,6 +1,7 @@
 import {
     concept_nodesAttribute,
     concept_linksAttribute,
+    concept_suggested_linksAttribute,
     modulesAttribute,
     definition_valuesAttribute,
 } from '../../../models/db'
@@ -20,6 +21,7 @@ export interface AppState {
     conceptGraph: {
         nodes: concept_nodesAttribute[],
         links: concept_linksAttribute[],
+        suggestedLinks: concept_suggested_linksAttribute[],
         graph: ConceptGraph,
         selectedConceptNode: any,
         displayedSlugs: string[],

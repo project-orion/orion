@@ -45,3 +45,33 @@
         }
     }
 }
+
+#blue_hash {
+    fill: @gray3;
+}
+
+#green_hash {
+    fill: @green3;
+}
+
+#green_hash_hover {
+    fill: @green5;
+}
+
+.suggested {
+    .conceptCircle {
+        fill: url(#blue_hash);
+    }
+}
+
+.displayedSlug.suggested {
+    .conceptCircle {
+        fill: url(#green_hash);
+    }
+
+    &:hover {
+        .conceptCircle {
+            fill: url(#green_hash_hover);
+        }
+    }
+}

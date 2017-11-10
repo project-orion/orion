@@ -11,6 +11,7 @@ import {
 import {
     ConceptNodes,
     ConceptLinks,
+    ConceptSuggestedLinks,
     Modules,
     DefinitionValues,
     TimeseriesValues,
@@ -42,6 +43,9 @@ export class ConceptBackend {
                 const links = await ConceptLinks.findAll({
                     ...options,
                 });
+                const suggestedLinks = await ConceptSuggestedLinks.findAll({
+                    ...options,
+                });
 
                 // Promise.all() turns an array of Promises into actual values.
                 // const enrichedConcepts = await Promise.all(
@@ -52,6 +56,7 @@ export class ConceptBackend {
                 response.json({
                     nodes,
                     links,
+                    suggestedLinks,
                 });
             })
 

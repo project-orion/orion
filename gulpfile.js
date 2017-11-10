@@ -98,11 +98,11 @@ gulp.task('insert-conceptGraph', (callback) => {
                     ),
                     Promise.all(
                         (data.suggestions ?
-                        data.suggestions.map((slug_to) => {
+                        data.suggestions.map((slug_from) => {
                             return schema.ConceptSuggestedLinks.create(
                                 {
-                                    slug_from: data.node.slug,
-                                    slug_to: slug_to,
+                                    slug_from: slug_from,
+                                    slug_to: data.node.slug,
                                 },
                                 options
                             )

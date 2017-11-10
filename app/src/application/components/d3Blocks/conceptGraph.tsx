@@ -32,11 +32,35 @@ export function ConceptGraphReducer(action: any){
 
     _.each(action.value.links, (link: any) => {
         if (childrenDict[link.slug_to]) {
-            childrenDict[link.slug_to].push(link.slug_from)
+            childrenDict[link.slug_to].directChildren.push(link.slug_from)
         } else {
-            childrenDict[link.slug_to] = [link.slug_from]
+            childrenDict[link.slug_to] = {
+                directChildren: [link.slug_from]
+            }
         }
     })
+
+    console.log(childrenDict)
+
+    _.each(action.value.suggestedLinks, (link: any) => {
+        if (childrenDict[link.slug_to]) {
+            if (childrenDict[link.slug_to].suggestedChildren) {
+                childrenDict[link.slug_to].suggestedChildren.push(link.slug_from)
+            } else {
+                childrenDict[link.slug_to] = {
+                    ...childrenDict[link.slug_to],
+                    suggestedChildren: [link.slug_from]
+                }
+
+            }
+        } else {
+            childrenDict[link.slug_to] = {
+                suggestedChildren: [link.slug_from]
+            }
+        }
+    })
+
+    console.log(childrenDict)
 
     let nodesDict: any = _.mapKeys(action.value.nodes, (value: any, key: any) => value.slug)
     nodesDict = _.mapValues(nodesDict, (node: any) => {
@@ -58,12 +82,15 @@ export function ConceptGraphReducer(action: any){
             let currentNode: any = nodesList.pop()
             nodesDict[currentNode.slug].connexComponent = currentConnexComponent
             nodesDict[currentNode.slug].distanceToRoot = currentNode.distance
-            _.each(childrenDict[currentNode.slug], (slug: string) => {
-                nodesList.push({
-                    slug,
-                    distance: currentNode.distance + 1,
+
+            if (childrenDict[currentNode.slug]) {
+                _.each(childrenDict[currentNode.slug].directChildren, (slug: string) => {
+                    nodesList.push({
+                        slug,
+                        distance: currentNode.distance + 1,
+                    })
                 })
-            })
+            }
         }
         currentConnexComponent++
     }
@@ -92,6 +119,16 @@ export function ConceptGraphReducer(action: any){
         }
     })
 
+    const suggestedLinks = _.map(action.value.suggestedLinks, (link: any) => {
+        return {
+            connexComponent: nodesDict[link.slug_from].connexComponent,
+            source: link.slug_from,
+            target: link.slug_to,
+            key: link.id,
+            size: 2,
+        }
+    }) as any
+
     const nodes = _.map(_.values(nodesDict), (node: any) => {
         return {
             ...node,
@@ -104,6 +141,7 @@ export function ConceptGraphReducer(action: any){
     return {
         nodes,
         links,
+        suggestedLinks,
         roots,
         childrenDict,
     }

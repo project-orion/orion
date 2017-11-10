@@ -28,6 +28,7 @@ const initialAppState: AppState = {
     conceptGraph: {
         nodes: [],
         links: [],
+        suggestedLinks: [],
         graph: {},
         selectedConceptNode: null,
         displayedSlugs: [],
@@ -150,7 +151,7 @@ export function reducer(state = initialAppState, action: Action): AppState {
             }
 
         case 'FETCH_CONCEPT_GRAPH_SUCCESS':
-            let {nodes, links, roots, childrenDict} = ConceptGraphReducer(action)
+            let {nodes, links, suggestedLinks, roots, childrenDict} = ConceptGraphReducer(action)
             let graph: ConceptGraph = ConceptNavReducer(nodes, links, roots, childrenDict)
 
             return {
@@ -159,6 +160,7 @@ export function reducer(state = initialAppState, action: Action): AppState {
                     ...state.conceptGraph,
                     nodes,
                     links,
+                    suggestedLinks,
                     graph,
                 },
                 containers: {
