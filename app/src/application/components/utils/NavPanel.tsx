@@ -193,9 +193,7 @@ export class NavPanel extends React.Component<Props, State> {
                                     }}
                                     graph={_.cloneDeep(this.props.graph)}
                                     nodes={_.cloneDeep(nodes)}
-                                    links={_.cloneDeep(links)}
                                     selectedConceptNode={selectedConceptNode}
-                                    displayedNodes={[selectedConceptNode]}
                                     displayedSlugs={displayedSlugs}
                                     dispatch={this.props.dispatch}
                                 />
@@ -205,9 +203,9 @@ export class NavPanel extends React.Component<Props, State> {
                                 <ConceptGraph
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
-                                    nodes={nodes}
-                                    links={links}
-                                    labels={nodes}
+                                    nodes={_.cloneDeep(nodes)}
+                                    links={_.cloneDeep(links)}
+                                    labels={_.cloneDeep(nodes)}
                                     dimensions={{
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,

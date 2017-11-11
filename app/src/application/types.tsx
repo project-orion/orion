@@ -10,19 +10,13 @@ export interface extendedConceptNodeAttribute extends concept_nodesAttribute {
     key: string,
     depth: number,
     connexComponent: number,
+    suggested: boolean,
 }
 
 export interface conceptLinksAttribute {
     key: number,
-    target: string,
-    source: string,
-    connexComponent: number,
-}
-
-export interface conceptSuggestedLinksAttribute {
-    key: number,
-    target: string,
-    source: string,
+    target: any,
+    source: any,
     connexComponent: number,
 }
 
@@ -31,13 +25,7 @@ export interface conceptGraphNodeData extends concept_nodesAttribute {
     suggested: boolean,
 }
 
-export interface conceptGraphNode {
-    children?: conceptGraphNode[],
-    data: conceptGraphNodeData,
-    depth: number,
-    height: number,
-    parent: conceptGraphNode,
-}
+export interface conceptGraphNode extends d3.HierarchyNode<extendedConceptNodeAttribute> {}
 
 export interface conceptGraph {
     [index: number]: conceptGraphNode,
@@ -50,7 +38,7 @@ export interface appState {
     conceptGraph: {
         nodes: extendedConceptNodeAttribute[],
         links: conceptLinksAttribute[],
-        suggestedLinks: conceptSuggestedLinksAttribute[],
+        suggestedLinks: conceptLinksAttribute[],
         graph: conceptGraph,
         selectedConceptNode: any,
         displayedSlugs: string[],
