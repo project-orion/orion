@@ -9,7 +9,6 @@ const fs = require('fs')
     Check for config under /config/secret/config.json
 */
 function properConfig(configFile) {
-
     const secretPath = path.join(__dirname, 'config/secret', configFile)
     const publicPath = path.join(__dirname, 'config', configFile)
     if(fs.existsSync(secretPath + '.json')) {
@@ -27,8 +26,6 @@ function properConfig(configFile) {
             console.log("No configuration available for specified context")
         }
     }
-
-
-
 }
+
 exports.default = properConfig;

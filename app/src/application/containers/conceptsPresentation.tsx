@@ -8,10 +8,10 @@ import * as React from 'react'
 import {connect} from 'react-redux'
 
 import {
-    AppState,
-    Module,
-    Concept,
-    ContainerState,
+    appState,
+    module,
+    concept,
+    containerState,
 } from '../types'
 import * as actions from '../actions'
 
@@ -21,9 +21,9 @@ import {DoughnutChart} from '../components/modules/labelized_chart'
 import {Definition} from '../components/modules/definition'
 import {Suggestion} from '../components/modules/suggestion'
 
-type Props = ContainerState
+type Props = containerState
 
-const mapReduxStateToReactProps = (state : AppState, componentProps: Props): ContainerState => {
+const mapReduxStateToReactProps = (state : appState, componentProps: Props): containerState => {
     return {
         ...state.containers[componentProps.containerId],
     }
@@ -50,7 +50,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
         this.props.dispatch(actions.fetchConcept(end_point, this.props.containerId))
     }
 
-    associatedReactModule (m: Module, index: number, loadedTime: number) : any {
+    associatedReactModule (m: module, index: number, loadedTime: number) : any {
         const key = loadedTime.toString() + '-' + index.toString()
         switch (m.type) {
             case 'definition':
@@ -100,10 +100,10 @@ export class ConceptsPresentation extends React.Component<Props, any> {
     render () {
         let {concepts, loading} = this.props
 
-        const conceptWithModuleList = concepts.map((concept: Concept) =>
+        const conceptWithModuleList = concepts.map((concept: concept) =>
             <div
                 key={concept.loadedTime}
-                className={'block-2'}
+                className={'left-of-panel block-2'}
             >
                 <h3 className={'concept-header'}>
                     {concept.attributes.name}
@@ -114,7 +114,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
 
                 <div className={'flex-box'}>
                     {
-                        concept.attributes.modules.map((m: Module, index: number) =>
+                        concept.attributes.modules.map((m: module, index: number) =>
                             this.associatedReactModule(m, index, concept.loadedTime)
                         )
                     }

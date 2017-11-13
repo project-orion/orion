@@ -95,6 +95,19 @@ gulp.task('insert-conceptGraph', (callback) => {
                                 options
                             )
                         })
+                    ),
+                    Promise.all(
+                        (data.suggestions ?
+                        data.suggestions.map((slug_from) => {
+                            return schema.ConceptSuggestedLinks.create(
+                                {
+                                    slug_from: slug_from,
+                                    slug_to: data.node.slug,
+                                },
+                                options
+                            )
+                        })
+                        : [])
                     )
                 ])
             })
@@ -240,7 +253,7 @@ gulp.task('build-tests', () => {
         .pipe(gulp.dest(DIST_FOLD))
 })
 
-gulp.task('run-test-all', ['build-tests', 'copy-config', 'copy-model-definition'], () => {
+gulp.task('run-test-all', ['build-tests', 'copy-config', 'copy-secret', 'copy-config-function', 'copy-model-definition'], () => {
     return gulp.src('.')
         .pipe(mocha())
 })
@@ -276,10 +289,14 @@ gulp.task('copy-config', () => {
 })
 
 gulp.task('copy-secret', () => {
-  return gulp.src(SECRET_FOLD + '/**/*.json').pipe(gulp.dest(path.join(DIST_FOLD, '/secret')))
+    return gulp.src(SECRET_FOLD + '/**/*.json')
+        .pipe(gulp.dest(path.join(DIST_FOLD, '/secret')))
 })
 
-
+gulp.task('copy-config-function', () => {
+    return gulp.src(path.join(__dirname, '/config.js'))
+        .pipe(gulp.dest(DIST_FOLD))
+})
 
 gulp.task('copy-model-definition', () => {
     return gulp.src(DATA_FOLD + '/*.js')

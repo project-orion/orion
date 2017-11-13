@@ -16,7 +16,6 @@ function isConceptLinksAttributes(element: any): element is concept_linksAttribu
 }
 
 function isModulesAttributes(element: any): element is modulesAttribute {
-    //console.log(element)
     return typeof element.id === "number" && typeof element.conceptNodeId == "number"
 }
 describe('API RETURN TYPES', () => {
@@ -48,7 +47,7 @@ describe('API RETURN TYPES', () => {
         for(const slug of r.body.nodes) {
             let object = await request(server)
                .get('/concepts/' + slug.slug)
-           assert(isConceptNodeAttributes(object.body))              
+           assert(isConceptNodeAttributes(object.body))
         }
 
     })

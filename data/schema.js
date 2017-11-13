@@ -6,7 +6,6 @@ const DB_CONFIG = require(path.join(__dirname, '../config')).default('database')
 const possibleModules = [
     'timeseries',
     'definition',
-    'suggestions',
     'doughnut'
 ]
 
@@ -29,6 +28,7 @@ const sequelize = new Sequelize(
     {
         host: DB_CONFIG.host,
         dialect: DB_CONFIG.dialect
+        // logging: false //Change if debugging is needed.
     }
 )
 
@@ -44,6 +44,16 @@ const ConceptNodes = sequelize.define('concept_nodes', {
 })
 
 const ConceptLinks = sequelize.define('concept_links', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    slug_from: Sequelize.STRING,
+    slug_to: Sequelize.STRING,
+})
+
+const ConceptSuggestedLinks = sequelize.define('concept_suggested_links', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -129,6 +139,7 @@ const Dataset = sequelize.define('datasets', {
 exports.sequelize = sequelize
 exports.ConceptNodes = ConceptNodes
 exports.ConceptLinks = ConceptLinks
+exports.ConceptSuggestedLinks = ConceptSuggestedLinks
 exports.Module = Module
 exports.DefinitionValues = DefinitionValues
 exports.TimeseriesValues = TimeseriesValues

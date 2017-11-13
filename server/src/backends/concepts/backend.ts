@@ -11,6 +11,7 @@ import {
 import {
     ConceptNodes,
     ConceptLinks,
+    ConceptSuggestedLinks,
     Modules,
     DefinitionValues,
     TimeseriesValues,
@@ -19,6 +20,10 @@ import {
     Datasets,
 } from '../../database'
 
+const options = {
+    raw: true,
+    logging: false // Change this line if a verbose script is needed.
+}
 
 export class ConceptBackend {
     public router: Router;
@@ -32,8 +37,15 @@ export class ConceptBackend {
             .get(async (request: Request, response: Response) => {
                 // Get flat results (Sequelize normally returns complex Instance objects
                 // which are later parsed by express when calling response.json()
-                const nodes = await ConceptNodes.findAll({raw: true});
-                const links = await ConceptLinks.findAll({raw: true});
+                const nodes = await ConceptNodes.findAll({
+                    ...options,
+                });
+                const links = await ConceptLinks.findAll({
+                    ...options,
+                });
+                const suggestedLinks = await ConceptSuggestedLinks.findAll({
+                    ...options,
+                });
 
                 // Promise.all() turns an array of Promises into actual values.
                 // const enrichedConcepts = await Promise.all(
@@ -44,6 +56,7 @@ export class ConceptBackend {
                 response.json({
                     nodes,
                     links,
+                    suggestedLinks,
                 });
             })
 
@@ -79,7 +92,7 @@ export class ConceptBackend {
             where: {
                 slug: slug,
             },
-            raw: true,
+            ...options,
         });
     }
 
@@ -94,7 +107,7 @@ export class ConceptBackend {
             where: {
                 conceptNodeId: concept.id
             },
-            raw: true,
+            ...options,
         })
 
         modules = await Promise.all(
@@ -117,7 +130,7 @@ export class ConceptBackend {
                         where: {
                             slug: data_identifier
                         },
-                        raw: true,
+                        ...options,
                     }))
                     break
                 case 'timeseries':
@@ -125,14 +138,14 @@ export class ConceptBackend {
                         where: {
                             name: data_identifier
                         },
-                        raw: true,
+                        ...options,
                     })
 
                     var values = await TimeseriesValues.findAll({
                         where: {
                             dataset: data_identifier
                         },
-                        raw: true,
+                        ...options,
                     })
 
                     data.push({
@@ -145,14 +158,14 @@ export class ConceptBackend {
                         where: {
                             name: data_identifier
                         },
-                        raw: true,
+                        ...options,
                     })
 
                     var values = await LabelizedValues.findAll({
                         where: {
                             dataset: data_identifier
                         },
-                        raw: true,
+                        ...options,
                     })
 
                     data.push({

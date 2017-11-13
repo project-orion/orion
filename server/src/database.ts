@@ -5,9 +5,9 @@
 
 import * as Sequelize from 'sequelize'
 import * as path from 'path'
-import config from './../../../config'
+import config from './../../config'
 const DB_CONFIG = config('database')
-console.log(process.env.PWD)
+
 // Start a new Sequelize instance which will be globally used
 // over the backend.
 export const sequelize = new Sequelize(
@@ -24,6 +24,7 @@ export const sequelize = new Sequelize(
 
 export const ConceptNodes = sequelize.import(__dirname + '/../../models/concept_nodes')
 export const ConceptLinks = sequelize.import(__dirname + '/../../models/concept_links')
+export const ConceptSuggestedLinks = sequelize.import(__dirname + '/../../models/concept_suggested_links')
 export const Modules = sequelize.import(__dirname + '/../../models/modules')
 export const DefinitionValues = sequelize.import(__dirname + '/../../models/definition_values')
 export const TimeseriesValues = sequelize.import(__dirname + '/../../models/timeseries_values')

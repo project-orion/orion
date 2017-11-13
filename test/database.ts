@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 
-import * as schema from '../../data/schema'
+import * as schema from './../data/schema'
 import {
     concept_nodesAttribute,
 } from '../models/db'
@@ -33,9 +33,13 @@ describe('SEQUELIZE SETUP', () => {
     })
 
     it('Model should delete', () => {
-        return schema.ConceptNodes.destroy({where: {
-            name: 'testName',
-        }}).then((res: any) => {
+        return schema.ConceptNodes.destroy({
+            where: {
+                name: {
+                    $eq: 'testName'
+                },
+            }
+        }).then((res: any) => {
             assert(res == 1, 'Response from db should be positive')
         })
     })

@@ -4,6 +4,44 @@ body {
     background-color: @dark-gray1;
 }
 
+.pt-dark .pt-navbar, .pt-navbar {
+    background-color: @dark-gray1;
+    box-shadow: none;
+}
+
+#app-container {
+    display: flex;
+    flex-flow: row wrap;
+    height: 100vh;
+}
+
+#concept-nav-panel {
+    flex: 1 0 25%;
+    background-color: @dark-gray1;
+    width: 25%;
+}
+
+#concept-nav-panel.toggled {
+    flex: 1 0 100%;
+    background-color: @dark-gray1;
+    width: 100%;
+}
+
+.hide {
+    display: none;
+}
+
+.left-of-panel {
+    flex: 0 1 75%;
+    padding: 20px;
+    overflow: auto;
+    background-color: @dark-gray2;
+}
+
+.left-of-panel.toggled {
+    display: none;
+}
+
 .vertical-center {
     display: flex;
     align-items: center;

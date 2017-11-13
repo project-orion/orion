@@ -11,7 +11,7 @@ export class NavBar extends React.Component<Props, any> {
         const {left_text, right_text}  = this.props;
 
         return (
-            <nav className={'pt-navbar pt-dark'}>
+            <nav className={'pt-navbar'}>
             <div className={'pt-navbar-group pt-align-left'}>
                 <div className={'pt-navbar-heading'}>Orion</div>
                 <span className={'pt-navbar-divider'}></span>

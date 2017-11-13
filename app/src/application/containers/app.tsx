@@ -9,16 +9,15 @@ import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 import {
-    AppState,
+    appState,
 } from '../types'
 import * as actions from '../actions'
 
-import {ConceptBar} from '../components/utils/concept_bar'
-import {ConceptNav} from '../components/utils/concept_nav'
-import {NavBar} from '../components/utils/navbar'
-import {ConceptsPresentation} from './concepts_presentation'
+import {NavPanel} from '../components/utils/navPanel'
+import {NavBar} from '../components/utils/navBar'
+import {ConceptsPresentation} from './conceptsPresentation'
 
-const mapReduxStateToReactProps = (state : AppState): AppState => {
+const mapReduxStateToReactProps = (state : appState): appState => {
     return state
 }
 
@@ -27,8 +26,8 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class App extends React.Component<AppState, any> {
-    constructor(props: AppState) {
+export class App extends React.Component<appState, any> {
+    constructor(props: appState) {
         super(props)
     }
 
@@ -39,6 +38,7 @@ export class App extends React.Component<AppState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'app'))
+        // this.props.dispatch(actions.fetchConcept('concepts/chomage/', 'cp1'))
     }
 
     render () {
@@ -63,20 +63,36 @@ export class App extends React.Component<AppState, any> {
             </div>
         )
 
+        const classToggled = (this.props.toggled) ? ' toggled' : ''
+
         return (
             <div>
                 <NavBar
-                    right_text={navbar_button}
+                    // right_text={navbar_button}
+                    left_text={'Visualisation et documentation de données socio-politiques'}
                 />
 
-                <ConceptNav
-                    nodes={conceptGraph.nodes}
-                    links={conceptGraph.links}
-                />
-
-                <BrowserRouter>
-                    <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
-                </BrowserRouter>
+                <div id={'app-container'}>
+                    <div
+                        id={'concept-nav-panel'}
+                        className={classToggled}
+                    >
+                        <NavPanel
+                            nodes={conceptGraph.nodes}
+                            links={conceptGraph.links}
+                            graph={conceptGraph.graph}
+                            dispatch={this.props.dispatch}
+                            toggled={this.props.toggled}
+                            selectedConceptNode={conceptGraph.selectedConceptNode}
+                            displayedSlugs={conceptGraph.displayedSlugs}
+                        />
+                    </div>
+                    <div className={'left-of-panel' + classToggled}>
+                        <BrowserRouter>
+                            <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
+                        </BrowserRouter>
+                    </div>
+                </div>
             </div>
         )
     }

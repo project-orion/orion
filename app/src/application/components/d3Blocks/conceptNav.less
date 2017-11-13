@@ -1,0 +1,77 @@
+@import '~@blueprintjs/core/dist/variables.less';
+
+.conceptNode {
+    text {
+        text-anchor: start;
+        fill: @light-gray5;
+    }
+}
+
+.conceptCircle {
+    r: 8px;
+    fill: @gray3;
+    stroke: @light-gray2;
+    stroke-width: 0;
+    stroke-location: inside;
+}
+
+.toggle {
+    .conceptCircle {
+        stroke-width: 3;
+    }
+
+    &:hover {
+        .conceptCircle {
+            fill: @gray5;
+            stroke: @light-gray5;
+        }
+    }
+}
+
+.toggle.toggled {
+    .conceptCircle {
+        stroke-width: 0;
+    }
+}
+
+.displayedSlug {
+    .conceptCircle {
+        fill: @green3;
+    }
+
+    &:hover {
+        .conceptCircle {
+            fill: @green5;
+        }
+    }
+}
+
+#blue_hash {
+    fill: @gray3;
+}
+
+#green_hash {
+    fill: @green3;
+}
+
+#green_hash_hover {
+    fill: @green5;
+}
+
+.suggested {
+    .conceptCircle {
+        fill: url(#blue_hash);
+    }
+}
+
+.displayedSlug.suggested {
+    .conceptCircle {
+        fill: url(#green_hash);
+    }
+
+    &:hover {
+        .conceptCircle {
+            fill: url(#green_hash_hover);
+        }
+    }
+}
