@@ -63,6 +63,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     domNodes: d3.Selection<any, d3GraphNode, any, any>
     domLabels: d3.Selection<any, d3GraphNode, any, any>
     domLinks: d3.Selection<any, d3GraphLink, any, any>
+    domLabelsTSpan: any
 
     highlightedNodes: {
         [key: string]: number
@@ -113,7 +114,10 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .attr('cx', (d: d3GraphNode) => Math.max(30 / (d.depth + 1), Math.min(this.width - 30 / (d.depth + 1), d.x)))
                 .attr('cy', (d: d3GraphNode) => Math.max(30 / (d.depth + 1), Math.min(this.width - 30 / (d.depth + 1), d.y)))
 
-            this.domLabels
+            // this.domLabels
+            //     .attr('x', (d: d3GraphNode) => d.x)
+            //     .attr('y', (d: d3GraphNode) => d.y)
+            this.domLabelsTSpan
                 .attr('x', (d: d3GraphNode) => d.x)
                 .attr('y', (d: d3GraphNode) => d.y)
         }
@@ -217,6 +221,51 @@ export class ConceptGraph extends React.Component<Props, State> {
                 )
     }
 
+    wrap(texts: any) {
+        let width = 100
+        // console.log(texts)
+
+        // TODO: investigate why function() {} and () => {}
+        // don't yield the same value for `this`...
+        texts.each(function() {
+            // console.log(d3.select(this as any))
+            let text = d3.select(this as any),
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line: any= [],
+                lineNumber = 0,
+                lineHeight = 1.1, // ems
+                y = text.attr('y'),
+                x = text.attr('x'),
+                dy = isNaN(parseFloat(text.attr('dy'))) ? 0.2 : parseFloat(text.attr('dy')),
+                tspan = text
+                    .text(null)
+                        .append('tspan')
+                            .attr('x', x)
+                            .attr('y', y)
+                            .attr('dy', dy + 'em')
+            // console.log([y, x, dy])
+
+            while (word = words.pop()) {
+                line.push(word)
+                tspan.text(line.join(' '))
+                var node: any = tspan.node()
+                var hasGreaterWidth = node.getComputedTextLength() > width
+                if (hasGreaterWidth) {
+                    line.pop()
+                    tspan.text(line.join(' '))
+                    line = [word]
+                    tspan = text
+                        .append('tspan')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('dy', ++lineNumber * lineHeight + dy + 'em')
+                        .text(word)
+                }
+            }
+        })
+    }
+
     // Same use as renderNodes, this time for labels...
     renderLabels() {
         this.domLabels = this.domContainer
@@ -233,6 +282,10 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .attr('x', (d: d3GraphNode) => d.x)
                 .attr('y', (d: d3GraphNode) => d.y)
                 .text((d: d3GraphNode) => d.name)
+                .call(this.wrap)
+
+        this.domLabelsTSpan = this.domContainer
+            .selectAll('tspan')
     }
 
     // ... and this time for links.
