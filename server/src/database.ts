@@ -6,6 +6,15 @@
 import * as Sequelize from 'sequelize'
 import * as path from 'path'
 import config from './../../config'
+import { 
+    concept_nodesAttribute,
+    concept_linksAttribute,
+    concept_suggested_linksAttribute,
+    concept_nodesInstance,
+    concept_linksInstance,
+    concept_suggested_linksInstance
+
+} from '../../models/db';
 const DB_CONFIG = config('database')
 
 // Start a new Sequelize instance which will be globally used
@@ -22,9 +31,9 @@ export const sequelize = new Sequelize(
 
 // Import automatically generated models.
 
-export const ConceptNodes = sequelize.import(__dirname + '/../../models/concept_nodes')
-export const ConceptLinks = sequelize.import(__dirname + '/../../models/concept_links')
-export const ConceptSuggestedLinks = sequelize.import(__dirname + '/../../models/concept_suggested_links')
+export const ConceptNodes = sequelize.import<concept_nodesAttribute, concept_nodesInstance>(__dirname + '/../../models/concept_nodes')
+export const ConceptLinks = sequelize.import<concept_linksAttribute, concept_linksInstance>(__dirname + '/../../models/concept_links')
+export const ConceptSuggestedLinks = sequelize.import<concept_suggested_linksAttribute, concept_suggested_linksInstance>(__dirname + '/../../models/concept_suggested_links')
 export const Modules = sequelize.import(__dirname + '/../../models/modules')
 export const DefinitionValues = sequelize.import(__dirname + '/../../models/definition_values')
 export const TimeseriesValues = sequelize.import(__dirname + '/../../models/timeseries_values')
