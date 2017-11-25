@@ -1,5 +1,6 @@
 exports.node = {
-    name: 'Revenu de Solidarité Active',
+    name: 'Administrations Publiques Locales',
+    slug: 'apul',
     modules: [
         // {
         //     type: 'definition',
@@ -19,5 +20,5 @@ exports.node = {
 }
 
 exports.links = [
-    'conseil-departemental'
+    'administrations-publiques'
 ]

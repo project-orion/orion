@@ -75,7 +75,7 @@ gulp.task('insert-conceptGraph', (callback) => {
 
                 data.node = {
                     ...data.node,
-                    slug: slug(data.node.name, {lower: true}),
+                    slug: data.node.slug ? data.node.slug : slug(data.node.name, {lower: true}),
                 }
 
                 return Promise.all([

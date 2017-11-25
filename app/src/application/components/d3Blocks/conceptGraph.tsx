@@ -168,7 +168,7 @@ export class ConceptGraph extends React.Component<Props, State> {
             .links(this.links)
             .distance(60 + (this.cc.length > 0 ? (50 / this.cc.length ) : 0))
         this.simulation.force('charge')
-            .strength(-200 - (this.cc.length > 0 ? (100 / this.cc.length ) : 0))
+            .strength(-400 - (this.cc.length > 0 ? (100 / this.cc.length ) : 0))
 
         d3.dragDisable(window)
     }

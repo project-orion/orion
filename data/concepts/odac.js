@@ -1,5 +1,5 @@
 exports.node = {
-    name: 'Revenu de Solidarité Active',
+    name: 'Organismes Divers d\'Administration Centrale',
     modules: [
         // {
         //     type: 'definition',
@@ -19,5 +19,5 @@ exports.node = {
 }
 
 exports.links = [
-    'conseil-departemental'
+    'administrations-publiques'
 ]

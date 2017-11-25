@@ -1,9 +1,23 @@
 exports.node = {
-    name: 'Etat',
-    rootConcept: true,
-    modules: []
+    name: 'État',
+    modules: [
+        // {
+        //     type: 'definition',
+        //     data_identifiers: ['chomage_bit'],
+        // }, {
+        //     type: 'definition',
+        //     data_identifiers: ['chomage_pole_emploi'],
+        // }, {
+        //     type: 'timeseries',
+        //     data_identifiers: ['chomage_insee', 'chomage_pole_emploi'],
+        //     options: {
+        //         relativisable: true,
+        //         data_identifiers: ['population_totale']
+        //     },
+        // }
+    ]
 }
 
 exports.links = [
-    // 'root'
+    'administrations-publiques'
 ]
