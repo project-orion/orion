@@ -26,7 +26,7 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class App extends React.Component<appState, any> {
+export class Test extends React.Component<appState, any> {
     constructor(props: appState) {
         super(props)
     }
@@ -37,8 +37,9 @@ export class App extends React.Component<appState, any> {
 
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
-        this.props.dispatch(actions.fetchConceptGraph('concepts/', 'app'))
-        // this.props.dispatch(actions.fetchConcept('concepts/chomage/', 'cp1'))
+        // this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
+        this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
@@ -68,8 +69,7 @@ export class App extends React.Component<appState, any> {
         return (
             <div>
                 <NavBar
-                    // right_text={navbar_button}
-                    left_text={'Visualisation et documentation de données socio-économiques'}
+                    left_text={'Visualisation et documentation de données socio-politiques'}
                 />
 
                 <div id={'app-container'}>
@@ -88,9 +88,11 @@ export class App extends React.Component<appState, any> {
                         />
                     </div>
                     <div className={'left-of-panel' + classToggled}>
-                        <BrowserRouter>
-                            <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
-                        </BrowserRouter>
+                        <div>
+                            <div className={'block-1'}>
+                                Bonjour
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,13 +4,17 @@ import {
 } from '@blueprintjs/core'
 import * as React from 'react'
 import {Route} from 'react-router'
-import {BrowserRouter} from 'react-router-dom'
+import {BrowserRouter,Switch} from 'react-router-dom'
 
 import {App} from './containers/app'
+import {Test} from './containers/test'
 
 const Routes = () => (
     <BrowserRouter>
-        <Route path='/' component={App}/>
+        <Switch>
+            <Route exact path='/' component={App}/>
+            <Route path='/test' component={Test}/>
+        </Switch>
     </BrowserRouter>
 )
 
