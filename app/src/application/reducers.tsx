@@ -92,6 +92,28 @@ export function reducer(state = initialAppState, action: action): appState {
                 containers: initialAppState.containers,
             }
 
+        case 'FETCH_TEST_SUCCESS':
+            // let response = csv_parse(action.value.response, {
+            //     delimiter: ';',
+            //     columns: true,
+            //     relax: true,
+            // })
+
+            return {
+                ...state,
+                containers: {
+                    ...state.containers,
+                    [action.container]: {
+                        ...state.containers[action.container],
+                        loading: state.containers[action.container].loading - 1,
+                        testData: {
+                            ...state.containers[action.container].testData,
+                            [action.value.fileName]: action.value.response,
+                        },
+                    }
+                }
+            }
+
         case 'FETCH_SLUG_SUCCESS':
             // Parse modules using specific reducers
             const modules = action.value.modules.map((m: module) => {
