@@ -50,8 +50,8 @@ export class Sunburst extends React.Component<Props, State> {
 
     updateAttributes() {
         this.domSvg
-            .attr("width", this.props.dimensions.width)
-            .attr("height", this.props.dimensions.height)
+            .attr('width', this.props.dimensions.width)
+            .attr('height', this.props.dimensions.height)
         this.domContainer
             .attr('transform', 'translate(' + this.props.dimensions.width / 2 + ',' + this.props.dimensions.height / 2 + ')')
         d3.select('#info')
@@ -60,6 +60,7 @@ export class Sunburst extends React.Component<Props, State> {
         this.radius = Math.min(this.props.dimensions.width, this.props.dimensions.height) / 2
         this.partition = d3.partition()
             .size([2 * Math.PI, this.radius * this.radius])
+            // .padding(0.1)
     }
 
     createVisualization(json: any) {
@@ -90,7 +91,7 @@ export class Sunburst extends React.Component<Props, State> {
 
         d3.select('#container').on('mouseleave', this.mouseleave.bind(this))
 
-        this.totalSize = this.path.datum().value
+        this.totalSize = root.value
     }
 
     mouseover(d: any) {
@@ -126,7 +127,7 @@ export class Sunburst extends React.Component<Props, State> {
 
         d3.selectAll('path')
             .transition()
-            .duration(200)
+            .duration(150)
             .style('opacity', 1)
             .on('end', _.partial(this.handleMouse, this))
 
@@ -233,7 +234,6 @@ export class Sunburst extends React.Component<Props, State> {
 
         let csv = d3.csvParseRows(text)
         let json = this.buildHierarchy(csv)
-        console.log(json)
 
         this.createVisualization(json)
     }
