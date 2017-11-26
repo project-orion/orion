@@ -63,12 +63,8 @@ export class Sunburst extends React.Component<Props, State> {
             // .padding(0.1)
     }
 
-    createVisualization(json: any) {
-        this.domContainer.append('circle')
-            .attr('r', this.radius)
-            .style('opacity', 0)
-
-        let root = d3.hierarchy(json)
+    drawSunburst(hierarchy: any) {
+        let root = d3.hierarchy(hierarchy)
             .sum((d: any) => d.size)
             .sort((a: any, b: any) => b.value - a.value)
 
@@ -77,24 +73,27 @@ export class Sunburst extends React.Component<Props, State> {
             .filter((d: any) => (d.x1 - d.x0 > 0.005))
 
         this.path = this.domContainer
-            .data([json])
+            .data([hierarchy])
             .selectAll('path')
                 .data(nodes)
-                .enter()
-                    .append('path')
-                    .attr('display', (d: any) => d.depth ? null : 'none')
-                    .attr('d', this.arc)
-                    .attr('fill-rule', 'evenodd')
-                    .style('fill', (d: any, index: number) => this.props.colors[index % this.props.colors.length])
-                    .style('opacity', 1)
-                    .on('mouseover', this.mouseover.bind(this))
 
-        d3.select('#container').on('mouseleave', this.mouseleave.bind(this))
+        this.path
+            .enter()
+                .append('path')
+                .attr('display', (d: any) => d.depth ? null : 'none')
+                .attr('d', this.arc)
+                .attr('fill-rule', 'evenodd')
+                .style('fill', (d: any, index: number) => this.props.colors[index % this.props.colors.length])
+            .merge(this.path)
+                .style('opacity', 1)
+                .on('mouseover', this.handleMouseOver.bind(this))
+
+        d3.select('#container').on('mouseleave', this.handleMouseleave.bind(this))
 
         this.totalSize = root.value
     }
 
-    mouseover(d: any) {
+    handleMouseOver(d: any) {
         let percentage = (100 * d.value / this.totalSize).toPrecision(3) as any
         let percentageString = percentage + '%'
         if (percentage < 0.1) {
@@ -119,24 +118,18 @@ export class Sunburst extends React.Component<Props, State> {
             .style('opacity', 1)
     }
 
-    mouseleave(d: any) {
+    handleMouseleave(d: any) {
         d3.select('#breadcrumb')
             .style('visibility', 'hidden')
 
-        d3.selectAll('path').on('mouseover', null)
 
         d3.selectAll('path')
             .transition()
             .duration(150)
             .style('opacity', 1)
-            .on('end', _.partial(this.handleMouse, this))
 
         d3.select('#info')
             .style('visibility', 'hidden')
-    }
-
-    handleMouse(that: any, d: any) {
-        d3.select(this as any).on('mouseover', that.mouseover.bind(that))
     }
 
     updateBreadcrumbs(nodeArray: any, percentageString: any) {
@@ -223,6 +216,7 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     componentDidUpdate() {
+        console.log('update')
         this.updateAttributes()
         let text = `
             orion-sunburst-redo,120
@@ -233,9 +227,9 @@ export class Sunburst extends React.Component<Props, State> {
         `
 
         let csv = d3.csvParseRows(text)
-        let json = this.buildHierarchy(csv)
+        let hierarchy = this.buildHierarchy(csv)
 
-        this.createVisualization(json)
+        this.drawSunburst(hierarchy)
     }
 
     render() {
