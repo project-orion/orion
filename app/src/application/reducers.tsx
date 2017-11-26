@@ -100,11 +100,11 @@ export function reducer(state = initialAppState, action: action): appState {
             }
 
         case 'FETCH_TEST_SUCCESS':
-            let response = csv_parse(action.value.response, {
-                delimiter: ';',
-                columns: true,
-                relax: true,
-            })
+            // let response = csv_parse(action.value.response, {
+            //     delimiter: ';',
+            //     columns: true,
+            //     relax: true,
+            // })
 
             return {
                 ...state,
@@ -115,7 +115,7 @@ export function reducer(state = initialAppState, action: action): appState {
                         loading: state.containers[action.container].loading - 1,
                         testData: {
                             ...state.containers[action.container].testData,
-                            [action.value.fileName]: response,
+                            [action.value.fileName]: action.value.response,
                         },
                     }
                 }
