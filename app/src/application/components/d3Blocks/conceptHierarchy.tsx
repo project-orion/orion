@@ -111,7 +111,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             l: 5,
         }
     }
-    transitionDuration = 75
+    transitionDuration = 50
 
     interceptClickHandler: any
     rebind = interceptClick.rebind
@@ -131,6 +131,14 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
     selectedRoot: any
     selectedNode: any
+
+    rectsPerLevel: any
+    indexParentPerLevel: any
+    selectedNodeAncestors: any
+    displayedNodes: any
+    xFactor: any
+    yFactor: any
+    depthIncrement: any
 
     initAttributes() {
         this.interceptClickHandler = this.interceptClick()
@@ -164,34 +172,53 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
     }
 
-    renderNodes() {
-        let rectsPerLevel = [1]
-        let indexParentPerLevel: any = [0]
-        let ancestors = this.selectedNode ? this.selectedNode.ancestors() : []
+    singleRectTranslation(d: any, index: number=null) {
+        let xShift = 0
+        let yShift = this.yFactor * d.depth
 
-        let allowedNodes = _.reduce(_.map(ancestors.reverse(), (n: any) => n.children ? n.children : []),
+        if (d.depth < this.rectsPerLevel.length && this.displayedNodes.indexOf(d) > -1) {
+            xShift = this.xFactor * (this.depthIncrement[d.depth] - (this.rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
+            if (d.depth < this.indexParentPerLevel.length) {
+                xShift -= this.xFactor * (this.indexParentPerLevel[d.depth] - (this.rectsPerLevel[d.depth] - 1) / 2)
+            }
+            this.depthIncrement[d.depth]++
+        }
+
+        return 'translate(' + xShift + ',' + yShift +')'
+    }
+
+    updateRenderingAttributes() {
+        this.rectsPerLevel = [1]
+        this.indexParentPerLevel = [0]
+        this.selectedNodeAncestors = this.selectedNode ? this.selectedNode.ancestors() : []
+
+        this.displayedNodes = _.reduce(_.map(this.selectedNodeAncestors.reverse(), (n: any) => n.children ? n.children : []),
             (acc: any, list: any) => {
-                if (list.length > 0 && list[0].depth < ancestors.length) {
+                if (list.length > 0 && list[0].depth < this.selectedNodeAncestors.length) {
                     list.forEach((node: any, index: number) => {
-                        if (node == ancestors[node.depth]) {
-                            indexParentPerLevel.push(index)
+                        if (node == this.selectedNodeAncestors[node.depth]) {
+                            this.indexParentPerLevel.push(index)
                         }
                     })
                 }
-                rectsPerLevel.push(list.length)
+                this.rectsPerLevel.push(list.length)
                 return acc.concat(list)
             },
             [this.selectedRoot]
         )
 
-        let depthIncrement: any = []
-        for (let i = 0; i < rectsPerLevel.length; i++) {
-            depthIncrement.push(0)
+        this.xFactor = (this.rectDimensions.w + this.rectDimensions.m.r + this.rectDimensions.m.l)
+        this.yFactor = (this.rectDimensions.h + this.rectDimensions.m.t + this.rectDimensions.m.b)
+    }
+
+    restartDepthIncrement() {
+        this.depthIncrement = []
+        for (let i = 0; i < this.rectsPerLevel.length; i++) {
+            this.depthIncrement.push(0)
         }
+    }
 
-        let xFactor = (this.rectDimensions.w + this.rectDimensions.m.r + this.rectDimensions.m.l)
-        let yFactor = (this.rectDimensions.h + this.rectDimensions.m.t + this.rectDimensions.m.b)
-
+    renderRectangles() {
         this.domRects = this.domContainer.selectAll('rect')
             .data(this.fnodes)
 
@@ -207,36 +234,25 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 )
                 .transition()
                 .delay(this.transitionDuration)
-                .attr('transform', (d: any, index: number) => {
-                    let xShift = 0
-                    let yShift = yFactor * d.depth
-
-                    if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
-                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
-                        if (d.depth < indexParentPerLevel.length) {
-                            xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
-                        }
-                        depthIncrement[d.depth]++
-                    }
-
-                    return 'translate(' + xShift + ',' + yShift +')'
-                })
+                .attr('transform', (d: any) => this.singleRectTranslation(d))
                 .attr('display', (d: any) => {
-                    let shouldDisplay = allowedNodes.indexOf(d) > -1
+                    let shouldDisplay = this.displayedNodes.indexOf(d) > -1
 
                     return shouldDisplay ? null : 'none'
                 })
                 .attr('class', (node: any) => {
                     return 'hierarchy-rect' +
                         ((node.id == this.selectedNode.id) ? ' selected-rect' : '') +
-                        ((ancestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
+                        ((this.selectedNodeAncestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
                 })
 
-        depthIncrement = []
-        for (let i = 0; i < rectsPerLevel.length; i++) {
-            depthIncrement.push(0)
+        this.depthIncrement = []
+        for (let i = 0; i < this.rectsPerLevel.length; i++) {
+            this.depthIncrement.push(0)
         }
+    }
 
+    renderTopTicks() {
         this.domTopTicks = this.domContainer.selectAll('.top-tick')
             .data(this.fnodes)
 
@@ -250,7 +266,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .delay(this.transitionDuration)
                 .attr('class', 'top-tick dot-line')
                 .attr('display', (d: any) => {
-                    let shouldDisplay = allowedNodes.indexOf(d) > -1 && d.depth > 0
+                    let shouldDisplay = this.displayedNodes.indexOf(d) > -1 && d.depth > 0
 
                     return shouldDisplay ? null : 'none'
                 })
@@ -258,26 +274,10 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .attr('x2', (d: any, index: number) => this.rectDimensions.w / 2)
                 .attr('y1', (d: any, index: any) => -this.rectDimensions.m.t)
                 .attr('y2', (d: any, index: any) => 0)
-                .attr('transform', (d: any, index: number) => {
-                    let xShift = 0
-                    let yShift = yFactor * d.depth
+                .attr('transform', (d: any) => this.singleRectTranslation(d))
+    }
 
-                    if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
-                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
-                        if (d.depth < indexParentPerLevel.length) {
-                            xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
-                        }
-                        depthIncrement[d.depth]++
-                    }
-
-                    return 'translate(' + xShift + ',' + yShift +')'
-                })
-
-        depthIncrement = []
-        for (let i = 0; i < rectsPerLevel.length; i++) {
-            depthIncrement.push(0)
-        }
-
+    renderBottomTicks() {
         this.domBottomTicks = this.domContainer.selectAll('.bottom-tick')
             .data(this.fnodes)
 
@@ -291,7 +291,10 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .delay(this.transitionDuration)
                 .attr('class', 'bottom-tick dot-line')
                 .attr('display', (d: any) => {
-                    let shouldDisplay = ancestors.indexOf(d) > -1
+                    let shouldDisplay = this.selectedNodeAncestors.indexOf(d) > -1
+                    if (d == this.selectedNode && (d.children == null || d.children.length == 0)) {
+                        shouldDisplay = false
+                    }
 
                     return shouldDisplay ? null : 'none'
                 })
@@ -299,23 +302,15 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .attr('x2', (d: any, index: number) => this.rectDimensions.w / 2)
                 .attr('y1', (d: any, index: any) => this.rectDimensions.h)
                 .attr('y2', (d: any, index: any) => this.rectDimensions.h + this.rectDimensions.m.b)
-                .attr('transform', (d: any, index: number) => {
-                    let xShift = 0
-                    let yShift = yFactor * d.depth
+                .attr('transform', (d: any) => this.singleRectTranslation(d))
+    }
 
-                    if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
-                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
-                        if (d.depth < indexParentPerLevel.length) {
-                            xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
-                        }
-                        depthIncrement[d.depth]++
-                    }
-
-                    return 'translate(' + xShift + ',' + yShift +')'
-                })
-
-        let dataLines = rectsPerLevel
+    renderHorizontalBars() {
+        let dataLines = this.rectsPerLevel
         dataLines.shift()
+        if (this.selectedNode && this.selectedNode.depth > 0 && (this.selectedNode.children == null || this.selectedNode.children.length == 0)) {
+            dataLines.pop()
+        }
 
         this.domLines = this.domContainer.selectAll('.hbar')
             .data(dataLines)
@@ -331,25 +326,37 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .attr('class', 'hbar dot-line')
                 .attr('x1', (d: any, index: number) => {
                     let xShift = 0
-                    if (index+1 < indexParentPerLevel.length) {
-                        xShift += xFactor * (indexParentPerLevel[index+1] - (d-1) / 2)
+                    if (index+1 < this.indexParentPerLevel.length) {
+                        xShift += this.xFactor * (this.indexParentPerLevel[index+1] - (d-1) / 2)
                     }
-                    return -((d-1) * xFactor / 2 + xShift)
+                    return -((d-1) * this.xFactor / 2 + xShift)
                 })
                 .attr('x2', (d: any, index: number) => {
                     let xShift = 0
-                    if (index+1 < indexParentPerLevel.length) {
-                        xShift += xFactor * (indexParentPerLevel[index+1] - (d-1) / 2)
+                    if (index+1 < this.indexParentPerLevel.length) {
+                        xShift += this.xFactor * (this.indexParentPerLevel[index+1] - (d-1) / 2)
                     }
-                    return (d-1) * xFactor / 2 - xShift
+                    return (d-1) * this.xFactor / 2 - xShift
                 })
-                .attr('y1', (d: any, index: any) => (index + 1) * yFactor - this.rectDimensions.m.t)
-                .attr('y2', (d: any, index: any) => (index + 1) * yFactor - this.rectDimensions.m.t)
+                .attr('y1', (d: any, index: any) => (index + 1) * this.yFactor - this.rectDimensions.m.t)
+                .attr('y2', (d: any, index: any) => (index + 1) * this.yFactor - this.rectDimensions.m.t)
+    }
+
+    renderAll() {
+        this.updateRenderingAttributes()
+        this.restartDepthIncrement()
+        this.renderRectangles()
+        this.restartDepthIncrement()
+        this.renderTopTicks()
+        this.restartDepthIncrement()
+        this.renderBottomTicks()
+        this.restartDepthIncrement()
+        this.renderHorizontalBars()
     }
 
     customClick(node: any) {
         this.selectedNode = node
-        this.renderNodes()
+        this.renderAll()
     }
 
     customDoubleClick(d: any) {
@@ -358,7 +365,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
     // Unite all previous rendering functions in just one function.
     renderD3DomElements() {
-        this.renderNodes()
+        this.renderAll()
     }
 
     // REACT LIFECYCLE
