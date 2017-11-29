@@ -111,6 +111,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             l: 5,
         }
     }
+    transitionDuration = 75
 
     interceptClickHandler: any
     rebind = interceptClick.rebind
@@ -119,6 +120,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     domSvg: any
     domContainer: any
     domRects: any
+    domTopTicks: any
+    domBottomTicks: any
     domLines: any
 
     hierarchy: any
@@ -198,6 +201,12 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             .enter()
                 .append('rect')
             .merge(this.domRects)
+                .call(this.interceptClickHandler
+                    .on('customClick', this.customClick.bind(this))
+                    .on('customDoubleClick', this.customDoubleClick.bind(this))
+                )
+                .transition()
+                .delay(this.transitionDuration)
                 .attr('transform', (d: any, index: number) => {
                     let xShift = 0
                     let yShift = yFactor * d.depth
@@ -222,16 +231,93 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                         ((node.id == this.selectedNode.id) ? ' selected-rect' : '') +
                         ((ancestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
                 })
-                .call(this.interceptClickHandler
-                    .on('customClick', this.customClick.bind(this))
-                    .on('customDoubleClick', this.customDoubleClick.bind(this))
-                )
 
+        depthIncrement = []
+        for (let i = 0; i < rectsPerLevel.length; i++) {
+            depthIncrement.push(0)
+        }
+
+        this.domTopTicks = this.domContainer.selectAll('.top-tick')
+            .data(this.fnodes)
+
+        this.domTopTicks.exit().remove()
+
+        this.domTopTicks
+            .enter()
+                .append('line')
+            .merge(this.domTopTicks)
+                .transition()
+                .delay(this.transitionDuration)
+                .attr('class', 'top-tick dot-line')
+                .attr('display', (d: any) => {
+                    let shouldDisplay = allowedNodes.indexOf(d) > -1 && d.depth > 0
+
+                    return shouldDisplay ? null : 'none'
+                })
+                .attr('x1', (d: any, index: number) => this.rectDimensions.w / 2)
+                .attr('x2', (d: any, index: number) => this.rectDimensions.w / 2)
+                .attr('y1', (d: any, index: any) => -this.rectDimensions.m.t)
+                .attr('y2', (d: any, index: any) => 0)
+                .attr('transform', (d: any, index: number) => {
+                    let xShift = 0
+                    let yShift = yFactor * d.depth
+
+                    if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
+                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
+                        if (d.depth < indexParentPerLevel.length) {
+                            xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
+                        }
+                        depthIncrement[d.depth]++
+                    }
+
+                    return 'translate(' + xShift + ',' + yShift +')'
+                })
+
+        depthIncrement = []
+        for (let i = 0; i < rectsPerLevel.length; i++) {
+            depthIncrement.push(0)
+        }
+
+        this.domBottomTicks = this.domContainer.selectAll('.bottom-tick')
+            .data(this.fnodes)
+
+        this.domBottomTicks.exit().remove()
+
+        this.domBottomTicks
+            .enter()
+                .append('line')
+            .merge(this.domBottomTicks)
+                .transition()
+                .delay(this.transitionDuration)
+                .attr('class', 'bottom-tick dot-line')
+                .attr('display', (d: any) => {
+                    let shouldDisplay = ancestors.indexOf(d) > -1
+
+                    return shouldDisplay ? null : 'none'
+                })
+                .attr('x1', (d: any, index: number) => this.rectDimensions.w / 2)
+                .attr('x2', (d: any, index: number) => this.rectDimensions.w / 2)
+                .attr('y1', (d: any, index: any) => this.rectDimensions.h)
+                .attr('y2', (d: any, index: any) => this.rectDimensions.h + this.rectDimensions.m.b)
+                .attr('transform', (d: any, index: number) => {
+                    let xShift = 0
+                    let yShift = yFactor * d.depth
+
+                    if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
+                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
+                        if (d.depth < indexParentPerLevel.length) {
+                            xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
+                        }
+                        depthIncrement[d.depth]++
+                    }
+
+                    return 'translate(' + xShift + ',' + yShift +')'
+                })
 
         let dataLines = rectsPerLevel
         dataLines.shift()
 
-        this.domLines = this.domContainer.selectAll('line')
+        this.domLines = this.domContainer.selectAll('.hbar')
             .data(dataLines)
 
         this.domLines.exit().remove()
@@ -240,13 +326,25 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             .enter()
                 .append('line')
             .merge(this.domLines)
-                .attr('class', 'dot-line')
+                .transition()
+                .delay(this.transitionDuration)
+                .attr('class', 'hbar dot-line')
                 .attr('x1', (d: any, index: number) => {
-                    return (- ((d-1) * this.rectDimensions.w + (d-2) * (this.rectDimensions.m.r + this.rectDimensions.m.l)) / 2)
+                    let xShift = 0
+                    if (index+1 < indexParentPerLevel.length) {
+                        xShift += xFactor * (indexParentPerLevel[index+1] - (d-1) / 2)
+                    }
+                    return -((d-1) * xFactor / 2 + xShift)
                 })
-                .attr('x2', (d: any) => ((d-1) * this.rectDimensions.w + (d-2) * (this.rectDimensions.m.r + this.rectDimensions.m.l)) / 2)
-                .attr('y1', (d: any, index: any) => (index + 1) * (this.rectDimensions.h + this.rectDimensions.m.b + this.rectDimensions.m.t) - this.rectDimensions.m.t)
-                .attr('y2', (d: any, index: any) => (index + 1) * (this.rectDimensions.h + this.rectDimensions.m.b + this.rectDimensions.m.t) - this.rectDimensions.m.t)
+                .attr('x2', (d: any, index: number) => {
+                    let xShift = 0
+                    if (index+1 < indexParentPerLevel.length) {
+                        xShift += xFactor * (indexParentPerLevel[index+1] - (d-1) / 2)
+                    }
+                    return (d-1) * xFactor / 2 - xShift
+                })
+                .attr('y1', (d: any, index: any) => (index + 1) * yFactor - this.rectDimensions.m.t)
+                .attr('y2', (d: any, index: any) => (index + 1) * yFactor - this.rectDimensions.m.t)
     }
 
     customClick(node: any) {
