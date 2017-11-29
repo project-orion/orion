@@ -168,9 +168,18 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.domRects.exit().remove()
 
         let rectsPerLevel = [1]
+        let indexParentPerLevel: any = [0]
         let ancestors = this.selectedNode ? this.selectedNode.ancestors() : []
+
         let allowedNodes = _.reduce(_.map(ancestors.reverse(), (n: any) => n.children ? n.children : []),
             (acc: any, list: any) => {
+                if (list.length > 0 && list[0].depth < ancestors.length) {
+                    list.forEach((node: any, index: number) => {
+                        if (node == ancestors[node.depth]) {
+                            indexParentPerLevel.push(index)
+                        }
+                    })
+                }
                 rectsPerLevel.push(list.length)
                 return acc.concat(list)
             },
@@ -193,7 +202,10 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                     let yShift = yFactor * d.depth
 
                     if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
-                        xShift = xFactor * (depthIncrement[d.depth] - rectsPerLevel[d.depth] / 2)
+                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
+                        if (d.depth < indexParentPerLevel.length) {
+                            xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
+                        }
                         depthIncrement[d.depth]++
                     }
 
