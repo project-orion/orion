@@ -166,6 +166,9 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         this.domContainer
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
+
+        this.domSvg.select('#tooltip')
+        .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
     }
 
     selectNode(d: any) {
@@ -218,6 +221,29 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         }
     }
 
+    handleMouseOver(that: any, d: any) {
+        console.log('mouseover')
+        console.log(this)
+        console.log(that)
+        console.log(d)
+        let tag = this as any
+        let attribute = tag.transform.baseVal[0].matrix
+        console.log(attribute)
+
+        that.domSvg.select('#tooltip')
+            .style('visibility', '')
+
+        that.domSvg.select('#tooltip_content')
+            .attr('transform', 'translate(' + attribute.e + ',' + attribute.f +')')
+            .text(d.data.name)
+    }
+
+    handleMouseOut(that: any) {
+        console.log('mouseout')
+        that.domSvg.select('#tooltip')
+            .style('visibility', 'hidden')
+    }
+
     renderRectangles() {
         this.domRects = this.domContainer.selectAll('rect')
             .data(this.fnodes)
@@ -232,6 +258,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                     .on('customClick', this.customClick.bind(this))
                     .on('customDoubleClick', this.customDoubleClick.bind(this))
                 )
+                .on('mouseover', _.partial(this.handleMouseOver, this))
+                .on('mouseout', _.partial(this.handleMouseOut, this))
                 .transition()
                 .delay(this.transitionDuration)
                 .attr('transform', (d: any) => this.singleRectTranslation(d))
@@ -427,6 +455,9 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 height={height}
             >
                 <g id='container'></g>
+                <g id='tooltip'>
+                    <text id='tooltip_content'></text>
+                </g>
             </svg>
         )
     }
