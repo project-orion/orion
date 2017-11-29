@@ -105,9 +105,9 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         w: 45,
         h: 25,
         m: {
-            t: 15,
+            t: 10,
             r: 5,
-            b: 5,
+            b: 10,
             l: 5,
         }
     }
@@ -162,11 +162,6 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     renderNodes() {
-        this.domRects = this.domContainer.selectAll('rect')
-            .data(this.fnodes)
-
-        this.domRects.exit().remove()
-
         let rectsPerLevel = [1]
         let indexParentPerLevel: any = [0]
         let ancestors = this.selectedNode ? this.selectedNode.ancestors() : []
@@ -191,18 +186,24 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             depthIncrement.push(0)
         }
 
+        let xFactor = (this.rectDimensions.w + this.rectDimensions.m.r + this.rectDimensions.m.l)
+        let yFactor = (this.rectDimensions.h + this.rectDimensions.m.t + this.rectDimensions.m.b)
+
+        this.domRects = this.domContainer.selectAll('rect')
+            .data(this.fnodes)
+
+        this.domRects.exit().remove()
+
         this.domRects
             .enter()
                 .append('rect')
             .merge(this.domRects)
                 .attr('transform', (d: any, index: number) => {
-                    let xFactor = (this.rectDimensions.w + this.rectDimensions.m.r + this.rectDimensions.m.l)
-                    let yFactor = (this.rectDimensions.h + this.rectDimensions.m.t + this.rectDimensions.m.b)
                     let xShift = 0
                     let yShift = yFactor * d.depth
 
                     if (d.depth < rectsPerLevel.length && allowedNodes.indexOf(d) > -1) {
-                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
+                        xShift = xFactor * (depthIncrement[d.depth] - (rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
                         if (d.depth < indexParentPerLevel.length) {
                             xShift -= xFactor * (indexParentPerLevel[d.depth] - (rectsPerLevel[d.depth] - 1) / 2)
                         }
@@ -225,6 +226,27 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                     .on('customClick', this.customClick.bind(this))
                     .on('customDoubleClick', this.customDoubleClick.bind(this))
                 )
+
+
+        let dataLines = rectsPerLevel
+        dataLines.shift()
+
+        this.domLines = this.domContainer.selectAll('line')
+            .data(dataLines)
+
+        this.domLines.exit().remove()
+
+        this.domLines
+            .enter()
+                .append('line')
+            .merge(this.domLines)
+                .attr('class', 'dot-line')
+                .attr('x1', (d: any, index: number) => {
+                    return (- ((d-1) * this.rectDimensions.w + (d-2) * (this.rectDimensions.m.r + this.rectDimensions.m.l)) / 2)
+                })
+                .attr('x2', (d: any) => ((d-1) * this.rectDimensions.w + (d-2) * (this.rectDimensions.m.r + this.rectDimensions.m.l)) / 2)
+                .attr('y1', (d: any, index: any) => (index + 1) * (this.rectDimensions.h + this.rectDimensions.m.b + this.rectDimensions.m.t) - this.rectDimensions.m.t)
+                .attr('y2', (d: any, index: any) => (index + 1) * (this.rectDimensions.h + this.rectDimensions.m.b + this.rectDimensions.m.t) - this.rectDimensions.m.t)
     }
 
     customClick(node: any) {
