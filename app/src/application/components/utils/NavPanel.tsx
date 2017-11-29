@@ -7,6 +7,7 @@ import {
 } from '@blueprintjs/core'
 
 import {ConceptGraph} from '../d3Blocks/conceptGraph'
+import {ConceptHierarchy} from '../d3Blocks/conceptHierarchy'
 import {ConceptNav} from '../d3Blocks/conceptNav'
 import * as actions from '../../actions'
 import {
@@ -22,7 +23,6 @@ import {
 
 interface Props {
     nodes: any,
-    links: any,
     graph: any,
     dispatch: any,
     toggled: boolean,
@@ -143,7 +143,7 @@ export class NavPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {nodes, links, toggled, selectedConceptNode, displayedSlugs} = this.props
+        const {nodes, graph, toggled, selectedConceptNode, displayedSlugs} = this.props
         const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
         const toggleButtonTextIcon = (toggled) ?
@@ -200,12 +200,11 @@ export class NavPanel extends React.Component<Props, State> {
                             </div>
 
                             <div className={(!toggled) ? 'hide' : ''}>
-                                <ConceptGraph
+                                <ConceptHierarchy
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
                                     nodes={_.cloneDeep(nodes)}
-                                    links={_.cloneDeep(links)}
-                                    labels={_.cloneDeep(nodes)}
+                                    graph={_.cloneDeep(graph)}
                                     dimensions={{
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,

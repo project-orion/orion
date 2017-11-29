@@ -79,7 +79,6 @@ export class App extends React.Component<appState, any> {
                     >
                         <NavPanel
                             nodes={conceptGraph.nodes}
-                            links={conceptGraph.links}
                             graph={conceptGraph.graph}
                             dispatch={this.props.dispatch}
                             toggled={this.props.toggled}

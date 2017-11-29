@@ -9,6 +9,7 @@ import {
     suggestion_valuesAttribute,
 } from '../../../../models/db'
 import {
+    sequelize,
     ConceptNodes,
     ConceptLinks,
     ConceptSuggestedLinks,
@@ -32,31 +33,20 @@ export class ConceptBackend {
         // Create public Router
         this.router = Router({mergeParams: true});
 
-        // Init all end points of the Router
         this.router.route('/')
             .get(async (request: Request, response: Response) => {
                 // Get flat results (Sequelize normally returns complex Instance objects
                 // which are later parsed by express when calling response.json()
-                const nodes = await ConceptNodes.findAll({
-                    ...options,
-                });
-                const links = await ConceptLinks.findAll({
-                    ...options,
-                });
-                const suggestedLinks = await ConceptSuggestedLinks.findAll({
-                    ...options,
-                });
-
-                // Promise.all() turns an array of Promises into actual values.
-                // const enrichedConcepts = await Promise.all(
-                //     // TODO: En fait je ne comprends même pas pourquoi il faut bind ici :D
-                //     concepts.map(this.enrichConcept.bind(this))
-                // )
+                const nodes = await sequelize
+                    .query(
+                        'SELECT n.*, l.slug_to AS parent FROM concept_nodes n LEFT JOIN concept_links l ON n.slug = l.slug_from',
+                        {
+                            type: sequelize.QueryTypes.SELECT
+                        }
+                    )
 
                 response.json({
                     nodes,
-                    links,
-                    suggestedLinks,
                 });
             })
 

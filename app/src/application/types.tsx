@@ -37,9 +37,7 @@ export interface appState {
     },
     conceptGraph: {
         nodes: extendedConceptNodeAttribute[],
-        links: conceptLinksAttribute[],
-        suggestedLinks: conceptLinksAttribute[],
-        graph: conceptGraph,
+        graph?: any,
         selectedConceptNode: any,
         displayedSlugs: string[],
     }

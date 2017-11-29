@@ -42,8 +42,8 @@ export class Test extends React.Component<appState, any> {
 
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
-        // this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
+        // this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
@@ -87,7 +87,6 @@ export class Test extends React.Component<appState, any> {
                     >
                         <NavPanel
                             nodes={conceptGraph.nodes}
-                            links={conceptGraph.links}
                             graph={conceptGraph.graph}
                             dispatch={this.props.dispatch}
                             toggled={this.props.toggled}
@@ -115,7 +114,6 @@ export class Test extends React.Component<appState, any> {
                                         />
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

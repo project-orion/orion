@@ -12,6 +12,7 @@ import {
 import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
 import {LabelizedValuesReducer} from './components/modules/labelized_chart'
 import {navPanelReducer} from './components/utils/navPanel'
+import {ConceptHierarchyReducer} from './components/d3Blocks/conceptHierarchy'
 
 const initialCp1State: containerState = {
     containerId: 'cp1',
@@ -32,8 +33,6 @@ const initialTestState: containerState = {
 const initialAppState: appState = {
     conceptGraph: {
         nodes: [],
-        links: [],
-        suggestedLinks: [],
         graph: {},
         selectedConceptNode: null,
         displayedSlugs: [],
@@ -43,7 +42,7 @@ const initialAppState: appState = {
         cp1: initialCp1State,
         test: initialTestState,
     },
-    toggled: true,
+    toggled: false,
 }
 
 export function reducer(state = initialAppState, action: action): appState {
@@ -179,15 +178,13 @@ export function reducer(state = initialAppState, action: action): appState {
             }
 
         case 'FETCH_CONCEPT_GRAPH_SUCCESS':
-            let {nodes, links, suggestedLinks, graph} = navPanelReducer(action)
+            let {nodes, graph} = ConceptHierarchyReducer(action.value.nodes)
 
             return {
                 ...state,
                 conceptGraph: {
                     ...state.conceptGraph,
-                    nodes,
-                    links,
-                    suggestedLinks,
+                    nodes: nodes,
                     graph,
                 },
                 containers: {
