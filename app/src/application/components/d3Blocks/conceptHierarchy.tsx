@@ -184,6 +184,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         this.domSvg.select('#tooltip_container')
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
+            .style('visibility', 'hidden')
     }
 
     selectNode(d: any) {
@@ -240,7 +241,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         let tag = this as any
         let attribute = tag.transform.baseVal[0].matrix
 
-        that.domSvg.select('#tooltip')
+        that.domSvg.select('#tooltip_container')
             .style('visibility', '')
 
         that.domSvg.select('#tooltip_content')
@@ -271,7 +272,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     handleMouseOut(that: any, d: any) {
-        that.domSvg.select('#tooltip')
+        that.domSvg.select('#tooltip_container')
             .style('visibility', 'hidden')
     }
 
@@ -414,7 +415,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     customClick(node: any) {
-        this.domSvg.select('#tooltip')
+        this.domSvg.select('#tooltip_container')
             .style('visibility', 'hidden')
 
         this.selectedNode = node
