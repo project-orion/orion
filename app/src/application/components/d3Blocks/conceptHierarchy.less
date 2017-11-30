@@ -5,34 +5,35 @@
 }
 
 rect {
-    stroke-width: 0
+    stroke-width: 0;
+    stroke-alignment: inner;
 }
 
 .hierarchy-rect {
-    fill: @gray4;
+    fill: @gray3;
     width: 45px;
     height: 25px;
 }
 
 .hierarchy-rect:hover {
-    fill: @gray3;
+    fill: @gray2;
 }
 
 .ancestor-rect {
-    stroke: @green3;
+    stroke: @green2;
     stroke-width: 4;
 }
 
 .ancestor-rect:hover {
-    stroke: @green2;
+    stroke: @green1;
 }
 
 .selected-rect {
-    fill: @green3;
+    fill: @green2;
 }
 
 .selected-rect:hover {
-    fill: @green2;
+    fill: @green1;
 }
 
 .dot-line {
@@ -41,7 +42,21 @@ rect {
     stroke-dasharray: 3, 2;
 }
 
+#tooltip {
+    pointer-events: none;
+}
+
 #tooltip_content {
     fill: @light-gray1;
     font-size: 15px;
+    text-anchor: middle;
+
+    tspan {
+        alignment-baseline: hanging;
+    }
+}
+
+#tooltip_background, #tooltip_pointer {
+    fill: black;
+    opacity: 0.8;
 }

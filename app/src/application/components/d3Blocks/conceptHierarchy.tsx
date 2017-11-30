@@ -12,6 +12,7 @@ import {
     conceptLinksAttribute,
     extendedConceptNodeAttribute,
 } from './../../types'
+import * as wrap from './utils/wrap'
 
 interface d3GraphNode extends d3.SimulationNodeDatum, extendedConceptNodeAttribute {}
 
@@ -111,6 +112,20 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             l: 5,
         }
     }
+    tooltipDimensions = {
+        w: 120,
+        h: 15,
+        p: {
+            t: 10,
+            r: 5,
+            b: 10,
+            l: 5,
+        },
+        t: {
+            w: 10,
+            h: 10,
+        }
+    }
     transitionDuration = 50
 
     interceptClickHandler: any
@@ -167,8 +182,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.domContainer
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
 
-        this.domSvg.select('#tooltip')
-        .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
+        this.domSvg.select('#tooltip_container')
+            .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
     }
 
     selectNode(d: any) {
@@ -222,24 +237,40 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     handleMouseOver(that: any, d: any) {
-        console.log('mouseover')
-        console.log(this)
-        console.log(that)
-        console.log(d)
         let tag = this as any
         let attribute = tag.transform.baseVal[0].matrix
-        console.log(attribute)
 
         that.domSvg.select('#tooltip')
             .style('visibility', '')
 
         that.domSvg.select('#tooltip_content')
-            .attr('transform', 'translate(' + attribute.e + ',' + attribute.f +')')
             .text(d.data.name)
+            .call(_.partial(wrap.wrap, 120))
+
+        that.domSvg.select('#tooltip')
+            .attr('transform', () => {
+                let xShift = attribute.e + that.rectDimensions.w / 2
+                let yShift = attribute.f - d3.selectAll('#tooltip_content tspan').size() * that.tooltipDimensions.h - that.tooltipDimensions.p.b - that.tooltipDimensions.t.h - 4
+                return 'translate(' + xShift + ',' + yShift +')'
+            })
+
+        that.domSvg.select('#tooltip_background')
+            .attr('transform', 'translate(' + (- (that.tooltipDimensions.w + that.tooltipDimensions.p.r + that.tooltipDimensions.p.l) / 2) + ',' + (- that.tooltipDimensions.p.t) +')')
+            .attr('width', that.tooltipDimensions.w + that.tooltipDimensions.p.r + that.tooltipDimensions.p.l)
+            .attr('height', () => {
+                return (d3.selectAll('#tooltip_content tspan').size() * that.tooltipDimensions.h
+                    + that.tooltipDimensions.p.t + that.tooltipDimensions.p.b)
+            })
+
+        that.domSvg.select('#tooltip_pointer')
+            .attr('transform', () => {
+                let xShift = - that.tooltipDimensions.t.w / 2
+                let yShift = d3.selectAll('#tooltip_content tspan').size() * that.tooltipDimensions.h + that.tooltipDimensions.p.b
+                return 'translate(' + xShift + ',' + yShift +')'
+            })
     }
 
-    handleMouseOut(that: any) {
-        console.log('mouseout')
+    handleMouseOut(that: any, d: any) {
         that.domSvg.select('#tooltip')
             .style('visibility', 'hidden')
     }
@@ -383,6 +414,9 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     customClick(node: any) {
+        this.domSvg.select('#tooltip')
+            .style('visibility', 'hidden')
+
         this.selectedNode = node
         this.renderAll()
     }
@@ -455,8 +489,12 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 height={height}
             >
                 <g id='container'></g>
-                <g id='tooltip'>
-                    <text id='tooltip_content'></text>
+                <g id='tooltip_container'>
+                    <g id='tooltip'>
+                        <rect id='tooltip_background'/>
+                        <text id='tooltip_content'></text>
+                        <polygon id='tooltip_pointer' points='0,0 10,0 5,10'/>
+                    </g>
                 </g>
             </svg>
         )
