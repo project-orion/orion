@@ -319,7 +319,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         this.props.dispatch(actions.changeDisplayedConceptNav(node))
         // TODO: associate correct container instead of default cp1
-        this.props.dispatch(actions.fetchConcept('concepts/' + node.data.slug, 'test'))
+        this.props.dispatch(actions.fetchConcept('concepts/' + node.data.slug, 'cp1'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
@@ -361,7 +361,10 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .on('mouseout', _.partial(this.handleMouseOut, this))
                 .transition()
                 .delay(this.transitionDuration)
-                .attr('transform', (d: any, index: number) => 'translate(' + this.xFactorRoot * (index - (availableRoots.length) / 2) + ',' + this.yFactorRoot + ')')
+                .attr('transform', (d: any, index: number) =>
+                    'translate(' + (this.xFactorRoot * (index - (availableRoots.length) / 2) + (this.rectDimensions.rm.r + this.rectDimensions.rm.l) / 2) +
+                    ',' + this.yFactorRoot + ')'
+                )
                 .attr('class', (node: any) => {
                     return 'hierarchy-rect' +
                         ((this.selectedNode && node.id == this.selectedNode.id) ? ' selected-rect' : '') +
