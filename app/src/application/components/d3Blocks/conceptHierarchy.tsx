@@ -103,13 +103,19 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     width: number
     height: number
     rectDimensions = {
-        w: 45,
-        h: 25,
+        w: 55,
+        h: 30,
         m: {
             t: 10,
             r: 5,
             b: 10,
             l: 5,
+        },
+        rm: {
+            t: 10,
+            r: 15,
+            b: 10,
+            l: 15,
         }
     }
     tooltipDimensions = {
@@ -122,22 +128,25 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             l: 5,
         },
         t: {
-            w: 10,
-            h: 10,
+            w: 12,
+            h: 12,
         }
     }
     transitionDuration = 50
 
-    interceptClickHandler: any
     rebind = interceptClick.rebind
     interceptClick = interceptClick.interceptClick
+    interceptClickHandlerRoot: any
+    interceptClickHandlerHierarchy: any
 
     domSvg: any
-    domContainer: any
-    domRects: any
+    domHierarchy: any
+    domHierarchyRects: any
     domTopTicks: any
     domBottomTicks: any
     domLines: any
+    domRoots: any
+    domRootRects: any
 
     hierarchy: any
     nodes: any
@@ -153,10 +162,23 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     displayedNodes: any
     xFactor: any
     yFactor: any
+    xFactorRoot: any
+    yFactorRoot: any
     depthIncrement: any
 
     initAttributes() {
-        this.interceptClickHandler = this.interceptClick()
+        this.interceptClickHandlerRoot = this.interceptClick()
+        this.interceptClickHandlerHierarchy = this.interceptClick()
+    }
+
+    updateHierarchyNodes() {
+        this.fnodes = []
+
+        if (this.selectedRoot) {
+            this.selectedRoot.each((node: any) => {
+                this.fnodes.push(node)
+            })
+        }
     }
 
     updateAttributes() {
@@ -167,43 +189,22 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.nodes = this.props.nodes
         this.graph = this.props.graph
 
-        this.selectedRoot = null
-        this.selectedNode = null
-        this.fnodes = []
-
         if (this.graph.length > 0) {
             this.selectedRoot = this.graph[0]
             this.selectedNode = this.graph[0]
-            this.selectedRoot.each((node: any) => {
-                this.fnodes.push(node)
-            })
         }
 
-        this.domContainer
+        this.updateHierarchyNodes()
+
+        this.domHierarchy
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
+
+        this.domRoots
+            .attr('transform', 'translate(' + this.width / 2 + ', 50)')
 
         this.domSvg.select('#tooltip_container')
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
             .style('visibility', 'hidden')
-    }
-
-    selectNode(d: any) {
-
-    }
-
-    singleRectTranslation(d: any, index: number=null) {
-        let xShift = 0
-        let yShift = this.yFactor * d.depth
-
-        if (d.depth < this.rectsPerLevel.length && this.displayedNodes.indexOf(d) > -1) {
-            xShift = this.xFactor * (this.depthIncrement[d.depth] - (this.rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
-            if (d.depth < this.indexParentPerLevel.length) {
-                xShift -= this.xFactor * (this.indexParentPerLevel[d.depth] - (this.rectsPerLevel[d.depth] - 1) / 2)
-            }
-            this.depthIncrement[d.depth]++
-        }
-
-        return 'translate(' + xShift + ',' + yShift +')'
     }
 
     updateRenderingAttributes() {
@@ -228,6 +229,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         this.xFactor = (this.rectDimensions.w + this.rectDimensions.m.r + this.rectDimensions.m.l)
         this.yFactor = (this.rectDimensions.h + this.rectDimensions.m.t + this.rectDimensions.m.b)
+        this.xFactorRoot = (this.rectDimensions.w + this.rectDimensions.rm.r + this.rectDimensions.rm.l)
+        this.yFactorRoot = (this.rectDimensions.h + this.rectDimensions.rm.t + this.rectDimensions.rm.b)
     }
 
     restartDepthIncrement() {
@@ -238,6 +241,19 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     handleMouseOver(that: any, d: any) {
+        // Place the tooltip in the correct container
+        let domParentId = d3.select(this as any).node().parentNode.id
+
+        if (domParentId == 'hierarchy') {
+            that.domSvg.select('#tooltip_container')
+                .attr('transform', 'translate(' + that.width / 2 + ',' + that.height / 2 + ')')
+                .style('visibility', 'hidden')
+        } else if (domParentId == 'roots') {
+            that.domSvg.select('#tooltip_container')
+                .attr('transform', 'translate(' + that.width / 2 + ', 50)')
+                .style('visibility', 'hidden')
+        }
+
         let tag = this as any
         let attribute = tag.transform.baseVal[0].matrix
 
@@ -276,18 +292,82 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             .style('visibility', 'hidden')
     }
 
+    customClick(newRootNode: any, node: any, a: any) {
+        if (newRootNode) {
+            this.selectedRoot = node
+            this.updateHierarchyNodes()
+        }
+
+        this.domSvg.select('#tooltip_container')
+            .style('visibility', 'hidden')
+
+        this.selectedNode = node
+        this.renderAll()
+    }
+
+    customDoubleClick(d: any) {
+        console.log('doubleclick')
+    }
+
+    singleRectTranslation(d: any, index: number=null) {
+        let xShift = 0
+        let yShift = this.yFactor * d.depth
+
+        if (d.depth < this.rectsPerLevel.length && this.displayedNodes.indexOf(d) > -1) {
+            xShift = this.xFactor * (this.depthIncrement[d.depth] - (this.rectsPerLevel[d.depth] - 1) / 2) - this.rectDimensions.w / 2
+            if (d.depth < this.indexParentPerLevel.length) {
+                xShift -= this.xFactor * (this.indexParentPerLevel[d.depth] - (this.rectsPerLevel[d.depth] - 1) / 2)
+            }
+            this.depthIncrement[d.depth]++
+        }
+
+        return 'translate(' + xShift + ',' + yShift +')'
+    }
+
     renderRectangles() {
-        this.domRects = this.domContainer.selectAll('rect')
-            .data(this.fnodes)
+        // Draws root rectangles
+        let availableRoots = _.filter(this.graph, (root: any) => root != this.selectedRoot)
 
-        this.domRects.exit().remove()
+        this.domRootRects = this.domRoots.selectAll('rect')
+            .data(availableRoots, (node: any) => node.data.id)
 
-        this.domRects
+        this.domRootRects.exit().remove()
+
+        this.domRootRects
             .enter()
                 .append('rect')
-            .merge(this.domRects)
-                .call(this.interceptClickHandler
-                    .on('customClick', this.customClick.bind(this))
+                .attr('width', this.rectDimensions.w)
+                .attr('height', this.rectDimensions.h)
+            .merge(this.domRootRects)
+                .call(this.interceptClickHandlerRoot
+                    .on('customClick', this.customClick.bind(this, true))
+                    .on('customDoubleClick', this.customDoubleClick.bind(this))
+                )
+                .on('mouseover', _.partial(this.handleMouseOver, this))
+                .on('mouseout', _.partial(this.handleMouseOut, this))
+                .transition()
+                .delay(this.transitionDuration)
+                .attr('transform', (d: any, index: number) => 'translate(' + this.xFactorRoot * (index - (availableRoots.length) / 2) + ',' + this.yFactorRoot + ')')
+                .attr('class', (node: any) => {
+                    return 'hierarchy-rect' +
+                        ((node.id == this.selectedNode.id) ? ' selected-rect' : '') +
+                        ((this.selectedNodeAncestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
+                })
+
+        // Draws hierarchy rectangles
+        this.domHierarchyRects = this.domHierarchy.selectAll('rect')
+            .data(this.fnodes, (node: any) => node.data.id)
+
+        this.domHierarchyRects.exit().remove()
+
+        this.domHierarchyRects
+            .enter()
+                .append('rect')
+                .attr('width', this.rectDimensions.w)
+                .attr('height', this.rectDimensions.h)
+            .merge(this.domHierarchyRects)
+                .call(this.interceptClickHandlerHierarchy
+                    .on('customClick', this.customClick.bind(this, false))
                     .on('customDoubleClick', this.customDoubleClick.bind(this))
                 )
                 .on('mouseover', _.partial(this.handleMouseOver, this))
@@ -305,15 +385,10 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                         ((node.id == this.selectedNode.id) ? ' selected-rect' : '') +
                         ((this.selectedNodeAncestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
                 })
-
-        this.depthIncrement = []
-        for (let i = 0; i < this.rectsPerLevel.length; i++) {
-            this.depthIncrement.push(0)
-        }
     }
 
     renderTopTicks() {
-        this.domTopTicks = this.domContainer.selectAll('.top-tick')
+        this.domTopTicks = this.domHierarchy.selectAll('.top-tick')
             .data(this.fnodes)
 
         this.domTopTicks.exit().remove()
@@ -338,7 +413,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     renderBottomTicks() {
-        this.domBottomTicks = this.domContainer.selectAll('.bottom-tick')
+        this.domBottomTicks = this.domHierarchy.selectAll('.bottom-tick')
             .data(this.fnodes)
 
         this.domBottomTicks.exit().remove()
@@ -372,7 +447,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             dataLines.pop()
         }
 
-        this.domLines = this.domContainer.selectAll('.hbar')
+        this.domLines = this.domHierarchy.selectAll('.hbar')
             .data(dataLines)
 
         this.domLines.exit().remove()
@@ -414,18 +489,6 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.renderHorizontalBars()
     }
 
-    customClick(node: any) {
-        this.domSvg.select('#tooltip_container')
-            .style('visibility', 'hidden')
-
-        this.selectedNode = node
-        this.renderAll()
-    }
-
-    customDoubleClick(d: any) {
-        console.log('doubleclick')
-    }
-
     // Unite all previous rendering functions in just one function.
     renderD3DomElements() {
         this.renderAll()
@@ -441,13 +504,14 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     }
 
     // This function is called right after the first render() of our component.
-    // We'll define here our domContainer, the forces to use in our d3 simulation
+    // We'll define here our domHierarchy, the forces to use in our d3 simulation
     // as well as other attributes which will be useful to d3 and which come from
     // React props (remember we want to dissociate d3 calculations from React props).
     // After that, we call our sent of simulation and rendering functions.
     componentDidMount() {
         this.domSvg = d3.select(this.refs.container as any)
-        this.domContainer = this.domSvg.select('#container')
+        this.domHierarchy = this.domSvg.select('#hierarchy')
+        this.domRoots = this.domSvg.select('#roots')
 
         this.width = this.props.dimensions.width
         this.height = this.props.dimensions.height
@@ -489,12 +553,13 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 width={width}
                 height={height}
             >
-                <g id='container'></g>
+                <g id='roots'></g>
+                <g id='hierarchy'></g>
                 <g id='tooltip_container'>
                     <g id='tooltip'>
                         <rect id='tooltip_background'/>
                         <text id='tooltip_content'></text>
-                        <polygon id='tooltip_pointer' points='0,0 10,0 5,10'/>
+                        <polygon id='tooltip_pointer' points='0,0 12,0 6,10'/>
                     </g>
                 </g>
             </svg>
