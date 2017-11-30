@@ -24,9 +24,11 @@ import {
 interface Props {
     nodes: any,
     graph: any,
+    selectedRoot: any,
+    selectedNode: any,
     dispatch: any,
     toggled: boolean,
-    selectedConceptNode: any,
+    displayedNode: any,
     displayedSlugs: string[],
 }
 
@@ -143,7 +145,7 @@ export class NavPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {nodes, graph, toggled, selectedConceptNode, displayedSlugs} = this.props
+        const {nodes, graph, selectedRoot, selectedNode, toggled, displayedNode, displayedSlugs} = this.props
         const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
         const toggleButtonTextIcon = (toggled) ?
@@ -193,7 +195,7 @@ export class NavPanel extends React.Component<Props, State> {
                                     }}
                                     graph={_.cloneDeep(this.props.graph)}
                                     nodes={_.cloneDeep(nodes)}
-                                    selectedConceptNode={selectedConceptNode}
+                                    displayedNode={displayedNode}
                                     displayedSlugs={displayedSlugs}
                                     dispatch={this.props.dispatch}
                                 />
@@ -203,8 +205,12 @@ export class NavPanel extends React.Component<Props, State> {
                                 <ConceptHierarchy
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
-                                    nodes={_.cloneDeep(nodes)}
-                                    graph={_.cloneDeep(graph)}
+                                    nodes={nodes}
+                                    graph={graph}
+                                    // selectedRoot={_.cloneDeep(selectedRoot)}
+                                    // selectedNode={_.cloneDeep(selectedNode)}
+                                    selectedRoot={selectedRoot}
+                                    selectedNode={selectedNode}
                                     dimensions={{
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,

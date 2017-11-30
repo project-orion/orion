@@ -8,6 +8,17 @@ rect {
     stroke-width: 0;
 }
 
+.breadcrumbs {
+    margin: 20px 10px 10px 20px;
+
+    li {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+}
+
 .hierarchy-rect {
     fill: @gray3;
 }
@@ -41,6 +52,12 @@ rect {
 
 #tooltip {
     pointer-events: none;
+    text {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 }
 
 #tooltip_content {

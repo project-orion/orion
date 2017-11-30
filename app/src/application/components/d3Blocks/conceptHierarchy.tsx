@@ -22,6 +22,8 @@ interface Props {
     version: number,
     nodes: extendedConceptNodeAttribute[],
     graph: any,
+    selectedRoot: any,
+    selectedNode: any,
     dimensions: {
         width: number,
         height: number,
@@ -189,10 +191,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.nodes = this.props.nodes
         this.graph = this.props.graph
 
-        if (this.graph.length > 0) {
-            this.selectedRoot = this.graph[0]
-            this.selectedNode = this.graph[0]
-        }
+        this.selectedRoot = this.props.selectedRoot
+        this.selectedNode = this.props.selectedNode
 
         this.updateHierarchyNodes()
 
@@ -205,6 +205,11 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.domSvg.select('#tooltip_container')
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
             .style('visibility', 'hidden')
+
+        this.domSvg.select('#breadcrumbs')
+            .attr('width', this.width)
+            .attr('height', '30px')
+            .attr('transform', 'translate(20, 20)')
     }
 
     updateRenderingAttributes() {
@@ -292,21 +297,30 @@ export class ConceptHierarchy extends React.Component<Props, State> {
             .style('visibility', 'hidden')
     }
 
-    customClick(newRootNode: any, node: any, a: any) {
+    customClick(newRootNode: any, node: any) {
         if (newRootNode) {
             this.selectedRoot = node
             this.updateHierarchyNodes()
+            this.props.dispatch(actions.changeSelectedRootNav(node))
         }
 
         this.domSvg.select('#tooltip_container')
             .style('visibility', 'hidden')
 
         this.selectedNode = node
+        this.props.dispatch(actions.changeSelectedNodeNav(node))
         this.renderAll()
     }
 
-    customDoubleClick(d: any) {
-        console.log('doubleclick')
+    customDoubleClick(node: any) {
+        this.selectedNode = node
+        this.props.dispatch(actions.changeSelectedNodeNav(node))
+        this.renderAll()
+
+        this.props.dispatch(actions.changeDisplayedConceptNav(node))
+        // TODO: associate correct container instead of default cp1
+        this.props.dispatch(actions.fetchConcept('concepts/' + node.data.slug, 'test'))
+        this.props.dispatch(actions.toggleNavPanel())
     }
 
     singleRectTranslation(d: any, index: number=null) {
@@ -350,7 +364,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .attr('transform', (d: any, index: number) => 'translate(' + this.xFactorRoot * (index - (availableRoots.length) / 2) + ',' + this.yFactorRoot + ')')
                 .attr('class', (node: any) => {
                     return 'hierarchy-rect' +
-                        ((node.id == this.selectedNode.id) ? ' selected-rect' : '') +
+                        ((this.selectedNode && node.id == this.selectedNode.id) ? ' selected-rect' : '') +
                         ((this.selectedNodeAncestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
                 })
 
@@ -477,6 +491,20 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .attr('y2', (d: any, index: any) => (index + 1) * this.yFactor - this.rectDimensions.m.t)
     }
 
+    renderBreadcrumbs() {
+        const selectedNodePath = this.selectedNode ? this.selectedNode.ancestors().reverse() : []
+
+        let breads = this.domSvg.select('#breadcrumb-list')
+            .selectAll('li')
+                .data(selectedNodePath, (node: any) => node.data.id)
+
+        breads.exit().remove()
+        breads.enter()
+            .append('li')
+                .attr('class', 'pt-breadcrumb')
+                .html((d: any) => d.data.name)
+    }
+
     renderAll() {
         this.updateRenderingAttributes()
         this.restartDepthIncrement()
@@ -487,6 +515,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.renderBottomTicks()
         this.restartDepthIncrement()
         this.renderHorizontalBars()
+        this.renderBreadcrumbs()
     }
 
     // Unite all previous rendering functions in just one function.
@@ -509,7 +538,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     // React props (remember we want to dissociate d3 calculations from React props).
     // After that, we call our sent of simulation and rendering functions.
     componentDidMount() {
-        this.domSvg = d3.select(this.refs.container as any)
+        this.domSvg = d3.select(this.refs.containerHierarchy as any)
         this.domHierarchy = this.domSvg.select('#hierarchy')
         this.domRoots = this.domSvg.select('#roots')
 
@@ -549,10 +578,16 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         return (
             <svg
-                ref='container'
+                ref='containerHierarchy'
                 width={width}
                 height={height}
             >
+                <foreignObject id='breadcrumbs'>
+                    <div className={'breadcrumbs'}>
+                        <ul id='breadcrumb-list' className='pt-breadcrumbs'>
+                        </ul>
+                    </div>
+                </foreignObject>
                 <g id='roots'></g>
                 <g id='hierarchy'></g>
                 <g id='tooltip_container'>

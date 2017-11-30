@@ -27,6 +27,7 @@ const initialAppContainerState: containerState = {
 
 const initialTestState: containerState = {
     containerId: 'test',
+    concepts: [],
     loading: 0,
 }
 
@@ -34,7 +35,9 @@ const initialAppState: appState = {
     conceptGraph: {
         nodes: [],
         graph: {},
-        selectedConceptNode: null,
+        selectedRoot: null,
+        selectedNode: null,
+        displayedNode: null,
         displayedSlugs: [],
     },
     containers: {
@@ -42,7 +45,7 @@ const initialAppState: appState = {
         cp1: initialCp1State,
         test: initialTestState,
     },
-    toggled: false,
+    toggled: true,
 }
 
 export function reducer(state = initialAppState, action: action): appState {
@@ -87,12 +90,32 @@ export function reducer(state = initialAppState, action: action): appState {
                 }
             }
 
-        case 'CHANGE_SELECTED_CONCEPT_NAV':
+        case 'CHANGE_SELECTED_ROOT_NAV':
             return {
                 ...state,
                 conceptGraph: {
                     ...state.conceptGraph,
-                    selectedConceptNode: action.value,
+                    selectedRoot: action.value,
+                },
+                containers: initialAppState.containers,
+            }
+
+        case 'CHANGE_SELECTED_NODE_NAV':
+            return {
+                ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    selectedNode: action.value,
+                },
+                containers: initialAppState.containers,
+            }
+
+        case 'CHANGE_DISPLAYED_CONCEPT_NAV':
+            return {
+                ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    displayedNode: action.value,
                     displayedSlugs: [],
                 },
                 containers: initialAppState.containers,
