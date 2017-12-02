@@ -88,6 +88,7 @@ export class Test extends React.Component<appState, any> {
                         <NavPanel
                             nodes={conceptGraph.nodes}
                             graph={conceptGraph.graph}
+                            graphNodes={conceptGraph.graphNodes}
                             selectedRoot={conceptGraph.selectedRoot}
                             selectedNode={conceptGraph.selectedNode}
                             dispatch={this.props.dispatch}

@@ -9,6 +9,7 @@ import {
 import {ConceptGraph} from '../d3Blocks/conceptGraph'
 import {ConceptHierarchy} from '../d3Blocks/conceptHierarchy'
 import {ConceptNav} from '../d3Blocks/conceptNav'
+import {ConceptSearchResults} from './conceptSearchResults'
 import * as actions from '../../actions'
 import {
     concept_nodesAttribute,
@@ -24,6 +25,7 @@ import {
 interface Props {
     nodes: any,
     graph: any,
+    graphNodes: any,
     selectedRoot: any,
     selectedNode: any,
     dispatch: any,
@@ -145,7 +147,7 @@ export class NavPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {nodes, graph, selectedRoot, selectedNode, toggled, displayedNode, displayedSlugs} = this.props
+        const {nodes, graph, graphNodes, selectedRoot, selectedNode, toggled, displayedNode, displayedSlugs} = this.props
         const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
         const toggleButtonTextIcon = (toggled) ?
@@ -172,20 +174,9 @@ export class NavPanel extends React.Component<Props, State> {
                                 className={'pt-minimal'}
                                 onClick={() => this.props.dispatch(actions.toggleNavPanel())}
                             >
-                                Toggle
+                                Panneau de Recherche
                                 {toggleButtonTextIcon}
                             </Button>
-
-                            <div className='pt-input-group concept_nav_bar'>
-                                <span className={'pt-icon pt-icon-search'}></span>
-                                <input
-                                    className={'pt-input'}
-                                    placeholder={'Concept (ex: Chômage)'}
-                                    dir='auto'
-                                    value={searchedConcept}
-                                    onChange={this.updateState.bind(this)}
-                                />
-                            </div>
 
                             <div className={(toggled) ? 'hide' : ''}>
                                 <ConceptNav
@@ -202,13 +193,26 @@ export class NavPanel extends React.Component<Props, State> {
                             </div>
 
                             <div className={(!toggled) ? 'hide' : ''}>
+                                <div className={'pt-input-group concept_nav_bar'}>
+                                    <span className={'pt-icon pt-icon-search'}></span>
+                                    <input
+                                        className={'pt-input'}
+                                        placeholder={'Concept (ex: Chômage)'}
+                                        dir='auto'
+                                        value={searchedConcept}
+                                        onChange={this.updateState.bind(this)}
+                                    />
+                                </div>
+                                <ConceptSearchResults
+                                    graphNodes={graphNodes}
+                                    searchedConcept={searchedConcept}
+                                    dispatch={this.props.dispatch}
+                                />
                                 <ConceptHierarchy
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
                                     nodes={nodes}
                                     graph={graph}
-                                    // selectedRoot={_.cloneDeep(selectedRoot)}
-                                    // selectedNode={_.cloneDeep(selectedNode)}
                                     selectedRoot={selectedRoot}
                                     selectedNode={selectedNode}
                                     dimensions={{

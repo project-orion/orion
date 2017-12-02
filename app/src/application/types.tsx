@@ -38,6 +38,7 @@ export interface appState {
     conceptGraph: {
         nodes: extendedConceptNodeAttribute[],
         graph?: any,
+        graphNodes: any,
         selectedRoot: any,
         selectedNode: any,
         displayedNode: any,

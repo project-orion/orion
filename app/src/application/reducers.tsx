@@ -35,6 +35,7 @@ const initialAppState: appState = {
     conceptGraph: {
         nodes: [],
         graph: {},
+        graphNodes: [],
         selectedRoot: null,
         selectedNode: null,
         displayedNode: null,
@@ -201,7 +202,7 @@ export function reducer(state = initialAppState, action: action): appState {
             }
 
         case 'FETCH_CONCEPT_GRAPH_SUCCESS':
-            let {nodes, graph} = ConceptHierarchyReducer(action.value.nodes)
+            let {nodes, graph, graphNodes} = ConceptHierarchyReducer(action.value.nodes)
 
             return {
                 ...state,
@@ -209,6 +210,7 @@ export function reducer(state = initialAppState, action: action): appState {
                     ...state.conceptGraph,
                     nodes: nodes,
                     graph,
+                    graphNodes,
                 },
                 containers: {
                     ...state.containers,

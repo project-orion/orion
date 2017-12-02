@@ -90,9 +90,17 @@ export function ConceptHierarchyReducer(nodes: any): any {
         graph.push(h)
     }
 
+    let graphNodes: any = []
+    graph.forEach((rootNode: any) => {
+        rootNode.each((node: any) => {
+            graphNodes.push(node)
+        })
+    })
+
     return {
         nodes,
         graph,
+        graphNodes,
     }
 }
 
@@ -104,6 +112,14 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     // whereas we want to have our simulation ran by d3.
     width: number
     height: number
+    svgDimensions = {
+        m: {
+            t: 15,
+            r: 5,
+            b: 5,
+            l: 5,
+        }
+    }
     rectDimensions = {
         w: 55,
         h: 30,
@@ -209,7 +225,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.domSvg.select('#breadcrumbs')
             .attr('width', this.width)
             .attr('height', '30px')
-            .attr('transform', 'translate(20, 20)')
+            .attr('transform', 'translate(' + 0 + ',' + (this.height - 80) + ')')
     }
 
     updateRenderingAttributes() {
@@ -309,13 +325,11 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         this.selectedNode = node
         this.props.dispatch(actions.changeSelectedNodeNav(node))
-        this.renderAll()
     }
 
     customDoubleClick(node: any) {
         this.selectedNode = node
         this.props.dispatch(actions.changeSelectedNodeNav(node))
-        this.renderAll()
 
         this.props.dispatch(actions.changeDisplayedConceptNav(node))
         // TODO: associate correct container instead of default cp1
@@ -399,7 +413,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 })
                 .attr('class', (node: any) => {
                     return 'hierarchy-rect' +
-                        ((node.id == this.selectedNode.id) ? ' selected-rect' : '') +
+                        ((this.selectedNode && node.id == this.selectedNode.id) ? ' selected-rect' : '') +
                         ((this.selectedNodeAncestors.indexOf(node) > -1) ? ' ancestor-rect' : '')
                 })
     }
@@ -521,7 +535,6 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.renderBreadcrumbs()
     }
 
-    // Unite all previous rendering functions in just one function.
     renderD3DomElements() {
         this.renderAll()
     }
@@ -531,15 +544,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selected: null}
-
-        // this.selectNode = this.selectNode.bind(this)
     }
 
-    // This function is called right after the first render() of our component.
-    // We'll define here our domHierarchy, the forces to use in our d3 simulation
-    // as well as other attributes which will be useful to d3 and which come from
-    // React props (remember we want to dissociate d3 calculations from React props).
-    // After that, we call our sent of simulation and rendering functions.
     componentDidMount() {
         this.domSvg = d3.select(this.refs.containerHierarchy as any)
         this.domHierarchy = this.domSvg.select('#hierarchy')
@@ -553,24 +559,6 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         this.renderD3DomElements()
     }
 
-    // This function is called by React every time the React state or props
-    // of this component change. In general, we don't want our component to rerender:
-    // indeed, all DOM elements already exist and their interactions with the DOM are
-    // handled by d3.
-    // The only case in which one should indeed rerender this component is when
-    // new data comes in. This we check keeping track of the version of our data
-    // (the version comes as a prop, given by the parent component).
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextProps.version === this.props.version) {
-            return false
-        }
-
-        return true
-    }
-
-    // This function is called right after the component actually rendered again. Therefore,
-    // at this stage, only the container is created. One thus updates the simulation
-    // and re-renders all possible DOM components which will populate the container.
     componentDidUpdate() {
         this.updateAttributes()
         this.renderD3DomElements()
@@ -581,9 +569,16 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         return (
             <svg
+                id='conceptHierarchy'
                 ref='containerHierarchy'
-                width={width}
+                width={(width - this.svgDimensions.m.r - this.svgDimensions.m.l) ? (width - this.svgDimensions.m.r - this.svgDimensions.m.l) : 0}
                 height={height}
+                style={{
+                    marginTop: this.svgDimensions.m.t,
+                    marginRight: this.svgDimensions.m.r,
+                    marginBottom: this.svgDimensions.m.b,
+                    marginLeft: this.svgDimensions.m.l,
+                }}
             >
                 <foreignObject id='breadcrumbs'>
                     <div className={'breadcrumbs'}>
