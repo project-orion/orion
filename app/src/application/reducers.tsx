@@ -1,3 +1,4 @@
+import * as csv_parse from 'csv-parse'
 import * as _ from 'lodash'
 
 import {
@@ -23,6 +24,11 @@ const initialAppContainerState: containerState = {
     loading: 0,
 }
 
+const initialTestState: containerState = {
+    containerId: 'test',
+    loading: 0,
+}
+
 const initialAppState: appState = {
     conceptGraph: {
         nodes: [],
@@ -35,6 +41,7 @@ const initialAppState: appState = {
     containers: {
         app: initialAppContainerState,
         cp1: initialCp1State,
+        test: initialTestState,
     },
     toggled: true,
 }
@@ -90,6 +97,28 @@ export function reducer(state = initialAppState, action: action): appState {
                     displayedSlugs: [],
                 },
                 containers: initialAppState.containers,
+            }
+
+        case 'FETCH_TEST_SUCCESS':
+            // let response = csv_parse(action.value.response, {
+            //     delimiter: ';',
+            //     columns: true,
+            //     relax: true,
+            // })
+
+            return {
+                ...state,
+                containers: {
+                    ...state.containers,
+                    [action.container]: {
+                        ...state.containers[action.container],
+                        loading: state.containers[action.container].loading - 1,
+                        testData: {
+                            ...state.containers[action.container].testData,
+                            [action.value.fileName]: action.value.response,
+                        },
+                    }
+                }
             }
 
         case 'FETCH_SLUG_SUCCESS':
