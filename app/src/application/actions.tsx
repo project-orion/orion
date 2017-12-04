@@ -27,6 +27,39 @@ export function removeConcept(container: string, index: number): action {
     }
 }
 
+export function testFetch(fileNames: string[], container: string, url: string): action {
+    return {
+        type: 'FETCH_TEST',
+        promise: (dispatch, getState) => {
+            dispatch(loading(container))
+
+            return Promise.all(fileNames.map((fileName: string) => {
+                return fetch(url + fileName)
+                    .then((response: any) => {
+                        return response.text()
+                    })
+                    .then((response: any) => {
+                        dispatch(receivedTest(response, container, fileName))
+                    }).catch((err: any) => {
+                        dispatch(fetchFailed(err, container))
+                    })
+            }))
+        },
+        container: container,
+    }
+}
+
+export function receivedTest(response: concept, container: string, fileName: string): action {
+    return {
+        type: 'FETCH_TEST_SUCCESS',
+        value: {
+            fileName,
+            response,
+        },
+        container: container,
+    }
+}
+
 export function fetchConcept(url: string, container: string, index: number=null): action {
     return {
         type: 'FETCH_CONCEPT',
@@ -38,7 +71,7 @@ export function fetchConcept(url: string, container: string, index: number=null)
             }).then( (json: concept) => {
                 dispatch(receivedSlug(json, container, index))
             }).catch( (err: any) => {
-                console.log(err);
+                console.log(err)
                 dispatch(fetchFailed(err, container))
             })
         },

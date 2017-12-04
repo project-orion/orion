@@ -8,6 +8,7 @@
     "dependencies": {
         "@blueprintjs/core": "^1.25.0",
         "@types/chart.js": "^2.6.2",
+        "@types/csv-parse": "^1.1.11",
         "@types/d3": "^4.10.0",
         "@types/lodash": "^4.14.71",
         "@types/node": "^8.0.16",
@@ -26,6 +27,7 @@
         "chart.js": "^2.6.0",
         "classnames": "^2.2.5",
         "css-loader": "^0.28.4",
+        "csv-parse": "^2.0.0",
         "d3": "^4.10.2",
         "express": "^4.15.3",
         "extract-text-webpack-plugin": "^3.0.0",

@@ -54,6 +54,7 @@ export interface containerState {
 
     // The following props depend on the container.
     concepts?: concept[],
+    testData?: any,
 }
 
 export interface concept {

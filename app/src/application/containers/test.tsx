@@ -4,6 +4,7 @@ import {
 } from '@blueprintjs/core'
 import * as _ from 'lodash'
 import * as React from 'react'
+import Measure from 'react-measure'
 import {Route} from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
@@ -17,6 +18,10 @@ import {NavPanel} from '../components/utils/navPanel'
 import {NavBar} from '../components/utils/navBar'
 import {ConceptsPresentation} from './conceptsPresentation'
 
+import {SunburstModule} from '../components/modules/sunburst'
+
+const colorScheme = ["#2965CC", "#29A634", "#D99E0B", "#D13913", "#8F398F", "#00B3A4", "#DB2C6F", "#9BBF30", "#96622D", "#7157D9"]
+
 const mapReduxStateToReactProps = (state : appState): appState => {
     return state
 }
@@ -26,7 +31,7 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class App extends React.Component<appState, any> {
+export class Test extends React.Component<appState, any> {
     constructor(props: appState) {
         super(props)
     }
@@ -37,12 +42,14 @@ export class App extends React.Component<appState, any> {
 
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
-        this.props.dispatch(actions.fetchConceptGraph('concepts/', 'app'))
-        // this.props.dispatch(actions.fetchConcept('concepts/chomage/', 'cp1'))
+        // this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
+        this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
         let {conceptGraph} = this.props
+        let data = this.props.containers['test'].testData
 
         let loading = false
 
@@ -65,11 +72,12 @@ export class App extends React.Component<appState, any> {
 
         const classToggled = (this.props.toggled) ? ' toggled' : ''
 
+        const key = 'Abracadabra'
+
         return (
             <div>
                 <NavBar
-                    // right_text={navbar_button}
-                    left_text={'Visualisation et documentation de données socio-économiques'}
+                    left_text={'Visualisation et documentation de données socio-politiques'}
                 />
 
                 <div id={'app-container'}>
@@ -88,9 +96,28 @@ export class App extends React.Component<appState, any> {
                         />
                     </div>
                     <div className={'left-of-panel' + classToggled}>
-                        <BrowserRouter>
-                            <Route path='/' exact={true} render={routeProps => <ConceptsPresentation containerId={'cp1'} loading={0} />} />
-                        </BrowserRouter>
+                        <div>
+                            <div className={'block-1'}>
+                                <div
+                                    key={'key1'}
+                                    className={'left-of-panel block-2'}
+                                >
+                                    <h3 className={'concept-header'}>
+                                        {'conceptName'}
+                                    </h3>
+                                    <h5 className={'concept-loadedtime'}>
+                                        {'loadedTime'}
+                                    </h5>
+
+                                    <div className={'flex-box'}>
+                                        <SunburstModule
+                                            key={key}
+                                        />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
