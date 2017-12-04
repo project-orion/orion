@@ -220,7 +220,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         this.domSvg.select('#tooltip_container')
             .attr('transform', 'translate(' + this.width / 2 + ',' + this.height / 2 + ')')
-            .style('visibility', 'hidden')
+            .style('opacity', 0)
 
         this.domSvg.select('#breadcrumbs')
             .attr('width', this.width)
@@ -261,6 +261,16 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         }
     }
 
+    parseTranslateTransformation(inputText: string) {
+        let r = inputText.split('(')
+        if (r.length > 0) {
+            r = r[1].split(',')
+            return _.map(r, (t: string) => parseFloat(t))
+        }
+
+        return null
+    }
+
     handleMouseOver(that: any, d: any) {
         // Place the tooltip in the correct container
         let domParentId = d3.select(this as any).node().parentNode.id
@@ -268,18 +278,19 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         if (domParentId == 'hierarchy') {
             that.domSvg.select('#tooltip_container')
                 .attr('transform', 'translate(' + that.width / 2 + ',' + that.height / 2 + ')')
-                .style('visibility', 'hidden')
+                .style('opacity', 0)
         } else if (domParentId == 'roots') {
             that.domSvg.select('#tooltip_container')
                 .attr('transform', 'translate(' + that.width / 2 + ', 50)')
-                .style('visibility', 'hidden')
+                .style('opacity', 0)
         }
 
         let tag = this as any
-        let attribute = tag.transform.baseVal[0].matrix
+        let attribute = d3.select(tag).attr('transform')
+        let translate = that.parseTranslateTransformation(attribute)
 
         that.domSvg.select('#tooltip_container')
-            .style('visibility', '')
+            .style('opacity', 1)
 
         that.domSvg.select('#tooltip_content')
             .text(d.data.name)
@@ -287,8 +298,8 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         that.domSvg.select('#tooltip')
             .attr('transform', () => {
-                let xShift = attribute.e + that.rectDimensions.w / 2
-                let yShift = attribute.f - d3.selectAll('#tooltip_content tspan').size() * that.tooltipDimensions.h - that.tooltipDimensions.p.b - that.tooltipDimensions.t.h - 4
+                let xShift = translate[0] + that.rectDimensions.w / 2
+                let yShift = translate[1] - d3.selectAll('#tooltip_content tspan').size() * that.tooltipDimensions.h - that.tooltipDimensions.p.b - that.tooltipDimensions.t.h - 4
                 return 'translate(' + xShift + ',' + yShift +')'
             })
 
@@ -310,7 +321,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
     handleMouseOut(that: any, d: any) {
         that.domSvg.select('#tooltip_container')
-            .style('visibility', 'hidden')
+            .style('opacity', 0)
     }
 
     customClick(newRootNode: any, node: any) {
@@ -321,7 +332,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         }
 
         this.domSvg.select('#tooltip_container')
-            .style('visibility', 'hidden')
+            .style('opacity', 0)
 
         this.selectedNode = node
         this.props.dispatch(actions.changeSelectedNodeNav(node))
@@ -366,13 +377,13 @@ export class ConceptHierarchy extends React.Component<Props, State> {
                 .append('rect')
                 .attr('width', this.rectDimensions.w)
                 .attr('height', this.rectDimensions.h)
+                .on('mouseover', _.partial(this.handleMouseOver, this))
+                .on('mouseout', _.partial(this.handleMouseOut, this))
             .merge(this.domRootRects)
                 .call(this.interceptClickHandlerRoot
                     .on('customClick', this.customClick.bind(this, true))
                     .on('customDoubleClick', this.customDoubleClick.bind(this))
                 )
-                .on('mouseover', _.partial(this.handleMouseOver, this))
-                .on('mouseout', _.partial(this.handleMouseOut, this))
                 .transition()
                 .delay(this.transitionDuration)
                 .attr('transform', (d: any, index: number) =>
