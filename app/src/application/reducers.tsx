@@ -12,6 +12,7 @@ import {
 import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
 import {LabelizedValuesReducer} from './components/modules/labelized_chart'
 import {navPanelReducer} from './components/utils/navPanel'
+import {ConceptHierarchyReducer} from './components/d3Blocks/conceptHierarchy'
 
 const initialCp1State: containerState = {
     containerId: 'cp1',
@@ -26,16 +27,18 @@ const initialAppContainerState: containerState = {
 
 const initialTestState: containerState = {
     containerId: 'test',
+    concepts: [],
     loading: 0,
 }
 
 const initialAppState: appState = {
     conceptGraph: {
         nodes: [],
-        links: [],
-        suggestedLinks: [],
         graph: {},
-        selectedConceptNode: null,
+        graphNodes: [],
+        selectedRoot: null,
+        selectedNode: null,
+        displayedNode: null,
         displayedSlugs: [],
     },
     containers: {
@@ -88,12 +91,32 @@ export function reducer(state = initialAppState, action: action): appState {
                 }
             }
 
-        case 'CHANGE_SELECTED_CONCEPT_NAV':
+        case 'CHANGE_SELECTED_ROOT_NAV':
             return {
                 ...state,
                 conceptGraph: {
                     ...state.conceptGraph,
-                    selectedConceptNode: action.value,
+                    selectedRoot: action.value,
+                },
+                containers: initialAppState.containers,
+            }
+
+        case 'CHANGE_SELECTED_NODE_NAV':
+            return {
+                ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    selectedNode: action.value,
+                },
+                containers: initialAppState.containers,
+            }
+
+        case 'CHANGE_DISPLAYED_CONCEPT_NAV':
+            return {
+                ...state,
+                conceptGraph: {
+                    ...state.conceptGraph,
+                    displayedNode: action.value,
                     displayedSlugs: [],
                 },
                 containers: initialAppState.containers,
@@ -179,16 +202,15 @@ export function reducer(state = initialAppState, action: action): appState {
             }
 
         case 'FETCH_CONCEPT_GRAPH_SUCCESS':
-            let {nodes, links, suggestedLinks, graph} = navPanelReducer(action)
+            let {nodes, graph, graphNodes} = ConceptHierarchyReducer(action.value.nodes)
 
             return {
                 ...state,
                 conceptGraph: {
                     ...state.conceptGraph,
-                    nodes,
-                    links,
-                    suggestedLinks,
+                    nodes: nodes,
                     graph,
+                    graphNodes,
                 },
                 containers: {
                     ...state.containers,

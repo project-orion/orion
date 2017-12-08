@@ -32,15 +32,6 @@ describe('API RETURN TYPES', () => {
             })
     })
 
-    it('End-point concepts/ should return correctly typed links', () => {
-        return request(server)
-            .get('/concepts')
-            .expect((response: Response) => {
-                let data = JSON.parse(JSON.stringify(response.body))
-                assert(data.links.filter((link: any) => isConceptLinksAttributes(link)).length == data.links.length, "Returned JSON is of wrong type, check integrity in type guard function isConceptLinksAttributes")
-            })
-    })
-
     it('Test each slug integrity', async () => {
         let r = await request(server)
             .get('/concepts')

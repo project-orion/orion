@@ -176,7 +176,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     customDoubleClick(d: d3GraphNode) {
         // It is important that this action is dispatched first as it erases
         // the list of displayed slugs from the Redux state.
-        this.props.dispatch(actions.changeSelectedConceptNav(d))
+        this.props.dispatch(actions.changeDisplayedConceptNav(d))
         // TODO: associate correct container instead of default cp1
         this.props.dispatch(actions.fetchConcept('concepts/' + d.slug, 'cp1'))
         this.props.dispatch(actions.toggleNavPanel())

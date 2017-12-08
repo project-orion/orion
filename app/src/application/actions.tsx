@@ -6,10 +6,24 @@ import {
 import config from './config'
 const serverUrl = config('app').serverURL
 
-export function changeSelectedConceptNav(conceptNode: any): action {
+export function changeSelectedRootNav(node: any): action {
     return {
-        type: 'CHANGE_SELECTED_CONCEPT_NAV',
-        value: conceptNode,
+        type: 'CHANGE_SELECTED_ROOT_NAV',
+        value: node,
+    }
+}
+
+export function changeSelectedNodeNav(node: any): action {
+    return {
+        type: 'CHANGE_SELECTED_NODE_NAV',
+        value: node,
+    }
+}
+
+export function changeDisplayedConceptNav(node: any): action {
+    return {
+        type: 'CHANGE_DISPLAYED_CONCEPT_NAV',
+        value: node,
     }
 }
 

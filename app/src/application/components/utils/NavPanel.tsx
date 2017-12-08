@@ -7,7 +7,9 @@ import {
 } from '@blueprintjs/core'
 
 import {ConceptGraph} from '../d3Blocks/conceptGraph'
+import {ConceptHierarchy} from '../d3Blocks/conceptHierarchy'
 import {ConceptNav} from '../d3Blocks/conceptNav'
+import {ConceptSearchResults} from './conceptSearchResults'
 import * as actions from '../../actions'
 import {
     concept_nodesAttribute,
@@ -22,11 +24,13 @@ import {
 
 interface Props {
     nodes: any,
-    links: any,
     graph: any,
+    graphNodes: any,
+    selectedRoot: any,
+    selectedNode: any,
     dispatch: any,
     toggled: boolean,
-    selectedConceptNode: any,
+    displayedNode: any,
     displayedSlugs: string[],
 }
 
@@ -143,7 +147,7 @@ export class NavPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {nodes, links, toggled, selectedConceptNode, displayedSlugs} = this.props
+        const {nodes, graph, graphNodes, selectedRoot, selectedNode, toggled, displayedNode, displayedSlugs} = this.props
         const {searchedConcept} = this.state
         const length = searchedConcept ? searchedConcept.length : 0
         const toggleButtonTextIcon = (toggled) ?
@@ -170,20 +174,9 @@ export class NavPanel extends React.Component<Props, State> {
                                 className={'pt-minimal'}
                                 onClick={() => this.props.dispatch(actions.toggleNavPanel())}
                             >
-                                Toggle
+                                Panneau de Recherche
                                 {toggleButtonTextIcon}
                             </Button>
-
-                            <div className='pt-input-group concept_nav_bar'>
-                                <span className={'pt-icon pt-icon-search'}></span>
-                                <input
-                                    className={'pt-input'}
-                                    placeholder={'Concept (ex: Chômage)'}
-                                    dir='auto'
-                                    value={searchedConcept}
-                                    onChange={this.updateState.bind(this)}
-                                />
-                            </div>
 
                             <div className={(toggled) ? 'hide' : ''}>
                                 <ConceptNav
@@ -193,19 +186,35 @@ export class NavPanel extends React.Component<Props, State> {
                                     }}
                                     graph={_.cloneDeep(this.props.graph)}
                                     nodes={_.cloneDeep(nodes)}
-                                    selectedConceptNode={selectedConceptNode}
+                                    displayedNode={displayedNode}
                                     displayedSlugs={displayedSlugs}
                                     dispatch={this.props.dispatch}
                                 />
                             </div>
 
                             <div className={(!toggled) ? 'hide' : ''}>
-                                <ConceptGraph
+                                <div className={'pt-input-group concept_nav_bar'}>
+                                    <span className={'pt-icon pt-icon-search'}></span>
+                                    <input
+                                        className={'pt-input'}
+                                        placeholder={'Concept (ex: Chômage)'}
+                                        dir='auto'
+                                        value={searchedConcept}
+                                        onChange={this.updateState.bind(this)}
+                                    />
+                                </div>
+                                <ConceptSearchResults
+                                    graphNodes={graphNodes}
+                                    searchedConcept={searchedConcept}
+                                    dispatch={this.props.dispatch}
+                                />
+                                <ConceptHierarchy
                                     version={nodes.length + this.state.dimensions.width + length}
                                     searchedConcept={searchedConcept}
-                                    nodes={_.cloneDeep(nodes)}
-                                    links={_.cloneDeep(links)}
-                                    labels={_.cloneDeep(nodes)}
+                                    nodes={nodes}
+                                    graph={graph}
+                                    selectedRoot={selectedRoot}
+                                    selectedNode={selectedNode}
                                     dimensions={{
                                         width: this.state.dimensions.width,
                                         height: window.innerHeight / 2,
