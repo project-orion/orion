@@ -4,9 +4,6 @@ exports.node = {
         {
             type: 'definition',
             data_identifiers: ['budget'],
-          },{
-            type: 'doughnut',
-            data_identifiers: ['plf_2017'],
         }
     ]
 }

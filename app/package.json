@@ -7,7 +7,6 @@
     },
     "dependencies": {
         "@blueprintjs/core": "^1.25.0",
-        "@types/chart.js": "^2.6.2",
         "@types/csv-parse": "^1.1.11",
         "@types/d3": "^4.10.0",
         "@types/lodash": "^4.14.71",
@@ -24,7 +23,6 @@
         "@types/redux-logger": "^3.0.0",
         "@types/webpack-env": "^1.13.2",
         "awesome-typescript-loader": "^3.2.2",
-        "chart.js": "^2.6.0",
         "classnames": "^2.2.5",
         "css-loader": "^0.28.4",
         "csv-parse": "^2.0.0",
@@ -39,7 +37,6 @@
         "morgan": "^1.8.2",
         "react": "^15.6.1",
         "react-addons-css-transition-group": "^15.6.0",
-        "react-chartjs-2": "^2.6.2",
         "react-d3-graph": "^0.2.1",
         "react-dom": "^15.6.1",
         "react-graph-vis": "^1.0.1",
@@ -57,5 +54,8 @@
         "webpack": "^3.4.1",
         "webpack-dev-server": "^2.6.1",
         "whatwg-fetch": "^2.0.3"
+    },
+    "devDependencies": {
+        "webpack-bundle-analyzer": "^2.9.1"
     }
 }

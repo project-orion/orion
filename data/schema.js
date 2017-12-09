@@ -6,7 +6,6 @@ const DB_CONFIG = require(path.join(__dirname, '../config')).default('database')
 const possibleModules = [
     'timeseries',
     'definition',
-    'doughnut'
 ]
 
 const possibleDatasets = [

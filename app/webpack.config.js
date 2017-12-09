@@ -2,7 +2,8 @@ var webpack = require('webpack'),
     path = require('path'),
     htmlPlugin = require('html-webpack-plugin'),
     extractTextWebpackPlugin = require('extract-text-webpack-plugin'),
-    UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+    UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
+    BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 
 var SRC_DIR = path.join(__dirname, './src')
@@ -16,15 +17,20 @@ module.exports = {
     entry: {
         main: './application/main.tsx',
         bundleLibraries: [
-            'chart.js',
+            '@blueprintjs/core',
+            'csv-parse',
             'd3',
             'lodash',
+            'moment',
             'react',
             'react-dom',
+            'react-measure',
             'react-redux',
             'react-router',
+            'react-router-dom',
             'redux',
-            '@blueprintjs/core'
+            'redux-logger',
+            'slug',
         ]
     },
     devtool: 'source-map',
@@ -55,9 +61,18 @@ module.exports = {
             }
         ],
     },
-    plugins: ((process.env.NODE_ENV == 'production') ? [new UglifyJSPlugin()] : []).concat([
+    plugins: (
+        (process.env.NODE_ENV == 'production') ?
+            [new UglifyJSPlugin()] :
+            [
+                // Use when bundle analysis is needed:
+                // new BundleAnalyzerPlugin()
+            ]
+        ).concat([
         // Plugin to compile libraries speficied in the entry
         // into a loadable bundle file.
+        new webpack.IgnorePlugin(/unicode\/category\/So/, /node_modules/),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'bundleLibraries',
             filename: 'libraries.bundle.js',

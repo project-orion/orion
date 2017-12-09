@@ -143,26 +143,6 @@ export class ConceptBackend {
                         values,
                     })
                     break
-                case 'doughnut':
-                    var info = await Datasets.findOne({
-                        where: {
-                            name: data_identifier
-                        },
-                        ...options,
-                    })
-
-                    var values = await LabelizedValues.findAll({
-                        where: {
-                            dataset: data_identifier
-                        },
-                        ...options,
-                    })
-
-                    data.push({
-                        info,
-                        values,
-                    })
-                    break
                 default:
                     break
             }

@@ -10,7 +10,6 @@ import {
 } from './types'
 
 import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
-import {LabelizedValuesReducer} from './components/modules/labelized_chart'
 import {navPanelReducer} from './components/utils/navPanel'
 import {ConceptHierarchyReducer} from './components/d3Blocks/conceptHierarchy'
 
@@ -160,8 +159,6 @@ export function reducer(state = initialAppState, action: action): appState {
                         }
                     case 'timeseries':
                         return TimeseriesValuesReducer(m)
-                    case 'labelizedvalues':
-                        return LabelizedValuesReducer(m)
                     default:
                         return m
                 }
