@@ -1,9 +1,7 @@
 import {assert} from 'chai'
 
 import * as schema from './../data/schema'
-import {
-    concept_nodesAttribute,
-} from '../models/db'
+import {concept_nodesAttribute} from './../models/db'
 
 describe('SEQUELIZE SETUP', () => {
     it('Connection should exist', () => {

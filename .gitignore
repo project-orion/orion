@@ -4,3 +4,4 @@ node_modules/
 models/
 config/secret
 app/config/secret
+*.DS_STORE
