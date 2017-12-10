@@ -4,6 +4,27 @@ body {
     background-color: @dark-gray1;
 }
 
+.concept-search-results > ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    > li {
+        background-color: @dark-gray2;
+        padding: 10px 20px 10px 20px;
+        margin: 5px 5px 5px 5px;
+    }
+
+    > li:hover {
+        background-color: @dark-gray3;
+        cursor: pointer;
+    }
+
+    > li * {
+        pointer-events: none;
+    }
+}
+
 .pt-dark .pt-navbar, .pt-navbar {
     background-color: @dark-gray1;
     box-shadow: none;
@@ -61,7 +82,7 @@ body {
 }
 
 .concept_nav_bar {
-    max-width: 600px;
+    max-width: 800px;
     margin: 10px auto 10px auto;
 }
 

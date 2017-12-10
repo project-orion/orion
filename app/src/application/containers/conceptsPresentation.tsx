@@ -17,7 +17,6 @@ import * as actions from '../actions'
 
 import {TimeseriesChart} from '../components/modules/timeseries_chart'
 import {HistogramChart} from '../components/modules/histogram_chart'
-import {DoughnutChart} from '../components/modules/labelized_chart'
 import {Definition} from '../components/modules/definition'
 import {Suggestion} from '../components/modules/suggestion'
 
@@ -86,11 +85,6 @@ export class ConceptsPresentation extends React.Component<Props, any> {
                         sendFetchAction={(slug: string) => {
                             this.props.dispatch(actions.fetchConcept('concepts/' + slug, this.props.containerId))
                         }}
-                    />
-            case 'doughnut':
-                return <DoughnutChart
-                        key={key}
-                        data={m.data}
                     />
             default:
                 return <div key={key}>{m.type}</div>

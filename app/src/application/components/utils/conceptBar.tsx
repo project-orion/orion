@@ -1,5 +1,5 @@
-import * as React from 'react'
 import {Breadcrumb} from '@blueprintjs/core'
+import * as React from 'react'
 
 import {concept} from '../../types'
 

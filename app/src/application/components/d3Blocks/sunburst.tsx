@@ -54,7 +54,7 @@ export class Sunburst extends React.Component<Props, State> {
             .attr('height', this.props.dimensions.height)
         this.domContainer
             .attr('transform', 'translate(' + this.props.dimensions.width / 2 + ',' + this.props.dimensions.height / 2 + ')')
-        d3.select('#info')
+        this.domSvg.select('#info')
             .attr('transform', 'translate(' + this.props.dimensions.width / 2 + ',' + this.props.dimensions.height / 2 + ')')
 
         this.radius = Math.min(this.props.dimensions.width, this.props.dimensions.height) / 2
@@ -119,9 +119,8 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     handleMouseleave(d: any) {
-        d3.select('#breadcrumb')
+        d3.select('#main #breadcrumbs')
             .style('visibility', 'hidden')
-
 
         d3.selectAll('path')
             .transition()
@@ -133,18 +132,19 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     updateBreadcrumbs(nodeArray: any, percentageString: any) {
-        d3.select('#breadcrumb').style('visibility', '')
+        d3.select('#main #breadcrumbs').style('visibility', '')
 
-        let breads = d3.select('#breadcrumb-list')
+        let breads = d3.select('#main #breadcrumbs #breadcrumb-list')
             .selectAll('li')
-                .data(nodeArray, (d: any) => d.data.name + d.depth)
+                // .data(nodeArray, (d: any) => d.data.name + d.depth)
+                .data(nodeArray)
 
         breads.exit().remove()
         breads.enter()
             .append('li')
                 .append('a')
                     .attr('class', 'pt-breadcrumb')
-                    .html((d) => d.data.name)
+                    .html((d: any) => d.data.name)
     }
 
     buildHierarchy(csv: any) {
@@ -216,7 +216,6 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     componentDidUpdate() {
-        console.log('update')
         this.updateAttributes()
         let text = `
             orion-sunburst-redo,120
@@ -238,22 +237,22 @@ export class Sunburst extends React.Component<Props, State> {
         return (
             <div>
                 <div id='main'>
-                    <div id='breadcrumb'>
-                        <ul id='breadcrumb-list' className='pt-breadcrumbs'>
-                        </ul>
+                    <div id='breadcrumbs'>
+                        <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
                     </div>
                     <div id='chart'>
-
                         <svg
                             ref='container'
                             width={width}
                             height={height}
                             className={'sunburst'}
                         >
-                            <g id='container'></g>
-                            <g id='info'>
-                                <text id='header'></text>
-                                <text id='sub'>Lorem ipsum dolor sit amet</text>
+                            <g id='sunburst'>
+                                <g id='container'></g>
+                                <g id='info'>
+                                    <text id='header'></text>
+                                    <text id='sub'>Lorem ipsum dolor sit amet</text>
+                                </g>
                             </g>
                         </svg>
                     </div>

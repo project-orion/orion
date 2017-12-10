@@ -189,7 +189,7 @@ export class Scatter extends React.Component<Props, State> {
             .translateExtent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
             .extent([[0, 0], [this.lineDimensions.width, this.lineDimensions.height]])
             .on('zoom', this.zoomed.bind(this))
-      
+
         this.domAxes = this.domContainer
             .attr('width', this.lineDimensions.width + this.padding.left + this.padding.right)
             .attr('height', this.lineDimensions.height + this.padding.top + this.padding.bottom)

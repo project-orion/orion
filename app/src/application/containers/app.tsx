@@ -79,11 +79,13 @@ export class App extends React.Component<appState, any> {
                     >
                         <NavPanel
                             nodes={conceptGraph.nodes}
-                            links={conceptGraph.links}
                             graph={conceptGraph.graph}
+                            graphNodes={conceptGraph.graphNodes}
+                            selectedRoot={conceptGraph.selectedRoot}
+                            selectedNode={conceptGraph.selectedNode}
                             dispatch={this.props.dispatch}
                             toggled={this.props.toggled}
-                            selectedConceptNode={conceptGraph.selectedConceptNode}
+                            displayedNode={conceptGraph.displayedNode}
                             displayedSlugs={conceptGraph.displayedSlugs}
                         />
                     </div>

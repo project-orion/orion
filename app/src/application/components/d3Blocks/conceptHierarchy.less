@@ -1,0 +1,81 @@
+@import '~@blueprintjs/core/dist/variables.less';
+
+svg#conceptHierarchy {
+    background-color: @dark-gray2;
+}
+
+#container {
+    vertical-align: baseline;
+}
+
+rect {
+    stroke-width: 0;
+}
+
+.breadcrumbs {
+    margin: 20px 10px 10px 20px;
+
+    li {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+}
+
+.hierarchy-rect {
+    fill: @gray3;
+}
+
+.hierarchy-rect:hover {
+    fill: @gray2;
+}
+
+.ancestor-rect {
+    stroke: @green2;
+    stroke-width: 4;
+}
+
+.ancestor-rect:hover {
+    stroke: @green1;
+}
+
+.selected-rect {
+    fill: @green2;
+}
+
+.selected-rect:hover {
+    fill: @green1;
+}
+
+.dot-line {
+    stroke: @gray2;
+    stroke-width: 1;
+    stroke-dasharray: 3, 2;
+}
+
+#tooltip {
+    pointer-events: none;
+
+    text {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+}
+
+#tooltip_content {
+    fill: @light-gray1;
+    font-size: 15px;
+    text-anchor: middle;
+
+    tspan {
+        alignment-baseline: hanging;
+    }
+}
+
+#tooltip_background, #tooltip_pointer {
+    fill: black;
+    opacity: 0.85;
+}
