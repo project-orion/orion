@@ -27,7 +27,7 @@ interface Props {
     }
     graph: conceptGraph,
     nodes: extendedConceptNodeAttribute[],
-    selectedConceptNode: extendedConceptNodeAttribute,
+    displayedNode: any,
     displayedSlugs: string[],
     dispatch: any,
 }
@@ -63,7 +63,7 @@ export class ConceptNav extends React.Component<Props, State> {
         if (!hNode.toggled) {
             hNode.toggled = true
             hNode.visible = true
-            hNode.children.forEach(this.hierachicalToggle.bind(this))
+            hNode.children ? hNode.children.forEach(this.hierachicalToggle.bind(this)) : null
         } else {
             hNode.toggled = false
             hNode.each((hNode: extendedHierarchyNode) => {
@@ -74,17 +74,17 @@ export class ConceptNav extends React.Component<Props, State> {
     }
 
     updateHierarchy() {
-        if (this.props.selectedConceptNode && this.props.selectedConceptNode.connexComponent) {
+        if (this.props.displayedNode && this.props.displayedNode.data.connexComponent) {
             this.graph = this.props.graph
 
             let selectedNode
 
-            if (this.selectedNodeId != this.props.selectedConceptNode.id) {
-                this.selectedNodeId = this.props.selectedConceptNode.id
-                this.hierarchy = this.graph[this.props.selectedConceptNode.connexComponent]
+            if (this.selectedNodeId != this.props.displayedNode.data.id) {
+                this.selectedNodeId = this.props.displayedNode.data.id
+                this.hierarchy = this.graph[this.props.displayedNode.data.connexComponent]
 
                 this.hierarchy.each((hNode: extendedHierarchyNode) => {
-                    if (hNode.data.id == this.props.selectedConceptNode.id) {
+                    if (hNode.data.id == this.props.displayedNode.data.id) {
                         selectedNode = hNode
                     }
                 })
@@ -216,13 +216,13 @@ export class ConceptNav extends React.Component<Props, State> {
 
     // REACT LIFECYCLE
     selectGraph(props: Props) {
-        let selectedGraph: extendedHierarchyNode
+        let selectedGraph: any
 
-        if (props.selectedConceptNode && props.selectedConceptNode.id) {
-            let hierarchy = props.graph[props.selectedConceptNode.connexComponent]
+        if (props.displayedNode && props.displayedNode.data.id) {
+            let hierarchy = props.graph[props.displayedNode.data.connexComponent]
 
             hierarchy.each((node: extendedHierarchyNode) => {
-                if (node.data.id == props.selectedConceptNode.id) {
+                if (node.data.id == props.displayedNode.data.id) {
                     selectedGraph = node
                 }
             })

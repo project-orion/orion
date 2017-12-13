@@ -37,10 +37,11 @@ export interface appState {
     },
     conceptGraph: {
         nodes: extendedConceptNodeAttribute[],
-        links: conceptLinksAttribute[],
-        suggestedLinks: conceptLinksAttribute[],
-        graph: conceptGraph,
-        selectedConceptNode: any,
+        graph?: any,
+        graphNodes: any,
+        selectedRoot: any,
+        selectedNode: any,
+        displayedNode: any,
         displayedSlugs: string[],
     }
     dispatch?: any,
@@ -54,6 +55,7 @@ export interface containerState {
 
     // The following props depend on the container.
     concepts?: concept[],
+    testData?: any,
 }
 
 export interface concept {

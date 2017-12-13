@@ -42,8 +42,8 @@ export class Test extends React.Component<appState, any> {
 
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
-        // this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
+        // this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
@@ -87,20 +87,36 @@ export class Test extends React.Component<appState, any> {
                     >
                         <NavPanel
                             nodes={conceptGraph.nodes}
-                            links={conceptGraph.links}
                             graph={conceptGraph.graph}
+                            graphNodes={conceptGraph.graphNodes}
+                            selectedRoot={conceptGraph.selectedRoot}
+                            selectedNode={conceptGraph.selectedNode}
                             dispatch={this.props.dispatch}
                             toggled={this.props.toggled}
-                            selectedConceptNode={conceptGraph.selectedConceptNode}
+                            displayedNode={conceptGraph.displayedNode}
                             displayedSlugs={conceptGraph.displayedSlugs}
                         />
                     </div>
                     <div className={'left-of-panel' + classToggled}>
                         <div>
                             <div className={'block-1'}>
-                                <SunburstModule
-                                    key={key}
-                                />
+                                <div
+                                    key={'key1'}
+                                    className={'left-of-panel block-2'}
+                                >
+                                    <h3 className={'concept-header'}>
+                                        {'conceptName'}
+                                    </h3>
+                                    <h5 className={'concept-loadedtime'}>
+                                        {'loadedTime'}
+                                    </h5>
+
+                                    <div className={'flex-box'}>
+                                        <SunburstModule
+                                            key={key}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
