@@ -43,13 +43,15 @@ export class Test extends React.Component<appState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        // this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.testFetch(['plf/PLFNomenclature.txt'], 'test', 'http://localhost:31338/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
         let {conceptGraph} = this.props
         let data = this.props.containers['test'].testData
+        console.log(data)
+        data = (data ? data['plf/PLFNomenclature.txt'] : data)
 
         let loading = false
 
@@ -114,6 +116,7 @@ export class Test extends React.Component<appState, any> {
                                     <div className={'flex-box'}>
                                         <SunburstModule
                                             key={key}
+                                            data={data}
                                         />
                                     </div>
                                 </div>

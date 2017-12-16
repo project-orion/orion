@@ -20,6 +20,7 @@ interface Props {
         left: number,
     },
     colors: any,
+    data: any,
 }
 
 interface State {
@@ -68,6 +69,14 @@ export class Sunburst extends React.Component<Props, State> {
             .sum((d: any) => d.size)
             .sort((a: any, b: any) => b.value - a.value)
 
+        let i = 0
+        root.each((node: any) => {
+            if (node.depth == 1) {
+                node.data.index = i
+                i++
+            }
+        })
+
         let nodes = this.partition(root)
             .descendants()
             .filter((d: any) => (d.x1 - d.x0 > 0.005))
@@ -75,16 +84,22 @@ export class Sunburst extends React.Component<Props, State> {
         this.path = this.domContainer
             .data([hierarchy])
             .selectAll('path')
-                .data(nodes)
+                .data(nodes, (d: any) => d.data.name)
+
+        this.path.exit().remove()
 
         this.path
             .enter()
                 .append('path')
                 .attr('display', (d: any) => d.depth ? null : 'none')
+            .merge(this.path)
                 .attr('d', this.arc)
                 .attr('fill-rule', 'evenodd')
-                .style('fill', (d: any, index: number) => this.props.colors[index % this.props.colors.length])
-            .merge(this.path)
+                .style('fill', (d: any, index: number) => {
+                    if (d.data.name != 'root') {
+                        return this.props.colors[d.ancestors().reverse()[1].data.index % this.props.colors.length]
+                    }
+                })
                 .style('opacity', 1)
                 .on('mouseover', this.handleMouseOver.bind(this))
 
@@ -137,7 +152,6 @@ export class Sunburst extends React.Component<Props, State> {
         let breads = d3.select('#main #breadcrumbs #breadcrumb-list')
             .selectAll('li')
                 .data(nodeArray, (d: any) => d.data.name + d.depth)
-                // .data(nodeArray)
 
         breads.exit().remove()
         breads.enter()
@@ -150,17 +164,17 @@ export class Sunburst extends React.Component<Props, State> {
     buildHierarchy(csv: any) {
         let root = {
             'name': 'root',
-            'children': [] as any
+            'children': [] as any,
         }
 
         for (let i = 0; i < csv.length; i++) {
             let sequence = csv[i][0]
-            let size = +csv[i][1]
+            let size = (csv[i].length > 1) ? (+csv[i][1]) : 1
             if (isNaN(size)) {
                 continue
             }
 
-            let parts = sequence.split('-')
+            let parts = sequence.split('|')
             let currentNode = root
             for (let j = 0; j < parts.length; j++) {
                 let children = currentNode['children']
@@ -209,23 +223,25 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextProps.version === this.props.version) {
-            return false
-        }
+        // if (nextProps.version === this.props.version) {
+        //     return false
+        // }
         return true
     }
 
     componentDidUpdate() {
         this.updateAttributes()
-        let text = `
-            orion-sunburst-redo,120
-            orion-sunburst-understand,50
-            orion-sunburst-typing,10
-            orion-fun,40
-            mva-homework,30
+        let defaultData = `
+            orion|sunburst|redo;120
+            orion|sunburst|understand;50
+            orion|sunburst|typing;10
+            orion|fun;40
+            mva|homework;30
         `
 
-        let csv = d3.csvParseRows(text)
+        let data: string = this.props.data ? this.props.data : defaultData
+
+        let csv = d3.dsvFormat(';').parseRows(data)
         let hierarchy = this.buildHierarchy(csv)
 
         this.drawSunburst(hierarchy)
