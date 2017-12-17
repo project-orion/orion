@@ -43,15 +43,14 @@ export class Test extends React.Component<appState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        this.props.dispatch(actions.testFetch(['plf/PLFNomenclature.txt'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.testFetch(['plf/PLF.txt'], 'test', 'http://localhost:31338/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
         let {conceptGraph} = this.props
         let data = this.props.containers['test'].testData
-        console.log(data)
-        data = (data ? data['plf/PLFNomenclature.txt'] : data)
+        data = (data ? data['plf/PLF.txt'] : data)
 
         let loading = false
 
@@ -79,7 +78,7 @@ export class Test extends React.Component<appState, any> {
         return (
             <div>
                 <NavBar
-                    left_text={'Visualisation et documentation de données socio-politiques'}
+                    left_text={'Visualisation et documentation de données socio-économiques'}
                 />
 
                 <div id={'app-container'}>

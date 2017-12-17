@@ -1,0 +1,30 @@
+GESTION;2017;;;;;;;
+TYPE BUDGET;Comptes d'affectation spéciale;;;;;;;
+;;;Données;;;;;
+Ministère;Libellé ministère;Programme;AE Titre 2;AE autres titres;Total AE;CP Titre 2;CP autres titres;Total CP
+03;Agriculture, agroalimentaire et forêt;775;0;70 553 250;70 553 250;0;70 553 250;70 553 250
+03;Agriculture, agroalimentaire et forêt;776;0;76 946 750;76 946 750;0;76 946 750;76 946 750
+07;Économie et finances;721;0;60 000 000;60 000 000;0;60 000 000;60 000 000
+07;Économie et finances;723;0;375 543 000;375 543 000;0;374 793 000;374 793 000
+07;Économie et finances;724;0;158 073 000;158 073 000;0;150 207 000;150 207 000
+07;Économie et finances;731;0;6 500 000 000;6 500 000 000;0;6 500 000 000;6 500 000 000
+07;Économie et finances;732;0;0;0;0;0;0
+07;Économie et finances;741;53 823 950 000;750 000;53 824 700 000;53 823 950 000;750 000;53 824 700 000
+07;Économie et finances;742;1 880 107 000;8 344 000;1 888 451 000;1 880 107 000;8 344 000;1 888 451 000
+07;Économie et finances;743;16 000 000;1 924 856 781;1 940 856 781;16 000 000;1 924 856 781;1 940 856 781
+07;Économie et finances;755;0;438 776 184;438 776 184;0;438 776 184;438 776 184
+07;Économie et finances;795;0;183 000 000;183 000 000;0;239 000 000;239 000 000
+07;Économie et finances;796;0;0;0;0;0;0
+09;Intérieur;751;0;249 000 000;249 000 000;0;249 000 000;249 000 000
+09;Intérieur;753;0;26 200 000;26 200 000;0;26 200 000;26 200 000
+09;Intérieur;754;0;664 790 165;664 790 165;0;664 790 165;664 790 165
+23;Environnement, énergie et mer;764;0;5 680 200 000;5 680 200 000;0;5 680 200 000;5 680 200 000
+23;Environnement, énergie et mer;765;0;1 303 000 000;1 303 000 000;0;1 303 000 000;1 303 000 000
+23;Environnement, énergie et mer;785;0;258 000 000;258 000 000;0;258 000 000;258 000 000
+23;Environnement, énergie et mer;786;0;100 000 000;100 000 000;0;100 000 000;100 000 000
+23;Environnement, énergie et mer;791;0;320 000 000;320 000 000;0;320 000 000;320 000 000
+23;Environnement, énergie et mer;792;0;27 000 000;27 000 000;0;27 000 000;27 000 000
+23;Environnement, énergie et mer;793;0;369 600 000;369 600 000;0;369 600 000;369 600 000
+23;Environnement, énergie et mer;794;0;7 400 000;7 400 000;0;7 400 000;7 400 000
+36;Travail, emploi, formation professionnelle et dialogue social;787;0;1 393 550 853;1 393 550 853;0;1 393 550 853;1 393 550 853
+36;Travail, emploi, formation professionnelle et dialogue social;790;0;179 689 222;179 689 222;0;179 689 222;179 689 222
