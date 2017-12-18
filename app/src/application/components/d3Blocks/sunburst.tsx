@@ -28,20 +28,21 @@ interface State {
 }
 
 export class Sunburst extends React.Component<Props, State> {
+    hierarchy: any
+
     // D3
     refs: any
     domSvg: any
     domContainer: any
 
     radius: any
+    x: any
+    y: any
     partition: any
     arc: any
     b: any
     totalSize: any
     path: any
-
-    x: any
-    y: any
 
     initAttributes() {
         this.totalSize = 0
@@ -79,8 +80,8 @@ export class Sunburst extends React.Component<Props, State> {
             .outerRadius((d: any) => Math.max(0, this.y(d.y1)))
     }
 
-    drawSunburst(hierarchy: any) {
-        let root = d3.hierarchy(hierarchy)
+    drawSunburst() {
+        let root = d3.hierarchy(this.hierarchy)
             .sum((d: any) => d.size)
             .sort((a: any, b: any) => b.value - a.value)
 
@@ -95,9 +96,10 @@ export class Sunburst extends React.Component<Props, State> {
         let nodes = this.partition(root)
             .descendants()
             .filter((d: any) => (this.x(d.x1) - this.x(d.x0) > 0.005))
+            // For PLF2017, filtering allows to go from 3000 nodes to 300.
 
         this.path = this.domContainer
-            .data([hierarchy])
+            .data([this.hierarchy])
             .selectAll('path')
                 .data(nodes, (d: any) => d.data.name)
 
@@ -127,17 +129,19 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     handleClick(d: any) {
+        // TODO: when clicking, hierarchy should be recomputed and include nodes which
+        // are not currently displayed because they are too small
         this.domContainer
             .transition()
             .duration(500)
             .tween('scale', () => {
-                let xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
-                let yd = d3.interpolate(this.y.domain(), [d.y0, 1])
-                let yr = d3.interpolate(this.y.range(), [d.y0 ? 20 : 0, this.radius])
+                let xdomain = d3.interpolate(this.x.domain(), [d.x0, d.x1])
+                let ydomain = d3.interpolate(this.y.domain(), [d.y0, 1])
+                let yrange = d3.interpolate(this.y.range(), [d.y0 ? 30 : 0, this.radius])
 
                 return ((t: any) => {
-                    this.x.domain(xd(t))
-                    this.y.domain(yd(t)).range(yr(t))
+                    this.x.domain(xdomain(t))
+                    this.y.domain(ydomain(t)).range(yrange(t))
                 })
             })
             .selectAll('path')
@@ -278,9 +282,9 @@ export class Sunburst extends React.Component<Props, State> {
         let data: string = this.props.data ? this.props.data : defaultData
 
         let csv = d3.dsvFormat(';').parseRows(data)
-        let hierarchy = this.buildHierarchy(csv)
+        this.hierarchy = this.buildHierarchy(csv)
 
-        this.drawSunburst(hierarchy)
+        this.drawSunburst()
     }
 
     render() {
