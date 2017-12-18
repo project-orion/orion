@@ -40,8 +40,12 @@ export class Sunburst extends React.Component<Props, State> {
     totalSize: any
     path: any
 
+    x: any
+    y: any
+
     initAttributes() {
         this.totalSize = 0
+
         this.arc = d3.arc()
             .startAngle((d: any) => d.x0)
             .endAngle((d: any) => d.x1)
@@ -60,8 +64,19 @@ export class Sunburst extends React.Component<Props, State> {
 
         this.radius = Math.min(this.props.dimensions.width, this.props.dimensions.height) / 2
         this.partition = d3.partition()
-            .size([2 * Math.PI, this.radius * this.radius])
-            // .padding(0.1)
+            .size([1, 1])
+
+        this.x = d3.scaleLinear()
+            .range([0, 2 * Math.PI])
+
+        this.y = d3.scaleSqrt()
+            .range([0, this.radius])
+
+        this.arc = d3.arc()
+            .startAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))))
+            .endAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))))
+            .innerRadius((d: any) => Math.max(0, this.y(d.y0)))
+            .outerRadius((d: any) => Math.max(0, this.y(d.y1)))
     }
 
     drawSunburst(hierarchy: any) {
@@ -79,7 +94,7 @@ export class Sunburst extends React.Component<Props, State> {
 
         let nodes = this.partition(root)
             .descendants()
-            .filter((d: any) => (d.x1 - d.x0 > 0.005))
+            .filter((d: any) => (this.x(d.x1) - this.x(d.x0) > 0.005))
 
         this.path = this.domContainer
             .data([hierarchy])
@@ -91,21 +106,42 @@ export class Sunburst extends React.Component<Props, State> {
         this.path
             .enter()
                 .append('path')
-                .attr('display', (d: any) => d.depth ? null : 'none')
+                // .attr('display', (d: any) => d.depth ? null : 'none')
+                .on('mouseover', this.handleMouseOver.bind(this))
+                .on('click', this.handleClick.bind(this))
             .merge(this.path)
                 .attr('d', this.arc)
                 .attr('fill-rule', 'evenodd')
                 .style('fill', (d: any, index: number) => {
                     if (d.data.name != 'root') {
                         return this.props.colors[d.ancestors().reverse()[1].data.index % this.props.colors.length]
+                    } else {
+                        return '#5C7080'
                     }
                 })
                 .style('opacity', 1)
-                .on('mouseover', this.handleMouseOver.bind(this))
 
         d3.select('#container').on('mouseleave', this.handleMouseleave.bind(this))
 
         this.totalSize = root.value
+    }
+
+    handleClick(d: any) {
+        this.domContainer
+            .transition()
+            .duration(500)
+            .tween('scale', () => {
+                let xd = d3.interpolate(this.x.domain(), [d.x0, d.x1])
+                let yd = d3.interpolate(this.y.domain(), [d.y0, 1])
+                let yr = d3.interpolate(this.y.range(), [d.y0 ? 20 : 0, this.radius])
+
+                return ((t: any) => {
+                    this.x.domain(xd(t))
+                    this.y.domain(yd(t)).range(yr(t))
+                })
+            })
+            .selectAll('path')
+            .attrTween('d', (d: any) => (() => this.arc(d)))
     }
 
     handleMouseOver(d: any) {
@@ -253,9 +289,6 @@ export class Sunburst extends React.Component<Props, State> {
         return (
             <div>
                 <div id='main'>
-                    <div id='breadcrumbs'>
-                        <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
-                    </div>
                     <div id='chart'>
                         <svg
                             ref='container'
@@ -271,6 +304,9 @@ export class Sunburst extends React.Component<Props, State> {
                                 </g>
                             </g>
                         </svg>
+                    </div>
+                    <div id='breadcrumbs'>
+                        <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
                     </div>
                 </div>
             </div>

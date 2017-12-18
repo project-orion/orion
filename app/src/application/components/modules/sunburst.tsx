@@ -36,7 +36,7 @@ export class SunburstModule extends React.Component<Props, State> {
     }
 
     render () {
-        const title = 'Module title'
+        const title = 'Projet de Loi de Finance 2017'
         const {data} = this.props
 
         return (
