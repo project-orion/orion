@@ -1,3 +1,6 @@
+import {
+    Switch,
+} from '@blueprintjs/core'
 import * as _ from 'lodash'
 import * as d3 from 'd3'
 import * as React from 'react'
@@ -24,7 +27,7 @@ interface Props {
 }
 
 interface State {
-
+    displayValue: boolean,
 }
 
 export class Sunburst extends React.Component<Props, State> {
@@ -231,7 +234,7 @@ export class Sunburst extends React.Component<Props, State> {
 
         for (let i = 0; i < csv.length; i++) {
             let sequence = csv[i][0]
-            let size = (csv[i].length > 1) ? (+csv[i][1]) : 1
+            let size = (csv[i].length > 1 && this.state.displayValue) ? (+csv[i][1]) : 1
             if (isNaN(size)) {
                 continue
             }
@@ -275,6 +278,9 @@ export class Sunburst extends React.Component<Props, State> {
     // REACT LIFECYCLE
     constructor(props: Props) {
         super(props)
+        this.state = {
+            displayValue: true,
+        }
     }
 
     componentDidMount() {
@@ -285,9 +291,11 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextProps.version === this.props.version) {
-            if (nextProps.data === this.props.data) {
-                return false
+        if (this.state.displayValue == nextState.displayValue) {
+            if (nextProps.version === this.props.version) {
+                if (nextProps.data === this.props.data) {
+                    return false
+                }
             }
         }
         return true
@@ -326,11 +334,20 @@ export class Sunburst extends React.Component<Props, State> {
         this.drawSunburst()
     }
 
+    changeDisplayValue() {
+        this.setState((prevState: any, props: any) => {
+            return {
+                displayValue: !prevState.displayValue,
+            }
+        })
+    }
+
     render() {
         let {width, height} = this.props.dimensions
 
         return (
             <div id='main'>
+                <Switch checked={this.state.displayValue} label='Surface proportionnelle à la valeur' onChange={this.changeDisplayValue.bind(this)} />
                 <div id='percentages'>
                     <div id='total'></div>
                     <div id='relative'></div>
