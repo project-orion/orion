@@ -7,7 +7,7 @@ import {
     timeseries_valuesAttribute,
     labelized_valuesAttribute,
     suggestion_valuesAttribute,
-} from '../../../../models/db'
+} from './../../../models/db'
 import {
     ConceptNodes,
     ConceptLinks,
@@ -17,7 +17,7 @@ import {
     LabelizedValues,
     SuggestionValues,
     Datasets,
-} from '../../database'
+} from './../database'
 
 
 export class DataBackend {
@@ -38,15 +38,13 @@ export class DataBackend {
                           dataset: request.params.dataset,
                       },
                       raw: true,
-                    }
-                    )
-
+                    })
 
                     response.json(data)
                 } else {
                     response.status(400)
                     response.json({
-                        error: 'Concept slug parameter absent from query.'
+                        error: 'Dataset id absent from query.'
                     })
                 }
             })
@@ -59,13 +57,13 @@ export class DataBackend {
                              dataset: request.params.dataset,
                          },
                          raw: true,
-                    }
-                    )
+                    })
+
                     response.json(data)
                 } else {
                     response.status(400)
                     response.json({
-                        error: 'Concept slug parameter absent from query.'
+                        error: 'Dataset id absent from query.'
                     })
                 }
             })

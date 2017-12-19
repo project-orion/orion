@@ -43,7 +43,7 @@ export class Test extends React.Component<appState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        this.props.dispatch(actions.testFetch(['plf/PLF.txt'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.testFetch(['plf/PLF.txt'], 'test', 'http://localhost:3001/file/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 

@@ -7,7 +7,7 @@ import {
     timeseries_valuesAttribute,
     labelized_valuesAttribute,
     suggestion_valuesAttribute,
-} from '../../../../models/db'
+} from './../../../models/db'
 import {
     sequelize,
     ConceptNodes,
@@ -19,7 +19,7 @@ import {
     LabelizedValues,
     SuggestionValues,
     Datasets,
-} from '../../database'
+} from './../database'
 
 const options = {
     raw: true,
