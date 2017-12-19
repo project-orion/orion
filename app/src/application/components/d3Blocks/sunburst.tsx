@@ -29,6 +29,8 @@ interface State {
 
 export class Sunburst extends React.Component<Props, State> {
     hierarchy: any
+    d3Hierarchy: any
+    selectedHierarchy: any
 
     // D3
     refs: any
@@ -36,8 +38,9 @@ export class Sunburst extends React.Component<Props, State> {
     domContainer: any
 
     radius: any
-    x: any
-    y: any
+    xScale: any
+    xTargetScale: any
+    yScale: any
     partition: any
     arc: any
     b: any
@@ -67,39 +70,35 @@ export class Sunburst extends React.Component<Props, State> {
         this.partition = d3.partition()
             .size([1, 1])
 
-        this.x = d3.scaleLinear()
+        this.xScale = d3.scaleLinear()
             .range([0, 2 * Math.PI])
 
-        this.y = d3.scaleSqrt()
+        this.xTargetScale = d3.scaleLinear()
+            .domain([0, 1])
+            .range([0, 2 * Math.PI])
+
+        this.yScale = d3.scaleSqrt()
             .range([0, this.radius])
 
         this.arc = d3.arc()
-            .startAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x0))))
-            .endAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.x(d.x1))))
-            .innerRadius((d: any) => Math.max(0, this.y(d.y0)))
-            .outerRadius((d: any) => Math.max(0, this.y(d.y1)))
+            .startAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.xScale(d.x0))))
+            .endAngle((d: any) => Math.max(0, Math.min(2 * Math.PI, this.xScale(d.x1))))
+            .innerRadius((d: any) => Math.max(0, this.yScale(d.y0)))
+            .outerRadius((d: any) => Math.max(0, this.yScale(d.y1)))
     }
 
     drawSunburst() {
-        let root = d3.hierarchy(this.hierarchy)
-            .sum((d: any) => d.size)
-            .sort((a: any, b: any) => b.value - a.value)
+        let descendants = this.selectedHierarchy.descendants()
+        let ancestors = this.selectedHierarchy.ancestors()
 
-        let i = 0
-        root.each((node: any) => {
-            if (node.depth == 1) {
-                node.data.index = i
-                i++
-            }
-        })
-
-        let nodes = this.partition(root)
+        let nodes = this.partition(this.d3Hierarchy)
             .descendants()
-            .filter((d: any) => (this.x(d.x1) - this.x(d.x0) > 0.005))
+            .filter((d: any) => {
+                return (ancestors.indexOf(d) != -1) || (descendants.indexOf(d) != -1 && (this.xTargetScale(d.x1) - this.xTargetScale(d.x0) > 0.005))
+            })
             // For PLF2017, filtering allows to go from 3000 nodes to 300.
 
         this.path = this.domContainer
-            .data([this.hierarchy])
             .selectAll('path')
                 .data(nodes, (d: any) => d.data.name)
 
@@ -114,7 +113,7 @@ export class Sunburst extends React.Component<Props, State> {
             .merge(this.path)
                 .attr('d', this.arc)
                 .attr('fill-rule', 'evenodd')
-                .style('fill', (d: any, index: number) => {
+                .style('fill', (d: any) => {
                     if (d.data.name != 'root') {
                         return this.props.colors[d.ancestors().reverse()[1].data.index % this.props.colors.length]
                     } else {
@@ -125,23 +124,37 @@ export class Sunburst extends React.Component<Props, State> {
 
         d3.select('#container').on('mouseleave', this.handleMouseleave.bind(this))
 
-        this.totalSize = root.value
+        this.totalSize = this.selectedHierarchy.value
     }
 
     handleClick(d: any) {
         // TODO: when clicking, hierarchy should be recomputed and include nodes which
         // are not currently displayed because they are too small
+        let selectedHierarchy = null
+        this.d3Hierarchy.each((node: any) => {
+            if (node == d) {
+                selectedHierarchy = node
+            }
+        })
+
+        console.log([d.x0, d.x1])
+        this.xTargetScale = d3.scaleLinear()
+            .domain([d.x0, d.x1])
+
+        this.selectedHierarchy = selectedHierarchy
+        this.drawSunburst()
+
         this.domContainer
             .transition()
             .duration(500)
             .tween('scale', () => {
-                let xdomain = d3.interpolate(this.x.domain(), [d.x0, d.x1])
-                let ydomain = d3.interpolate(this.y.domain(), [d.y0, 1])
-                let yrange = d3.interpolate(this.y.range(), [d.y0 ? 30 : 0, this.radius])
+                let xdomain = d3.interpolate(this.xScale.domain(), [d.x0, d.x1])
+                let ydomain = d3.interpolate(this.yScale.domain(), [d.y0, 1])
+                let yrange = d3.interpolate(this.yScale.range(), [d.y0 ? 30 : 0, this.radius])
 
                 return ((t: any) => {
-                    this.x.domain(xdomain(t))
-                    this.y.domain(ydomain(t)).range(yrange(t))
+                    this.xScale.domain(xdomain(t))
+                    this.yScale.domain(ydomain(t)).range(yrange(t))
                 })
             })
             .selectAll('path')
@@ -162,7 +175,7 @@ export class Sunburst extends React.Component<Props, State> {
             .style('visibility', '')
 
         let sequenceArray = d.ancestors().reverse()
-        sequenceArray.shift()
+        // sequenceArray.shift()
         this.updateBreadcrumbs(sequenceArray, percentageString)
 
         d3.selectAll('path')
@@ -284,6 +297,20 @@ export class Sunburst extends React.Component<Props, State> {
         let csv = d3.dsvFormat(';').parseRows(data)
         this.hierarchy = this.buildHierarchy(csv)
 
+        this.d3Hierarchy = d3.hierarchy(this.hierarchy)
+            .sum((d: any) => d.size)
+            .sort((a: any, b: any) => b.value - a.value)
+
+        let i = 0
+        this.d3Hierarchy.each((node: any) => {
+            if (node.depth == 1) {
+                node.data.index = i
+                i++
+            }
+        })
+
+        this.selectedHierarchy = this.d3Hierarchy
+
         this.drawSunburst()
     }
 
@@ -304,7 +331,7 @@ export class Sunburst extends React.Component<Props, State> {
                                 <g id='container'></g>
                                 <g id='info'>
                                     <text id='header'></text>
-                                    <text id='sub'>Lorem ipsum dolor sit amet</text>
+                                    <text id='sub'>sub</text>
                                 </g>
                             </g>
                         </svg>
