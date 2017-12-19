@@ -6,9 +6,18 @@ path {
     stroke-opacity: 1;
 }
 
+#chart {
+    text-align: center;
+}
+
 #breadcrumbs {
-    height: 18px;
     font-size: 15px;
+    margin-top: 10px;
+
+    li a {
+        background-color: @gray1;
+        padding: 2px 5px 2px 5px;
+    }
 }
 
 #info {
@@ -26,5 +35,29 @@ path {
     #sub {
         alignment-baseline: hanging;
         font-size: 13px;
+    }
+}
+
+#percentages {
+    width: 100%;
+    height: 35px;
+    padding: 3px;
+    margin: 6px 0 16px 0;
+    text-align: center;
+
+    #total, #relative {
+        display: inline-block;
+        padding: 10px;
+        font-size: 15px;
+        line-height: 15px;
+        height: 35px;
+    }
+
+    #total {
+        background-color: @gray1;
+    }
+
+    #relative {
+        background-color: @blue2;
     }
 }

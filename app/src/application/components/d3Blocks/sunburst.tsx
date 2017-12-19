@@ -28,7 +28,6 @@ interface State {
 }
 
 export class Sunburst extends React.Component<Props, State> {
-    hierarchy: any
     d3Hierarchy: any
     selectedHierarchy: any
 
@@ -36,6 +35,9 @@ export class Sunburst extends React.Component<Props, State> {
     refs: any
     domSvg: any
     domContainer: any
+    size: number
+    height: number
+    width: number
 
     radius: any
     xScale: any
@@ -45,6 +47,7 @@ export class Sunburst extends React.Component<Props, State> {
     arc: any
     b: any
     totalSize: any
+    relativeSize: any
     path: any
 
     initAttributes() {
@@ -58,15 +61,19 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     updateAttributes() {
-        this.domSvg
-            .attr('width', this.props.dimensions.width)
-            .attr('height', this.props.dimensions.height)
-        this.domContainer
-            .attr('transform', 'translate(' + this.props.dimensions.width / 2 + ',' + this.props.dimensions.height / 2 + ')')
-        this.domSvg.select('#info')
-            .attr('transform', 'translate(' + this.props.dimensions.width / 2 + ',' + this.props.dimensions.height / 2 + ')')
+        this.height = this.props.dimensions.height
+        this.width = this.props.dimensions.width
+        this.size = Math.min(this.height, this.width)
 
-        this.radius = Math.min(this.props.dimensions.width, this.props.dimensions.height) / 2
+        this.domSvg
+            .attr('width', this.size)
+            .attr('height', this.size)
+        this.domContainer
+            .attr('transform', 'translate(' + this.size / 2 + ',' + this.size / 2 + ')')
+        this.domSvg.select('#info')
+            .attr('transform', 'translate(' + this.size / 2 + ',' + this.size / 2 + ')')
+
+        this.radius = Math.min(this.size, this.size) / 2
         this.partition = d3.partition()
             .size([1, 1])
 
@@ -74,8 +81,7 @@ export class Sunburst extends React.Component<Props, State> {
             .range([0, 2 * Math.PI])
 
         this.xTargetScale = d3.scaleLinear()
-            .domain([0, 1])
-            .range([0, 2 * Math.PI])
+            .range([0, 1])
 
         this.yScale = d3.scaleSqrt()
             .range([0, this.radius])
@@ -114,7 +120,7 @@ export class Sunburst extends React.Component<Props, State> {
                 .attr('d', this.arc)
                 .attr('fill-rule', 'evenodd')
                 .style('fill', (d: any) => {
-                    if (d.data.name != 'root') {
+                    if (d.depth != 0) {
                         return this.props.colors[d.ancestors().reverse()[1].data.index % this.props.colors.length]
                     } else {
                         return '#5C7080'
@@ -124,12 +130,10 @@ export class Sunburst extends React.Component<Props, State> {
 
         d3.select('#container').on('mouseleave', this.handleMouseleave.bind(this))
 
-        this.totalSize = this.selectedHierarchy.value
+        this.relativeSize = this.selectedHierarchy.value
     }
 
     handleClick(d: any) {
-        // TODO: when clicking, hierarchy should be recomputed and include nodes which
-        // are not currently displayed because they are too small
         let selectedHierarchy = null
         this.d3Hierarchy.each((node: any) => {
             if (node == d) {
@@ -137,7 +141,6 @@ export class Sunburst extends React.Component<Props, State> {
             }
         })
 
-        console.log([d.x0, d.x1])
         this.xTargetScale = d3.scaleLinear()
             .domain([d.x0, d.x1])
 
@@ -162,21 +165,27 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     handleMouseOver(d: any) {
-        let percentage = (100 * d.value / this.totalSize).toPrecision(3) as any
-        let percentageString = percentage + '%'
-        if (percentage < 0.1) {
-            percentageString = '< 0.1%'
+        let totalPercentage = (100 * d.value / this.totalSize).toPrecision(3) as any
+        let totalPercentageString = totalPercentage + '%'
+        let relativePercentage = (100 * d.value / this.relativeSize).toPrecision(3) as any
+        let relativePercentageString = relativePercentage + '%'
+
+        if (relativePercentage < 0.1) {
+            relativePercentageString = '< 0.1%'
         }
 
-        d3.select('#header')
-            .text(percentageString)
+        d3.select('#total')
+            .text(totalPercentageString)
 
-        d3.select('#info')
+        d3.select('#relative')
+            .text(relativePercentageString)
+
+        d3.select('#percentages')
             .style('visibility', '')
 
         let sequenceArray = d.ancestors().reverse()
         // sequenceArray.shift()
-        this.updateBreadcrumbs(sequenceArray, percentageString)
+        this.updateBreadcrumbs(sequenceArray)
 
         d3.selectAll('path')
             .style('opacity', 0.3)
@@ -195,11 +204,11 @@ export class Sunburst extends React.Component<Props, State> {
             .duration(150)
             .style('opacity', 1)
 
-        d3.select('#info')
+        d3.select('#percentages')
             .style('visibility', 'hidden')
     }
 
-    updateBreadcrumbs(nodeArray: any, percentageString: any) {
+    updateBreadcrumbs(nodeArray: any) {
         d3.select('#main #breadcrumbs').style('visibility', '')
 
         let breads = d3.select('#main #breadcrumbs #breadcrumb-list')
@@ -216,7 +225,7 @@ export class Sunburst extends React.Component<Props, State> {
 
     buildHierarchy(csv: any) {
         let root = {
-            'name': 'root',
+            'name': 'PLF',
             'children': [] as any,
         }
 
@@ -276,9 +285,11 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        // if (nextProps.version === this.props.version) {
-        //     return false
-        // }
+        if (nextProps.version === this.props.version) {
+            if (nextProps.data === this.props.data) {
+                return false
+            }
+        }
         return true
     }
 
@@ -295,9 +306,9 @@ export class Sunburst extends React.Component<Props, State> {
         let data: string = this.props.data ? this.props.data : defaultData
 
         let csv = d3.dsvFormat(';').parseRows(data)
-        this.hierarchy = this.buildHierarchy(csv)
+        let hierarchy = this.buildHierarchy(csv)
 
-        this.d3Hierarchy = d3.hierarchy(this.hierarchy)
+        this.d3Hierarchy = d3.hierarchy(hierarchy)
             .sum((d: any) => d.size)
             .sort((a: any, b: any) => b.value - a.value)
 
@@ -309,6 +320,7 @@ export class Sunburst extends React.Component<Props, State> {
             }
         })
 
+        this.totalSize = this.d3Hierarchy.value
         this.selectedHierarchy = this.d3Hierarchy
 
         this.drawSunburst()
@@ -318,27 +330,25 @@ export class Sunburst extends React.Component<Props, State> {
         let {width, height} = this.props.dimensions
 
         return (
-            <div>
-                <div id='main'>
-                    <div id='chart'>
-                        <svg
-                            ref='container'
-                            width={width}
-                            height={height}
-                            className={'sunburst'}
-                        >
-                            <g id='sunburst'>
-                                <g id='container'></g>
-                                <g id='info'>
-                                    <text id='header'></text>
-                                    <text id='sub'>sub</text>
-                                </g>
-                            </g>
-                        </svg>
-                    </div>
-                    <div id='breadcrumbs'>
-                        <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
-                    </div>
+            <div id='main'>
+                <div id='percentages'>
+                    <div id='total'></div>
+                    <div id='relative'></div>
+                </div>
+                <div id='chart'>
+                    <svg
+                        ref='container'
+                        width={Math.min(width, height)}
+                        height={Math.min(width, height)}
+                        className={'sunburst'}
+                    >
+                        <g id='sunburst'>
+                            <g id='container'></g>
+                        </g>
+                    </svg>
+                </div>
+                <div id='breadcrumbs'>
+                    <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
                 </div>
             </div>
         )
