@@ -167,6 +167,10 @@ export class Sunburst extends React.Component<Props, State> {
             .attrTween('d', (d: any) => (() => this.arc(d)))
     }
 
+    numberWithCommas = (x: number) => {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+    }
+
     handleMouseOver(d: any) {
         let totalPercentage = (100 * d.value / this.totalSize).toPrecision(3) as any
         let totalPercentageString = totalPercentage + '%'
@@ -183,7 +187,10 @@ export class Sunburst extends React.Component<Props, State> {
         d3.select('#relative')
             .text(relativePercentageString)
 
-        d3.select('#percentages')
+        d3.select('#absoluteValue')
+            .text(this.numberWithCommas(d.value))
+
+        d3.select('#values')
             .style('visibility', '')
 
         let sequenceArray = d.ancestors().reverse()
@@ -207,7 +214,7 @@ export class Sunburst extends React.Component<Props, State> {
             .duration(150)
             .style('opacity', 1)
 
-        d3.select('#percentages')
+        d3.select('#values')
             .style('visibility', 'hidden')
     }
 
@@ -348,9 +355,12 @@ export class Sunburst extends React.Component<Props, State> {
         return (
             <div id='main'>
                 <Switch checked={this.state.displayValue} label='Surface proportionnelle à la valeur' onChange={this.changeDisplayValue.bind(this)} />
-                <div id='percentages'>
-                    <div id='total'></div>
-                    <div id='relative'></div>
+                <div id='values'>
+                    <div id='absoluteValue'></div>
+                    <div id='percentages'>
+                        <div id='total'></div>
+                        <div id='relative'></div>
+                    </div>
                 </div>
                 <div id='chart'>
                     <svg

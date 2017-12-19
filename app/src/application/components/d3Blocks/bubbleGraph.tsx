@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import './bubble-graph.less'
+import './bubbleGraph.less'
 
 interface Props {
     version: any,

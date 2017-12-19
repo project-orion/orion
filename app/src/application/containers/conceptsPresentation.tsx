@@ -15,8 +15,8 @@ import {
 } from '../types'
 import * as actions from '../actions'
 
-import {TimeseriesChart} from '../components/modules/timeseries_chart'
-import {HistogramChart} from '../components/modules/histogram_chart'
+import {TimeseriesChart} from '../components/modules/timeseriesChart'
+import {HistogramChart} from '../components/modules/histogramChart'
 import {Definition} from '../components/modules/definition'
 import {Suggestion} from '../components/modules/suggestion'
 

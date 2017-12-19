@@ -38,19 +38,17 @@ path {
     }
 }
 
-#percentages {
-    width: 100%;
-    height: 35px;
-    padding: 3px;
-    margin: 6px 0 16px 0;
+#values {
     text-align: center;
+    margin: 6px 0 16px 0;
 
-    #total, #relative {
+    #total, #relative, #absoluteValue {
         display: inline-block;
         padding: 10px;
         font-size: 15px;
         line-height: 15px;
         height: 35px;
+        margin: 0;
     }
 
     #total {
@@ -59,5 +57,15 @@ path {
 
     #relative {
         background-color: @blue1;
+    }
+
+    #absoluteValue {
+        background-color: @gray1;
+    }
+
+    #percentages {
+        width: 100%;
+        height: 35px;
+        padding: 3px;
     }
 }
