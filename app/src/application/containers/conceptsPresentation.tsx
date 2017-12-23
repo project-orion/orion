@@ -97,7 +97,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
         const conceptWithModuleList = concepts.map((concept: concept) =>
             <div
                 key={concept.loadedTime}
-                className={'left-of-panel block-2'}
+                className={'left-of-panel block'}
             >
                 <h3 className={'concept-header'}>
                     {concept.attributes.name}
@@ -118,7 +118,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
 
         return (
             <div>
-                <div className={'block-1'}>
+                <div className={'block'}>
                     {conceptWithModuleList}
                 </div>
             </div>

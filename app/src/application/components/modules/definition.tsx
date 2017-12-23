@@ -12,7 +12,7 @@ export class Definition extends React.Component<Props, any> {
 
         return (
             <div
-                className={'block-3'}
+                className={'block'}
                 style={{flexGrow: 1}}
             >
                 <span><h4>Définition</h4> - <h6>Source : <a href={link}>{source}</a></h6></span>

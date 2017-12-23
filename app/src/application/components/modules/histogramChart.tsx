@@ -96,7 +96,7 @@ export class HistogramChart extends React.Component<Props, State> {
 
         return (
             <div
-                className={'block-3 timeseries_chart'}
+                className={'block timeseries_chart'}
                 style={{flexGrow: 2}}
             >
                 <span>

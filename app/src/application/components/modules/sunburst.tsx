@@ -41,7 +41,7 @@ export class SunburstModule extends React.Component<Props, State> {
 
         return (
             <div
-                className={'block-3'}
+                className={'block'}
                 style={{flexGrow: 2}}
             >
                 <span>
