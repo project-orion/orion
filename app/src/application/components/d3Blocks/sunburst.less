@@ -1,22 +1,49 @@
 @import '~@blueprintjs/core/dist/variables.less';
 
+#main {
+    .flex-box {
+        align-content: center;
+    }
+}
+
 path {
     stroke: @dark-gray4;
     stroke-width: 2px;
     stroke-opacity: 1;
 }
 
-#chart {
-    text-align: center;
+#svgDiv {
+    flex-grow: 2;
+
+    #chart {
+        text-align: center;
+    }
 }
 
 #breadcrumbs {
-    font-size: 15px;
-    margin-top: 10px;
+    flex-grow: 1;
+    flex-basis: 20%;
+    align-items: center;
 
-    li a {
-        background-color: @dark-gray5;
-        padding: 2px 5px 2px 5px;
+    min-width: 100px;
+    font-size: 15px;
+    margin: 10px;
+    display: flex;
+
+    #breadcrumb-list {
+        padding: 5px;
+        background-color: @dark-gray3;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+        margin: 3px;
+
+        a {
+            background-color: @dark-gray5;
+            padding: 2px 5px 2px 5px;
+        }
     }
 }
 

@@ -355,27 +355,31 @@ export class Sunburst extends React.Component<Props, State> {
         return (
             <div id='main'>
                 <Switch checked={this.state.displayValue} label='Surface proportionnelle à la valeur' onChange={this.changeDisplayValue.bind(this)} />
-                <div id='values'>
-                    <div id='absoluteValue'></div>
-                    <div id='percentages'>
-                        <div id='total'></div>
-                        <div id='relative'></div>
+                <div className='flex-box'>
+                    <div id='svgDiv'>
+                        <div id='values'>
+                            <div id='absoluteValue'></div>
+                            <div id='percentages'>
+                                <div id='total'></div>
+                                <div id='relative'></div>
+                            </div>
+                        </div>
+                        <div id='chart'>
+                            <svg
+                                ref='container'
+                                width={Math.min(width, height)}
+                                height={Math.min(width, height)}
+                                className={'sunburst'}
+                            >
+                                <g id='sunburst'>
+                                    <g id='container'></g>
+                                </g>
+                            </svg>
+                        </div>
                     </div>
-                </div>
-                <div id='chart'>
-                    <svg
-                        ref='container'
-                        width={Math.min(width, height)}
-                        height={Math.min(width, height)}
-                        className={'sunburst'}
-                    >
-                        <g id='sunburst'>
-                            <g id='container'></g>
-                        </g>
-                    </svg>
-                </div>
-                <div id='breadcrumbs'>
-                    <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
+                    <div id='breadcrumbs'>
+                        <ul id='breadcrumb-list' className='pt-breadcrumbs'></ul>
+                    </div>
                 </div>
             </div>
         )
