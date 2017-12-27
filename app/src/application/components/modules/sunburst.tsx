@@ -10,7 +10,6 @@ import {
 
 interface Props {
     options?: any,
-    chartjs_datasets?: any,
     sources?: any,
     data?: any,
 }
@@ -22,7 +21,7 @@ interface State {
     }
 }
 
-const colorScheme = ["#2965CC", "#29A634", "#D99E0B", "#D13913", "#8F398F", "#00B3A4", "#DB2C6F", "#9BBF30", "#96622D", "#7157D9"]
+const colorScheme = ['#2965CC', '#29A634', '#D99E0B', '#D13913', '#8F398F', '#00B3A4', '#DB2C6F', '#9BBF30', '#96622D', '#7157D9']
 
 export class SunburstModule extends React.Component<Props, State> {
     constructor(props: Props) {

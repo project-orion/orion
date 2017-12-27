@@ -13,22 +13,7 @@ import {TimeseriesValuesReducer} from './components/modules/timeseriesChart'
 import {navPanelReducer} from './components/utils/navPanel'
 import {ConceptHierarchyReducer} from './components/d3Blocks/conceptHierarchy'
 
-const initialCp1State: containerState = {
-    containerId: 'cp1',
-    concepts: [],
-    loading: 0,
-}
-
-const initialAppContainerState: containerState = {
-    containerId: 'app',
-    loading: 0,
-}
-
-const initialTestState: containerState = {
-    containerId: 'test',
-    concepts: [],
-    loading: 0,
-}
+const containers = ['cp1', 'app', 'test', 'plf', 'jo']
 
 const initialAppState: appState = {
     conceptGraph: {
@@ -40,13 +25,20 @@ const initialAppState: appState = {
         displayedNode: null,
         displayedSlugs: [],
     },
-    containers: {
-        app: initialAppContainerState,
-        cp1: initialCp1State,
-        test: initialTestState,
-    },
+    containers: {},
     toggled: true,
 }
+
+containers.forEach((container: string) => {
+    let emptyContainer: containerState = {
+        containerId: 'undefined',
+        concepts: [],
+        loading: 0,
+    }
+
+    emptyContainer.containerId = container
+    initialAppState.containers[container] = emptyContainer
+})
 
 export function reducer(state = initialAppState, action: action): appState {
     switch (action.type) {
@@ -137,7 +129,7 @@ export function reducer(state = initialAppState, action: action): appState {
                         loading: state.containers[action.container].loading - 1,
                         testData: {
                             ...state.containers[action.container].testData,
-                            [action.value.fileName]: action.value.response,
+                            [action.value.key]: action.value.response,
                         },
                     }
                 }

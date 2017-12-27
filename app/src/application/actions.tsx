@@ -41,19 +41,33 @@ export function removeConcept(container: string, index: number): action {
     }
 }
 
-export function testFetch(fileNames: string[], container: string, url: string): action {
+export function testFetch(requestArgs: any, container: string, url: string): action {
     return {
         type: 'FETCH_TEST',
         promise: (dispatch, getState) => {
             dispatch(loading(container))
 
-            return Promise.all(fileNames.map((fileName: string) => {
-                return fetch(url + fileName)
-                    .then((response: any) => {
-                        return response.text()
+            return Promise.all(Object.keys(requestArgs).map((key: string) => {
+                let body = JSON.stringify(requestArgs[key].body)
+
+                return fetch(url + requestArgs[key].arg,
+                    {
+                        'method': body ? 'POST' : 'GET',
+                        'body': body,
+                        'headers': {
+                            'Accept': 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json'
+                        },
                     })
                     .then((response: any) => {
-                        dispatch(receivedTest(response, container, fileName))
+                        if (requestArgs[key].json) {
+                            return response.json()
+                        } else {
+                            return response.text()
+                        }
+                    })
+                    .then((response: any) => {
+                        dispatch(receivedTest(response, container, key))
                     }).catch((err: any) => {
                         dispatch(fetchFailed(err, container))
                     })
@@ -63,11 +77,11 @@ export function testFetch(fileNames: string[], container: string, url: string): 
     }
 }
 
-export function receivedTest(response: concept, container: string, fileName: string): action {
+export function receivedTest(response: concept, container: string, key: string): action {
     return {
         type: 'FETCH_TEST_SUCCESS',
         value: {
-            fileName,
+            key,
             response,
         },
         container: container,

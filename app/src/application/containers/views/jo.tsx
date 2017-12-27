@@ -11,14 +11,14 @@ import {connect} from 'react-redux'
 
 import {
     appState,
-} from '../types'
-import * as actions from '../actions'
+} from './../../types'
+import * as actions from './../../actions'
 
-import {NavPanel} from '../components/utils/navPanel'
-import {NavBar} from '../components/utils/navBar'
-import {ConceptsPresentation} from './conceptsPresentation'
+import {NavPanel} from './../../components/utils/navPanel'
+import {NavBar} from './../../components/utils/navBar'
+import {ConceptsPresentation} from './../conceptsPresentation'
 
-import {SunburstModule} from '../components/modules/sunburst'
+import {JOSearch} from './../../components/modules/joSearch'
 
 const colorScheme = ['#2965CC', '#29A634', '#D99E0B', '#D13913', '#8F398F', '#00B3A4', '#DB2C6F', '#9BBF30', '#96622D', '#7157D9']
 
@@ -31,7 +31,7 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class Test extends React.Component<appState, any> {
+export class JO extends React.Component<appState, any> {
     constructor(props: appState) {
         super(props)
     }
@@ -43,38 +43,12 @@ export class Test extends React.Component<appState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        this.props.dispatch(actions.testFetch({'plf/PLF.txt': {'arg':'plf/PLF.txt'}}, 'test', 'http://localhost:3001/file/'))
+        this.props.dispatch(actions.testFetch({'summaries': {'arg':'summary/_search/?size=10', 'json': true}}, 'jo', 'http://localhost:9200/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
-        let {conceptGraph} = this.props
-        let data = this.props.containers['test'].testData
-        data = (data ? data['plf/PLF.txt'] : data)
-
-        let loading = false
-
-        let spinner = loading ?
-            <span className={'vertical-center'}>
-                <Spinner className={'pt-small'}/>
-                <span className={'pt-navbar-divider'}></span>
-            </span> : null
-
-        const navbar_button = (
-            <div className={'vertical-center'}>
-                {spinner}
-                <Button
-                    className={'pt-minimal'}
-                    onClick={() => this.sendFetchAction('chomage')}
-                    text={'Send Fetch Request'}
-                />
-            </div>
-        )
-
-        const classToggled = (this.props.toggled) ? ' toggled' : ''
-
-        const key = 'Abracadabra'
-
+        let data = this.props.containers['jo'].testData
         return (
             <div>
                 <NavBar
@@ -82,9 +56,9 @@ export class Test extends React.Component<appState, any> {
                 />
 
                 <div id={'app-container'}>
-                    <SunburstModule
-                        key={key}
+                    <JOSearch
                         data={data}
+                        dispatch={this.props.dispatch}
                     />
                 </div>
             </div>
