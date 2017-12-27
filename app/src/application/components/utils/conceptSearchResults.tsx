@@ -51,7 +51,7 @@ export class ConceptSearchResults extends React.Component<Props, any> {
         })
 
         return (
-            <div className={'concept-search-results'}>
+            <div className={'search-results'}>
                 <ul>
                     {selectedNodesLi}
                 </ul>
