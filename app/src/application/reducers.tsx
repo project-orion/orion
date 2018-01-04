@@ -9,7 +9,7 @@ import {
     conceptGraph,
 } from './types'
 
-import {TimeseriesValuesReducer} from './components/modules/timeseries_chart'
+import {TimeseriesValuesReducer} from './components/modules/timeseriesChart'
 import {navPanelReducer} from './components/utils/navPanel'
 import {ConceptHierarchyReducer} from './components/d3Blocks/conceptHierarchy'
 

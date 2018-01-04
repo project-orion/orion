@@ -20,7 +20,7 @@ import {ConceptsPresentation} from './conceptsPresentation'
 
 import {SunburstModule} from '../components/modules/sunburst'
 
-const colorScheme = ["#2965CC", "#29A634", "#D99E0B", "#D13913", "#8F398F", "#00B3A4", "#DB2C6F", "#9BBF30", "#96622D", "#7157D9"]
+const colorScheme = ['#2965CC', '#29A634', '#D99E0B', '#D13913', '#8F398F', '#00B3A4', '#DB2C6F', '#9BBF30', '#96622D', '#7157D9']
 
 const mapReduxStateToReactProps = (state : appState): appState => {
     return state
@@ -43,13 +43,14 @@ export class Test extends React.Component<appState, any> {
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
         this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        // this.props.dispatch(actions.testFetch(['PLF2017-Nomenclature_MPA.csv'], 'test', 'http://localhost:31338/'))
+        this.props.dispatch(actions.testFetch(['plf/PLF.txt'], 'test', 'http://localhost:3001/file/'))
         this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
         let {conceptGraph} = this.props
         let data = this.props.containers['test'].testData
+        data = (data ? data['plf/PLF.txt'] : data)
 
         let loading = false
 
@@ -77,49 +78,14 @@ export class Test extends React.Component<appState, any> {
         return (
             <div>
                 <NavBar
-                    left_text={'Visualisation et documentation de données socio-politiques'}
+                    left_text={'Visualisation et documentation de données socio-économiques'}
                 />
 
                 <div id={'app-container'}>
-                    <div
-                        id={'concept-nav-panel'}
-                        className={classToggled}
-                    >
-                        <NavPanel
-                            nodes={conceptGraph.nodes}
-                            graph={conceptGraph.graph}
-                            graphNodes={conceptGraph.graphNodes}
-                            selectedRoot={conceptGraph.selectedRoot}
-                            selectedNode={conceptGraph.selectedNode}
-                            dispatch={this.props.dispatch}
-                            toggled={this.props.toggled}
-                            displayedNode={conceptGraph.displayedNode}
-                            displayedSlugs={conceptGraph.displayedSlugs}
-                        />
-                    </div>
-                    <div className={'left-of-panel' + classToggled}>
-                        <div>
-                            <div className={'block-1'}>
-                                <div
-                                    key={'key1'}
-                                    className={'left-of-panel block-2'}
-                                >
-                                    <h3 className={'concept-header'}>
-                                        {'conceptName'}
-                                    </h3>
-                                    <h5 className={'concept-loadedtime'}>
-                                        {'loadedTime'}
-                                    </h5>
-
-                                    <div className={'flex-box'}>
-                                        <SunburstModule
-                                            key={key}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <SunburstModule
+                        key={key}
+                        data={data}
+                    />
                 </div>
             </div>
         )

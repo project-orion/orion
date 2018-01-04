@@ -137,7 +137,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
         }
     }
     tooltipDimensions = {
-        w: 120,
+        w: 200,
         h: 15,
         p: {
             t: 10,
@@ -294,7 +294,7 @@ export class ConceptHierarchy extends React.Component<Props, State> {
 
         that.domSvg.select('#tooltip_content')
             .text(d.data.name)
-            .call(_.partial(wrap.wrap, 120))
+            .call(_.partial(wrap.wrap, that.tooltipDimensions.w - 20))
 
         that.domSvg.select('#tooltip')
             .attr('transform', () => {

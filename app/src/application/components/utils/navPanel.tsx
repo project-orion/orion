@@ -75,7 +75,7 @@ export function navPanelReducer(action: action) {
     let nodeMap = _.mapKeys(action.value.nodes, (value: any, index: number) => value.slug)
 
     let enrichNodeWithChildren = (connexComponent: number, parentsSuggestedConcepts: string[]=null, slug: string): any => {
-        let c = childrenDict[slug] ? childrenDict[slug].directChildren : []
+        let c = childrenDict[slug] && childrenDict[slug].directChildren ? childrenDict[slug].directChildren : []
         let sc = childrenDict[slug] && childrenDict[slug].suggestedChildren ? childrenDict[slug].suggestedChildren : []
 
         return {

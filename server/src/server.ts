@@ -3,8 +3,9 @@ import * as bodyParser from 'body-parser'
 
 // Import the various backends of the application, each of which
 // has a router that defines various end points.
-import {ConceptBackend} from './backends/concepts/backend'
-import {DataBackend} from './backends/data/backend'
+import {ConceptBackend} from './backends/concepts'
+import {DataBackend} from './backends/data'
+import {FileBackend} from './backends/files'
 
 const PORT = 3001
 
@@ -25,9 +26,11 @@ backend.use(allowCrossDomains)
 const conceptBackend = new ConceptBackend()
 backend.use('/concepts', conceptBackend.router)
 
-// Link various routers
 const dataBackend = new DataBackend()
 backend.use('/data', dataBackend.router)
+
+const fileBackend = new FileBackend()
+backend.use('/file', fileBackend.router)
 
 // Start the backend
 const server = backend.listen(PORT, () => {

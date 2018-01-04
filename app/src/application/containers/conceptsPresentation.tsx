@@ -15,8 +15,8 @@ import {
 } from '../types'
 import * as actions from '../actions'
 
-import {TimeseriesChart} from '../components/modules/timeseries_chart'
-import {HistogramChart} from '../components/modules/histogram_chart'
+import {TimeseriesChart} from '../components/modules/timeseriesChart'
+import {HistogramChart} from '../components/modules/histogramChart'
 import {Definition} from '../components/modules/definition'
 import {Suggestion} from '../components/modules/suggestion'
 
@@ -97,7 +97,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
         const conceptWithModuleList = concepts.map((concept: concept) =>
             <div
                 key={concept.loadedTime}
-                className={'left-of-panel block-2'}
+                className={'left-of-panel block'}
             >
                 <h3 className={'concept-header'}>
                     {concept.attributes.name}
@@ -118,7 +118,7 @@ export class ConceptsPresentation extends React.Component<Props, any> {
 
         return (
             <div>
-                <div className={'block-1'}>
+                <div className={'block'}>
                     {conceptWithModuleList}
                 </div>
             </div>

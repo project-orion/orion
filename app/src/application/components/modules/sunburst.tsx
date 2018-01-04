@@ -12,6 +12,7 @@ interface Props {
     options?: any,
     chartjs_datasets?: any,
     sources?: any,
+    data?: any,
 }
 
 interface State {
@@ -35,11 +36,12 @@ export class SunburstModule extends React.Component<Props, State> {
     }
 
     render () {
-        const title = 'Module title'
+        const title = 'Projet de Loi de Finance 2017'
+        const {data} = this.props
 
         return (
             <div
-                className={'block-3 timeseries_chart'}
+                className={'block'}
                 style={{flexGrow: 2}}
             >
                 <span>
@@ -65,7 +67,7 @@ export class SunburstModule extends React.Component<Props, State> {
                                     <Sunburst
                                         dimensions={{
                                             width: this.state.dimensions.width,
-                                            height: window.innerHeight / 2,
+                                            height: window.innerHeight * 3 / 4,
                                             toolbox_width: 120,
                                             toolbox_height: 30,
                                         }}
@@ -77,6 +79,7 @@ export class SunburstModule extends React.Component<Props, State> {
                                         }}
                                         version={this.state.dimensions.width}
                                         colors={colorScheme}
+                                        data={data}
                                     />
                                 </div>
                         }

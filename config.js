@@ -1,7 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const ENV = process.env.NODE_ENV || "development";
-const path = require("path");
+"use strict"
+Object.defineProperty(exports, '__esModule', { value: true })
+
+const ENV = process.env.NODE_ENV || 'development'
+const path = require('path')
 const fs = require('fs')
 
 /**

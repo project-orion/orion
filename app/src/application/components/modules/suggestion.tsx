@@ -25,7 +25,7 @@ export class Suggestion extends React.Component<Props, any> {
 
         return (
             <div
-                className={'block-3'}
+                className={'block'}
                 style={{flexGrow: 1}}
             >
                 <span><h4>Concepts Associés</h4></span>

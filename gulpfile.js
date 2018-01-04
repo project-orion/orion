@@ -23,8 +23,9 @@ const DATA_FOLD = path.join(__dirname, '/data/')
 
 const MODELS_FOLD = path.join(__dirname, '/models/')
 const CONCEPTS_FOLD = path.join(DATA_FOLD, '/concepts/')
+const CONCEPT_NODES_FOLD = path.join(DATA_FOLD, '/conceptNodes/')
 const DEFINITIONS_FOLD = path.join(DATA_FOLD, '/definitions/')
-const LABELIZED_FOLD = path.join(DATA_FOLD, '/labelized_values/')
+const LABELIZED_FOLD = path.join(DATA_FOLD, '/labelizedValues/')
 const TIMESERIES_FOLD = path.join(DATA_FOLD, '/timeseries/')
 const TESTS_FOLD = path.join(__dirname, '/test/')
 
@@ -63,7 +64,54 @@ gulp.task('disconnect-sequelize', (callback) => {
 // All these functions populates some tables of our database
 // and return a Promise.
 
-gulp.task('insert-conceptGraph', (callback) => {
+String.prototype.format = function () {
+    var args = [].slice.call(arguments)
+    return this.replace(/(\{\d+\})/g, function (a) {
+        return args[+(a.substr(1,a.length-2))||0]
+    })
+}
+
+var conceptNodeContent = `exports.node = {
+    name: "{0}",
+    rootConcept: {1},
+    modules: [
+
+    ]
+}
+
+exports.links = [
+    {2}
+]`
+
+function createConceptNodeFile(rootConcept, currentConceptTree) {
+    var promises = []
+
+    for (var key in currentConceptTree) {
+        var data = conceptNodeContent.format(
+            key,
+            rootConcept == null,
+            (rootConcept ? ('"' + slug(rootConcept, {lower: true}) + '"') : '')
+        )
+
+        var filePath = path.join(CONCEPT_NODES_FOLD, slug(key, {lower: true}) + '.js')
+
+        if (!fs.existsSync(filePath)) {
+            var fd = fs.openSync(filePath, 'w')
+
+            promises.push(
+                fs.writeFile(filePath, data, (err) => {
+                    if (err) throw err
+                })
+            )
+        }
+
+        promises.push(createConceptNodeFile(key, currentConceptTree[key]))
+    }
+
+    return Promise.all(promises)
+}
+
+gulp.task('generate-conceptNodes', (callback) => {
     return new Promise((resolve, reject) => {
         return fs.readdir(CONCEPTS_FOLD, (err, files) => {
             return err ? reject(err) : resolve(files)
@@ -73,9 +121,29 @@ gulp.task('insert-conceptGraph', (callback) => {
             files.map((file) => {
                 var data = require(path.join(CONCEPTS_FOLD, file))
 
+                if (!fs.existsSync(CONCEPT_NODES_FOLD)) {
+                    fs.mkdirSync(CONCEPT_NODES_FOLD)
+                }
+
+                return createConceptNodeFile(null, data.concepts)
+            })
+        )
+    })
+})
+
+gulp.task('insert-conceptGraph', (callback) => {
+    return new Promise((resolve, reject) => {
+        return fs.readdir(CONCEPT_NODES_FOLD, (err, files) => {
+            return err ? reject(err) : resolve(files)
+        })
+    }).then((files) => {
+        return Promise.all(
+            files.map((file) => {
+                var data = require(path.join(CONCEPT_NODES_FOLD, file))
+
                 data.node = {
                     ...data.node,
-                    slug: slug(data.node.name, {lower: true}),
+                    slug: data.node.slug ? data.node.slug : slug(data.node.name, {lower: true}),
                 }
 
                 return Promise.all([
@@ -309,6 +377,10 @@ gulp.task('clean-models', () => {
 
 gulp.task('clean-tests', () => {
     return del([DIST_FOLD])
+})
+
+gulp.task('clean-conceptNodes', () => {
+    return del([CONCEPT_NODES_FOLD])
 })
 
 gulp.task('clean-all', ['clean-models', 'clean-tests'])

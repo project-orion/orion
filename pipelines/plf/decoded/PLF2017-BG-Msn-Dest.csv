@@ -1,0 +1,200 @@
+GESTION;2017;;;;;;;;
+TYPE BUDGET;Budget général;;;;;;;;
+;;;;;;Données;;;
+Mission;Programme;Action;Libellé action;Sous-action;Libellé SSA;AELF 2016;AEPLF; CPLF 2016; CPPLF
+Anciens combattants, mémoire et liens avec la nation;169;1;Administration de  la dette viagère;10;Pensions militaires d'invalidité de victimes de guerre et allocations rattachées;1 189 720 000;1 147 350 000;1 189 720 000;1 147 350 000
+Anciens combattants, mémoire et liens avec la nation;169;1;Administration de  la dette viagère;11;Retraite du combattant;756 600 000;748 500 000;756 600 000;748 500 000
+Anciens combattants, mémoire et liens avec la nation;169;2;Gestion  des droits liés aux pensions militaires d'invalidité;21;Soins médicaux gratuits et appareillage des mutilés;56 250 000;56 300 000;56 250 000;56 300 000
+Anciens combattants, mémoire et liens avec la nation;169;2;Gestion  des droits liés aux pensions militaires d'invalidité;22;Remboursement des réductions de transport accordées aux invalides;3 300 000;3 200 000;3 300 000;3 200 000
+Anciens combattants, mémoire et liens avec la nation;169;2;Gestion  des droits liés aux pensions militaires d'invalidité;23;Remboursement des prestations de sécurité sociale aux invalides;93 500 000;85 200 000;93 500 000;85 200 000
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;30;Fonds de solidarité pour les anciens combattants d'Afrique du Nord et d'Indochine;0;0;0;0
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;31;Majoration des rentes mutualistes des anciens combattants et victimes de guerre;261 700 000;253 500 000;261 700 000;253 500 000
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;32;Subventions aux associations et oeuvres diverses;673 000;260 000;673 000;260 000
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;33;Indemnités, pécules et frais de voyages sur les tombes;110 000;110 000;110 000;110 000
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;34;Action sociale en faveur du monde combattant : Office national des anciens combattants (ONAC);25 400 000;26 400 000;25 400 000;26 400 000
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;35;Office national des anciens combattants (ONAC) : subventions;57 149 214;56 801 489;57 149 214;56 801 489
+Anciens combattants, mémoire et liens avec la nation;169;3;Solidarité;36;Institution nationale des invalides : subventions;12 089 143;17 089 143;12 089 143;12 089 143
+Défense;144;3;Recherche et exploitation du renseignement intéressant la sécurité de la France;31;Renseignement extérieur;250 260 075;310 532 501;230 760 075;243 832 501
+Défense;144;3;Recherche et exploitation du renseignement intéressant la sécurité de la France;32;Renseignement de sécurité de défense;12 250 696;13 536 615;10 050 695;13 536 615
+Défense;144;7;Prospective de défense;1;Analyse stratégique;9 783 937;4 568 308;6 083 937;6 201 641
+Défense;144;7;Prospective de défense;2;Prospective des systèmes de forces;20 956 921;21 315 050;20 956 921;21 315 050
+Défense;144;7;Prospective de défense;3;Etudes amont;680 000 000;856 740 000;706 529 875;720 434 123
+Défense;144;7;Prospective de défense;4;Gestion des moyens et subventions;281 698 466;281 278 527;276 148 466;286 828 527
+Défense;146;6;Dissuasion;14;Assurer la crédibilité technique de la dissuasion M51;163 103 481;199 589 290;463 818 035;582 125 402
+Défense;146;6;Dissuasion;15;Assurer la crédibilité technique de la dissuasion SNLE NG : adaptation M51;50 700 000;0;189 112 851;219 214 730
+Défense;146;6;Dissuasion;17;Assurer la crédibilité technique de la dissuasion - Air sol moyenne portée amélioré (ASMPA);402 240 239;108 939 719;42 619 166;62 008 395
+Défense;146;6;Dissuasion;18;Assurer la crédibilité technique de la dissuasion Simulation;526 800 085;501 775 783;488 519 787;528 157 899
+Défense;146;6;Dissuasion;19;Assurer la crédibilité technique de la dissuasion - Autres opérations;854 964 729;645 361 966;660 517 021;649 850 323
+Défense;146;6;Dissuasion;22;Assurer la crédibilité opérationnelle de la dissuasion - soutien et mise en oeuvre des forces - toutes opérations;737 292 222;778 075 703;733 341 709;746 494 453
+Défense;146;6;Dissuasion;23;Assurer la crédibilité technique de la posture - toutes opérations;216 867 195;143 435 053;265 160 430;256 633 996
+Défense;146;6;Dissuasion;24;Assurer la crédibilité technique de la dissuasion  SNLE 3G;769 000 000;0;46 565 016;117 733 692
+Défense;146;7;Commandement et maîtrise de l'information;24;Commander et conduire - Système de commandement et de conduite des opérations aériennes (SCCOA);28 589 000;41 900 000;214 889 789;222 216 996
+Défense;146;7;Commandement et maîtrise de l'information;25;Commander et conduire - Système d'information TERRE;8 000 000;7 260 000;50 826 149;52 345 333
+Défense;146;7;Commandement et maîtrise de l'information;27;Commander et conduire - Géographie numérique;138 000 000;281 349 040;48 101 301;55 317 486
+Défense;146;7;Commandement et maîtrise de l'information;28;Commander et conduire - Autres opérations;27 701 010;258 624 322;27 154 306;37 500 607
+Défense;146;7;Commandement et maîtrise de l'information;29;Commander et conduire - Système d'information des armées (SIA);0;0;109 113 570;100 293 242
+Défense;146;7;Commandement et maîtrise de l'information;32;Communiquer - Moyens de communication satellitaire;106 580 000;578 553 000;101 056 836;193 518 629
+Défense;146;7;Commandement et maîtrise de l'information;35;Communiquer - Autres opérations;417 792 000;242 672 800;404 483 285;256 669 837
+Défense;146;7;Commandement et maîtrise de l'information;36;Communiquer - CONTACT;513 402 402;0;118 218 401;150 948 997
+Défense;146;7;Commandement et maîtrise de l'information;39;Renseigner, surveiller, acquérir et reconnaître - Autres opérations;572 012 262;68 271 786;489 496 291;345 392 723
+Défense;146;7;Commandement et maîtrise de l'information;40;Renseigner, surveiller, acquérir et reconnaître - MUSIS;0;0;133 003 605;138 066 345
+Défense;146;7;Commandement et maîtrise de l'information;41;Communiquer - DESCARTES;150 000 000;0;30 671 121;48 589 084
+Défense;146;7;Commandement et maîtrise de l'information;42;Renseigner, surveiller, acquérir et reconnaître - CERES;200 500 000;0;93 008 082;70 134 546
+Défense;146;8;Projection - mobilité - soutien;42;Projeter les forces - Avion de transport futur (A400M);255 360 000;57 923 333;316 380 464;325 774 240
+Défense;146;8;Projection - mobilité - soutien;43;Projeter les forces - Autres opérations;364 717 015;180 649 126;237 688 935;203 787 748
+Défense;146;8;Projection - mobilité - soutien;46;Assurer la mobilité - Rénovation Cougar;0;0;35 178 623;31 594 801
+Défense;146;8;Projection - mobilité - soutien;47;Assurer la mobilité - Hélicoptère NH 90;260 000 000;0;319 797 543;337 029 587
+Défense;146;8;Projection - mobilité - soutien;48;Assurer la mobilité - Autres opérations;72 256 650;347 689 121;52 879 735;77 766 016
+Défense;146;8;Projection - mobilité - soutien;51;Maintenir le potentiel ami et autre - Porteur polyvalent terrestre (PPT);0;0;101 046 595;78 221 603
+Défense;146;8;Projection - mobilité - soutien;53;Maintenir le potentiel ami et autre - Autres opérations;256 258 612;29 616 794;37 004 009;49 779 100
+Défense;146;8;Projection - mobilité - soutien;55;Maintenir le potentiel ami et autre - MRTT;1 625 600 000;0;173 945 060;180 806 077
+Défense;146;9;Engagement et combat;56;Frapper à distance - Missile de croisière naval (MDCN);0;0;167 254 384;57 861 799
+Défense;146;9;Engagement et combat;59;Frapper à distance - RAFALE;428 528 710;59 330 489;538 683 194;482 997 888
+Défense;146;9;Engagement et combat;61;Frapper à distance - Autres opérations;289 222 561;68 209 571;302 356 804;293 634 798
+Défense;146;9;Engagement et combat;66;Opérer en milieu hostile - Véhicule blindé de combat d'infanterie (VBCI);0;0;76 463 610;48 381 979
+Défense;146;9;Engagement et combat;68;Opérer en milieu hostile - Hélicoptère HAP/HAD TIGRE;151 500 000;26 360 000;218 134 568;299 817 626
+Défense;146;9;Engagement et combat;69;Opérer en milieu hostile - Future torpille lourde (FTL);0;0;43 802 460;53 382 770
+Défense;146;9;Engagement et combat;71;Opérer en milieu hostile - Evolution Exocet;0;0;43 379 509;33 859 118
+Défense;146;9;Engagement et combat;73;Opérer en milieu hostile - Frégates multi-missions (FREMM);100 000 000;682 000 000;351 078 285;306 268 872
+Défense;146;9;Engagement et combat;74;Opérer en milieu hostile - SNA Barracuda;1 124 000 000;950 000 000;645 404 230;571 698 594
+Défense;146;9;Engagement et combat;75;Opérer en milieu hostile - Autres opérations et conduire des opérations spéciales;602 927 329;3 079 616 112;697 033 713;776 733 093
+Défense;146;9;Engagement et combat;77;Opérer en milieu hostile -  SCORPION;1 139 000 000;100 000 000;154 549 553;190 787 391
+Défense;146;9;Engagement et combat;78;Frapper à distance - Mirage 2000;0;85 585 271;0;143 930 750
+Défense;146;9;Engagement et combat;88;Opérer en milieu hostile - missile moyenne portée MMP;0;0;78 548 823;86 846 894
+Défense;146;10;Protection et sauvegarde;79;Assurer la sûreté des approches - Autres opérations et assurer la sécurité de l'Etat, de la nation et des citoyens;243 434 374;302 520 691;234 029 322;204 045 573
+Défense;146;10;Protection et sauvegarde;80;Assurer la sûreté des approches - Alerte avancée;0;0;0;0
+Défense;146;10;Protection et sauvegarde;82;Assurer la protection des forces et des sites - Famille de systèmes sol-air futurs (FSAF);519 800 000;0;107 357 126;90 235 677
+Défense;146;10;Protection et sauvegarde;86;Assurer la protection des forces et des sites - Autres opérations et assurer la protection de l'homme;109 274 800;105 050 082;88 343 800;97 763 394
+Défense;146;11;Préparation et conduite des opérations d'armement;89;Fonctionnement et soutien DGA;77 910 631;82 428 072;89 151 048;84 903 182
+Défense;146;11;Préparation et conduite des opérations d'armement;90;Investissements pour les opérations d'armement;110 105 760;127 461 825;110 730 695;110 250 529
+Défense;146;12;Parts étrangères et programmes civils;96;Parts étrangères;0;0;0;0
+Défense;146;12;Parts étrangères et programmes civils;97;Programmes civils;0;0;0;0
+Défense;178;1;Planification  des moyens et conduite des opérations;10;Emploi des forces;234 785 692;257 830 822;231 350 856;252 776 493
+Défense;178;1;Planification  des moyens et conduite des opérations;11;Renseignement d'intérêt militaire;36 855 763;45 501 137;36 309 409;44 608 957
+Défense;178;1;Planification  des moyens et conduite des opérations;14;Systèmes d'information et de communication;164 798 680;177 865 064;175 069 525;187 220 652
+Défense;178;2;Préparation des forces terrestres;1;Commandement et activités des forces terrestres;151 078 780;177 354 016;132 615 129;174 834 089
+Défense;178;2;Préparation des forces terrestres;5;Ressources humaines des forces terrestres;107 050 934;79 956 006;94 358 037;78 382 598
+Défense;178;2;Préparation des forces terrestres;7;Maintien en condition opérationnelle du matériel des forces terrestres;786 510 484;919 772 067;712 118 263;776 371 499
+Défense;178;2;Préparation des forces terrestres;8;Environnement opérationnel des forces terrestres;371 018 653;158 196 240;303 722 462;196 761 020
+Défense;178;3;Préparation des forces navales;1;Commandement et activités des forces navales;292 080 716;260 998 295;278 693 625;305 474 124
+Défense;178;3;Préparation des forces navales;5;Ressources humaines des forces navales;36 286 377;43 628 588;36 650 205;42 636 378
+Défense;178;3;Préparation des forces navales;7;Maintien en condition opérationnelle du matériel des forces navales;2 497 301 792;1 510 913 729;1 572 993 267;1 585 332 909
+Défense;178;3;Préparation des forces navales;8;Environnement opérationnel des forces navales;75 183 416;67 757 794;76 460 170;66 363 530
+Défense;178;4;Préparation des forces aériennes;2;Commandement et activités centralisées des forces aériennes;12 322 404;7 405 740;12 365 398;7 040 660
+Défense;178;4;Préparation des forces aériennes;3;Activités des forces aériennes;278 548 814;259 496 788;277 685 021;258 241 106
+Défense;178;4;Préparation des forces aériennes;4;Activités des forces aériennes stratégiques;141 387 291;147 833 139;139 737 291;145 418 859
+Défense;178;4;Préparation des forces aériennes;5;Ressources humaines des forces aériennes;71 671 710;75 803 759;71 105 194;75 368 235
+Défense;178;4;Préparation des forces aériennes;6;Entretien et équipements des forces aériennes;2 144 295 251;2 466 801 264;1 504 325 679;1 490 343 939
+Défense;178;4;Préparation des forces aériennes;9;Service industriel aéronautique (SIAé);0;0;0;0
+Défense;178;5;Logistique et soutien interarmées;80;Fonction santé;240 366 669;221 768 951;136 559 678;120 358 703
+Défense;178;5;Logistique et soutien interarmées;82;Soutien des forces par les bases de défense;710 354 215;621 691 444;660 339 810;647 462 759
+Défense;178;5;Logistique et soutien interarmées;83;Soutiens complémentaires;147 947 891;140 097 818;147 366 684;146 468 449
+Défense;178;5;Logistique et soutien interarmées;84;Service interarmées des munitions;11 889 504;14 984 704;11 731 014;14 690 886
+Défense;178;5;Logistique et soutien interarmées;85;Service du commissariat aux armées;391 369 974;436 045 724;385 617 618;400 853 102
+Défense;212;6;Politiques des ressources humaines;3;Reconversion;34 792 284;36 472 386;34 792 284;36 472 386
+Défense;212;6;Politiques des ressources humaines;4;Action sociale et autres politiques de ressources humaines (hors rémunérations des agents);95 707 033;105 347 317;95 707 033;105 347 317
+Défense;212;8;Politique culturelle et éducative;1;Actions culturelles et mise en valeur du patrimoine;27 818 877;22 234 138;27 818 877;22 234 138
+Défense;212;8;Politique culturelle et éducative;2;Gestion et communication des archives historiques de la défense;5 052 425;3 470 251;5 025 426;3 723 918
+Défense;212;50;"Recherche et exploitation du renseignement intéressant la sécurité de la France - Personnel travaillant  pour le programme ""Environnement et prospective de la politique de défense""";1;Renseignement extérieur;412 889 922;426 629 485;412 889 922;426 629 485
+Défense;212;50;"Recherche et exploitation du renseignement intéressant la sécurité de la France - Personnel travaillant  pour le programme ""Environnement et prospective de la politique de défense""";2;Renseignement de sécurité et de défense;84 694 268;105 547 900;84 694 268;105 547 900
+Défense;212;51;"Prospective de défense - Personnel travaillant  pour le programme ""Environnement et prospective de la politique de défense""";1;DGRIS / Administration  centrale;23 690 487;25 702 225;23 690 487;25 702 225
+Défense;212;52;Relations internationales;1;DGA / Soutien aux exportations;4 422 987;7 764 526;4 422 987;7 764 526
+Défense;212;52;Relations internationales;2;DGRIS / Diplomatie de défense;34 558 512;78 675 589;34 558 512;78 675 589
+Défense;212;53;"Préparation et conduite des opérations d'armement - Personnel travaillant  pour le programme  ""Équipement des forces """;1;Soutien aux opérations d'armement;1 925 309 477;1 899 094 275;1 925 309 477;1 899 094 275
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";1;Commandement des armées;77 714 504;101 650 374;77 714 504;101 650 374
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";2;Organismes interarmées à vocation opérationnelle;112 044 719;228 098 384;112 044 719;228 098 384
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";3;Organismes interarmées à vocation prospective et maitrise des armements;8 784 261;33 663 496;8 784 261;33 663 496
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";4;Enseignement interarmées;28 939 245;55 098 392;28 939 245;55 098 392
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";5;EMA / Relations internationales militaires / PPE;92 163 740;148 383 549;92 163 740;148 383 549
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";6;Renseignement d'intérêt militaire;136 933 810;147 148 640;136 933 810;147 148 640
+Défense;212;54;"Planification des moyens et conduite des opérations - Personnel travaillant  pour le programme ""Préparation et emploi des forces""";7;Systèmes d'information et de communication;533 706 347;503 145 685;533 706 347;503 145 685
+Défense;212;55;"Préparation des forces terrestres - Personnel travaillant pour le programme ""Préparation et emploi des forces""";1;Ressources humaines des forces terrestres;6 114 631 428;6 866 799 415;6 114 631 428;6 866 799 415
+Défense;212;56;"Préparation des forces navales - Personnel travaillant pour le programme ""Préparation et emploi des forces""";1;Ressources humaines des forces navales;2 262 543 603;2 416 844 649;2 262 543 603;2 416 844 649
+Défense;212;56;"Préparation des forces navales - Personnel travaillant pour le programme ""Préparation et emploi des forces""";2;Rémunérations des ouvriers de l'Etat de la DCNS;0;0;0;0
+Défense;212;57;"Préparation des forces aériennes- Personnel travaillant pour le programme ""Préparation et emploi des forces""";1;Ressources humaines des forces aériennes;2 334 595 041;2 555 533 552;2 334 595 041;2 555 533 552
+Défense;212;57;"Préparation des forces aériennes- Personnel travaillant pour le programme ""Préparation et emploi des forces""";2;Service industriel aéronautique(SIAé);0;0;0;0
+Défense;212;58;"Logistique et soutien interarmées - Personnel travaillant pour le programme ""Préparation et emploi des forces""";1;Fonction pétrolière;130 370 755;130 990 575;130 370 755;130 990 575
+Défense;212;58;"Logistique et soutien interarmées - Personnel travaillant pour le programme ""Préparation et emploi des forces""";2;Logistique et soutien interarmées / CICoS;63 908 625;38 918 689;63 908 625;38 918 689
+Défense;212;58;"Logistique et soutien interarmées - Personnel travaillant pour le programme ""Préparation et emploi des forces""";3;Soutiens complémentaires;20 706 679;63 434;20 706 679;63 434
+Défense;212;58;"Logistique et soutien interarmées - Personnel travaillant pour le programme ""Préparation et emploi des forces""";4;Service interarmées des munitions;78 580 513;81 241 988;78 580 513;81 241 988
+Défense;212;58;"Logistique et soutien interarmées - Personnel travaillant pour le programme ""Préparation et emploi des forces""";5;Service du commissariat des armées;1 676 825 980;1 413 877 112;1 676 825 980;1 413 877 112
+Défense;212;58;"Logistique et soutien interarmées - Personnel travaillant pour le programme ""Préparation et emploi des forces""";6;Fonction santé;1 139 595 318;774 079 081;1 139 595 318;774 079 081
+Défense;212;59;"Surcoûts liés aux opérations - Personnel travaillant pour le programme ""Préparation et emploi des forces""";1;Surcoûts liés aux opérations extérieures;170 000 000;170 000 000;170 000 000;170 000 000
+Défense;212;59;"Surcoûts liés aux opérations - Personnel travaillant pour le programme ""Préparation et emploi des forces""";2;Surcoûts liés aux opérations intérieures;26 000 000;41 000 000;26 000 000;41 000 000
+Défense;212;61;Action sociale, chômage et pensions;1;Actions sociales et autres politiques des ressources humaines;173 679 526;173 757 736;173 679 526;173 757 736
+Défense;212;61;Action sociale, chômage et pensions;2;Reconversion des personnels militaires - Chômage;122 118 812;128 784 691;122 118 812;128 784 691
+Défense;212;61;Action sociale, chômage et pensions;3;Reconversion des personnels civils - Chômage;26 733 876;4 984 560;26 733 876;4 984 560
+Défense;212;63;Restructurations - RH;1;Restructurations Personnels civils;48 242 110;53 080 756;48 242 110;53 080 756
+Défense;212;63;Restructurations - RH;2;Restructurations Personnels militaires;105 862 520;61 161 465;105 862 520;61 161 465
+Défense;212;64;"Pilotage, soutien  -  Personnel travaillant pour l'action "" Pilotage, soutien """;1;Personnel du SGA employeur;322 544 912;309 167 772;322 544 912;309 167 772
+Défense;212;64;"Pilotage, soutien  -  Personnel travaillant pour l'action "" Pilotage, soutien """;7;Personnel de l'action sociale;79 772 398;58 885 934;79 772 398;58 885 934
+Défense;212;64;"Pilotage, soutien  -  Personnel travaillant pour l'action "" Pilotage, soutien """;8;Personnel de l'agence de reconversion de la Défense;47 567 259;48 073 267;47 567 259;48 073 267
+Défense;212;66;Rayonnement et contribution extérieure;1;Pilotage, soutien et communication - effectifs sortants remboursés sous PMEA Mindef;0;0;0;0
+Défense;212;66;Rayonnement et contribution extérieure;2;Pilotage, soutien et communication - effectifs sortants non remboursés sous PMEA Mindef;23 795 575;22 949 599;23 795 575;22 949 599
+Défense;212;66;Rayonnement et contribution extérieure;3;Pilotage, soutien et communication - effectifs sortants remboursés hors PMEA Mindef;0;0;0;0
+Défense;212;66;Rayonnement et contribution extérieure;4;Pilotage, soutien et communication - Présidence de la République;0;0;0;0
+Défense;212;66;Rayonnement et contribution extérieure;5;Pilotage, soutien et communication -  Elèves des classes préparatoires des lycées de la défense;0;1 168 073;0;1 168 073
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;1;Sous-Direction des Bureau des Cabinets - Cabinet du Ministre de la Défense - Cabinet du Secrétaire d'Etat aux anciens combattants - Bureau des Officiers Généraux;37 036 458;39 320 386;37 036 458;39 320 386
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;2;Contrôle général des armées;18 878 785;17 580 169;18 878 785;17 580 169
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;3;Direction Générale des Systèmes d'Information et de Communication;5 064 100;6 776 371;5 064 100;6 776 371
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;4;Délégation à l'Information et la Communication de la Défense;12 410 772;10 748 967;12 410 772;10 748 967
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;5;Gendarmerie de la Sureté de l'Armement Nucléaire;3 852 291;4 584 238;3 852 291;4 584 238
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;6;Contrôle Budgétaire et Comptable Ministériel défense - Agence Comptable des Services Industriels de l'Armement;11 878 093;9 809 056;11 878 093;9 809 056
+Défense;212;67;Pilotage, soutien et communication - dépenses de personnel des cabinets et des organismes rattachés / RH;7;Direction de la Protection des Installations, moyens et activités de la Dissuasion;1 915 949;2 234 349;1 915 949;2 234 349
+Engagements financiers de l'État;114;4;Développement international de l'économie française;1;Assurance-crédit;0;0;0;0
+Engagements financiers de l'État;114;4;Développement international de l'économie française;2;Assurance-prospection;80 000 000;0;80 000 000;0
+Engagements financiers de l'État;114;4;Développement international de l'économie française;3;Garantie de change;10 400 000;0;10 400 000;0
+Engagements financiers de l'État;114;4;Développement international de l'économie française;4;Garantie du risque économique;200 000;0;200 000;0
+Engagements financiers de l'État;114;4;Développement international de l'économie française;5;Garanties de taux d'intérêt Natixis;0;0;0;0
+Engagements financiers de l'État;114;4;Développement international de l'économie française;6;Garantie du risque exportateur;12 000 000;0;12 000 000;0
+Recherche et enseignement supérieur;190;10;Recherche dans le domaine de l'énergie;1;Commissariat à l'énergie atomique et aux énergies alternatives (CEA);493 137 265;490 136 265;493 137 265;490 136 265
+Recherche et enseignement supérieur;190;10;Recherche dans le domaine de l'énergie;2;IFP Energies nouvelles (IFPEN);129 784 549;135 627 494;129 784 549;135 627 494
+Recherche et enseignement supérieur;190;10;Recherche dans le domaine de l'énergie;3;Gestion des matières et déchets radioactifs : CNE - reprise des sources;467 781;467 781;467 781;467 781
+Recherche et enseignement supérieur;190;11;Recherche dans le domaine des risques;1;Institut national de l'environnement industriel et des risques (INERIS);6 373 110;6 373 110;6 373 110;6 373 110
+Recherche et enseignement supérieur;190;11;Recherche dans le domaine des risques;2;Institut de radioprotection et de sûreté nucléaire (IRSN);172 729 240;172 729 240;172 729 240;172 729 240
+Recherche et enseignement supérieur;190;12;Recherche dans le domaine des transports, de la construction et de l'aménagement;1;Institut français des sciences et technologies des transports, de laménagement et des réseaux (IFSTTAR);86 204 995;86 184 495;86 204 995;86 184 495
+Recherche et enseignement supérieur;190;12;Recherche dans le domaine des transports, de la construction et de l'aménagement;3;Centre scientifique et technique du bâtiment (CSTB);15 046 382;15 046 382;15 046 382;15 046 382
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;1;Agence nationale chargée de la sécurité sanitaire de l'alimentation, de l'environnement et du travail (ANSES);1 551 198;1 551 198;1 551 198;1 551 198
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;2;Agence de l'environnement et de la maîtrise de l'énergie (ADEME);0;0;0;0
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;4;Recherche en matière de transport (PREDIT);0;0;965 735;965 735
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;5;Construction (PREBAT, C2D2, RGCU);0;0;276 099;276 099
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;6;Urbanisme et territoire (PUCA, MUTS);0;0;1 120 134;1 120 134
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;7;Changement global (GMES, adaptation au changement climatique);0;0;753 671;753 671
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;8;Risque, santé, environnement;0;0;1 770 746;1 770 746
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;9;Biodiversité;0;0;698 847;698 847
+Recherche et enseignement supérieur;190;13;Recherche partenariale dans le développement et l'aménagement durable;10;Innovation et prospective dans le domaine du développement et de l'aménagement durable;0;0;414 768;414 768
+Recherche et enseignement supérieur;190;14;Recherche et développement dans le domaine de l'aéronautique civile;1;Recherches en amont;59 665 448;59 665 448;59 665 448;59 665 448
+Recherche et enseignement supérieur;190;14;Recherche et développement dans le domaine de l'aéronautique civile;2;Subventions à des organismes de recherche;128 000;128 000;128 000;128 000
+Recherche et enseignement supérieur;190;14;Recherche et développement dans le domaine de l'aéronautique civile;3;Equipementier;12 981 920;10 137 975;12 981 920;10 137 975
+Recherche et enseignement supérieur;190;14;Recherche et développement dans le domaine de l'aéronautique civile;4;Avions;0;0;0;0
+Recherche et enseignement supérieur;190;14;Recherche et développement dans le domaine de l'aéronautique civile;5;Moteurs;0;0;0;0
+Recherche et enseignement supérieur;190;14;Recherche et développement dans le domaine de l'aéronautique civile;6;Hélicoptères;0;0;0;0
+Remboursements et dégrèvements;200;11;Remboursements et restitutions liés à la mécanique de l'impôt;1;Impôts sur les sociétés;14 944 354 000;17 174 000 000;14 944 354 000;17 174 000 000
+Remboursements et dégrèvements;200;11;Remboursements et restitutions liés à la mécanique de l'impôt;2;Taxe sur la valeur ajoutée;49 108 000 000;52 419 000 000;49 108 000 000;52 419 000 000
+Remboursements et dégrèvements;200;11;Remboursements et restitutions liés à la mécanique de l'impôt;3;Plafonnement des impositions directes;0;0;0;0
+Remboursements et dégrèvements;200;11;Remboursements et restitutions liés à la mécanique de l'impôt;4;Autres remboursements et dégrèvements liés à la mécanique de limpôt;164 424 000;164 424 000;164 424 000;164 424 000
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;1;Prime pour l'emploi;55 000 000;0;55 000 000;0
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;2;Impôt sur le revenu;2 123 000 000;2 628 000 000;2 123 000 000;2 628 000 000
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;3;Impôt sur les sociétés;8 398 767 000;11 519 000 000;8 398 767 000;11 519 000 000
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;4;Taxe intérieure sur les produits pétroliers;755 000 000;1 119 852 000;755 000 000;1 119 852 000
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;5;Taxe intérieure de consommation sur le gaz naturel;3 000 000;3 000 000;3 000 000;3 000 000
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;6;Contribution pour l'audiovisuel public;513 800 000;515 395 000;513 800 000;515 395 000
+Remboursements et dégrèvements;200;12;Remboursements et dégrèvements liées à des politiques publiques;7;Prélèvement sur le produit des jeux;0;0;0;0
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;1;Impôts sur le revenu - Dégrèvements et restitution de sommes indûment perçues;2 207 000 000;2 348 000 000;2 207 000 000;2 348 000 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;2;Impôts sur les sociétés - Dégrèvements et restitution de sommes indûment perçues;1 323 842 000;1 317 000 000;1 323 842 000;1 317 000 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;3;Autres impôts directs et taxes assimilées - Dégrèvements et restitution de sommes indûment perçues;2 515 000 000;1 627 434 000;2 515 000 000;1 627 434 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;4;Taxe sur la valeur ajoutée - Dégrèvements et restitution de sommes indûment perçues;2 082 000 000;2 200 000 000;2 082 000 000;2 200 000 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;5;Enregistrement, timbre, autres contributions et taxes indirectes - Dégrèvements et restitution de sommes indûment perçues;403 000 000;500 000 000;403 000 000;500 000 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;6;Autres remboursements et dégrèvements liés à la gestion des produits de l'Etat;702 000 000;716 000 000;702 000 000;716 000 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;7;Autres remboursements et dégrèvements liés à la gestion des produits de l'Etat - Admissions en non valeur - Créances liées aux impôts;2 259 000 000;2 200 000 000;2 259 000 000;2 200 000 000
+Remboursements et dégrèvements;200;13;Remboursements et dégrèvements liés à la gestion des produits de l'Etat;8;Autres remboursements et dégrèvements liés à la gestion des produits de l'Etat - Dations en paiement, intérêts moratoires, remises de débets;637 000 000;513 000 000;637 000 000;513 000 000
+Travail et emploi;102;1;Amélioration de lefficacité du service public de lemploi;1;Indemnisation des demandeurs d'emploi;1 788 463 529;1 484 500 000;1 788 463 529;1 484 500 000
+Travail et emploi;102;1;Amélioration de lefficacité du service public de lemploi;2;Coordination du service public de l'emploi;1 532 330 046;1 528 000 000;1 532 330 046;1 528 000 000
+Travail et emploi;102;2;Amélioration des dispositifs en faveur de lemploi des personnes les plus éloignées du marché du travail;1;Insertion dans l'emploi au moyen de contrats aidés;2 198 270 698;1 841 869 697;2 480 514 224;2 472 561 004
+Travail et emploi;102;2;Amélioration des dispositifs en faveur de lemploi des personnes les plus éloignées du marché du travail;2;Accompagnement des publics les plus en difficultés;1 759 546 297;2 195 221 260;1 734 345 177;2 116 784 460
+Travail et emploi;103;1;Anticipation et accompagnement des conséquences des mutations économiques sur l'emploi;1;Développement de lemploi en TPE-PME;123 365 204;3 667 876 180;141 302 756;1 976 288 658
+Travail et emploi;103;1;Anticipation et accompagnement des conséquences des mutations économiques sur l'emploi;2;Implication des branches et des entreprises dans la prévention du licenciement et le reclassement des salariés;697 186 445;417 828 725;621 526 621;367 675 502
+Travail et emploi;103;2;Amélioration de l'insertion dans l'emploi par l'adaptation des qualifications et la reconnaissance des compétences;3;Reconnaissance des compétences acquises par les personnes;2 922 209;1 920 000;2 922 209;1 920 000
+Travail et emploi;103;2;Amélioration de l'insertion dans l'emploi par l'adaptation des qualifications et la reconnaissance des compétences;4;Amélioration de l'accès à la qualification par le développement de l'alternance et de la certification;1 724 864 379;1 714 404 288;1 638 704 594;1 871 381 464
+Travail et emploi;103;3;Développement de l'emploi;1;Baisse du coût du travail pour faciliter le développement de territoires et de secteurs à forts potentiels d'emploi;842 383 813;2 620 836 598;842 383 813;2 620 836 598
+Travail et emploi;103;3;Développement de l'emploi;2;Promotion de l'activité;65 983 237;244 010 793;62 724 520;244 010 793
