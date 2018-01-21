@@ -18,9 +18,7 @@ import {NavPanel} from './../../components/utils/navPanel'
 import {NavBar} from './../../components/utils/navBar'
 import {ConceptsPresentation} from './../conceptsPresentation'
 
-import {JOSearch} from './../../components/modules/joSearch'
-
-import './jo.less'
+import {JOGraphModule} from './../../components/modules/jograph'
 
 const colorScheme = ['#2965CC', '#29A634', '#D99E0B', '#D13913', '#8F398F', '#00B3A4', '#DB2C6F', '#9BBF30', '#96622D', '#7157D9']
 
@@ -33,7 +31,7 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class JO extends React.Component<appState, any> {
+export class JOTFIDFView extends React.Component<appState, any> {
     constructor(props: appState) {
         super(props)
     }
@@ -44,13 +42,27 @@ export class JO extends React.Component<appState, any> {
 
     // When page is done loading, fetch concept graph from backend
     componentDidMount() {
-        this.props.dispatch(actions.fetchConceptGraph('concepts/', 'test'))
-        this.props.dispatch(actions.testFetch({'summaries': {'arg':'summary/_search/?size=10', 'json': true}}, 'jo', 'http://localhost:9200/'))
+        this.props.dispatch(actions.testFetch({'articles': {'arg': 'article/_search/?size=1000', 'json': true}}, 'jographview', 'http://localhost:9200/'))
+        this.props.dispatch(actions.testFetch({
+                'article': {
+                    'arg':'article/_search/?size=10',
+                    'json': true,
+                    'body': {
+                        'query': {
+                            'match': {
+                                'cid': 'JORFTEXT000036121328',
+                            }
+                        }
+                    }
+                }
+            }, 'jographview', 'http://localhost:9200/')
+        )
+
         this.props.dispatch(actions.toggleNavPanel())
     }
 
     render () {
-        let data = this.props.containers['jo'].testData
+        let data = this.props.containers['jographview'].testData
         return (
             <div>
                 <NavBar
@@ -58,9 +70,11 @@ export class JO extends React.Component<appState, any> {
                 />
 
                 <div id={'app-container'}>
-                    <JOSearch
+                    <JOGraphModule
                         data={data}
                         dispatch={this.props.dispatch}
+                        tfidf={true}
+                        cid={'JORFTEXT000036121328'}
                     />
                 </div>
             </div>

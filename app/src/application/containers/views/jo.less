@@ -1,0 +1,47 @@
+@import "~@blueprintjs/core/dist/variables.less";
+
+#jo {
+    margin: 10px;
+    padding: 0px;
+}
+
+#summaries {
+    max-width: 150px;
+}
+
+#summaryArticles {
+    flex-grow: 1;
+}
+
+#article {
+    flex-grow: 2;
+}
+
+.search-results-nested ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+        list-style: none;
+    }
+
+    li.result {
+        background-color: @dark-gray2;
+        padding: 10px 20px 10px 20px;
+        margin: 5px 5px 5px 5px;
+    }
+
+    li.result:hover {
+        background-color: @dark-gray3;
+        cursor: pointer;
+    }
+
+    li.result * {
+        pointer-events: none;
+    }
+}
+
+#entete {
+    text-align: center;
+}

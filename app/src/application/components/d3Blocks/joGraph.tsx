@@ -1,45 +1,48 @@
 import * as d3 from 'd3'
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import Measure from 'react-measure'
 
-import './conceptGraph.less'
+import './joGraph.less'
 
-import * as actions from '../../actions'
+import * as actions from './../../actions'
 import * as interceptClick from './utils/interceptClick'
 import {
     action,
     conceptLinksAttribute,
     extendedConceptNodeAttribute,
+    module,
 } from './../../types'
 
-interface d3GraphNode extends d3.SimulationNodeDatum, extendedConceptNodeAttribute {}
-
-interface d3GraphLink extends d3.SimulationNodeDatum, conceptLinksAttribute {}
-
 interface Props {
+    options?: any,
+    sources?: any,
+    data?: any,
     version: number,
-    nodes: extendedConceptNodeAttribute[],
-    links: conceptLinksAttribute[],
-    labels: extendedConceptNodeAttribute[],
     dimensions: {
         width: number,
         height: number,
     }
-    searchedConcept: string,
-    dispatch: any
+    dispatch: any,
+    tfidf: boolean,
+    cid: string,
 }
 
 interface State {
     selected: string,
 }
 
-export class ConceptGraph extends React.Component<Props, State> {
+const colorScheme = ['#2965CC', '#29A634', '#D99E0B', '#D13913', '#8F398F', '#00B3A4', '#DB2C6F', '#9BBF30', '#96622D', '#7157D9']
+
+export class JOGraph extends React.Component<Props, State> {
     // D3
 
     // All these parameters are simple parameters; one doesn't use
     // React props only since they imply abiding by the React lifecycle
     // whereas we want to have our simulation ran by d3.
+    charge = this.props.tfidf ? -10 : -2
+    linkDistance = this.props.tfidf ? 50 : 15
+
     width: number
     height: number
     simulation: any
@@ -47,22 +50,16 @@ export class ConceptGraph extends React.Component<Props, State> {
 
     interceptClickHandler: any
 
-    data: {
-        nodes: d3GraphNode[],
-        links: d3GraphLink[],
-        labels: d3GraphNode[],
-    }
-    nodes: d3GraphNode[]
-    links: d3GraphLink[]
-    labels: d3GraphNode[]
-    cc: number[]
+    nodes: any
+    links: any
+    labels: any
 
     refs: any
     domContainer: any
 
-    domNodes: d3.Selection<any, d3GraphNode, any, any>
-    domLabels: d3.Selection<any, d3GraphNode, any, any>
-    domLinks: d3.Selection<any, d3GraphLink, any, any>
+    domNodes: d3.Selection<any, any, any, any>
+    domLabels: d3.Selection<any, any, any, any>
+    domLinks: d3.Selection<any, any, any, any>
     domLabelsTSpan: any
 
     highlightedNodes: {
@@ -87,39 +84,25 @@ export class ConceptGraph extends React.Component<Props, State> {
         this.width = width
         this.height = height
 
-        this.data = {
-            nodes: [],
-            links: [],
-            labels: [],
-        }
-
         this.simulation = d3.forceSimulation()
-            .force('link', d3.forceLink().id((d: d3GraphNode) => d.key).distance(70))
-            .force('charge', d3.forceManyBody().strength(-200))
-            .force('y2', d3.forceY().strength((d: d3GraphNode) => (5 - d.depth) / 10).y(this.height / 3))
-            .force('y3', d3.forceY().strength((d: d3GraphNode) => d.depth / 10).y(this.height))
+            .force('link', d3.forceLink().id((d: any) => d.cid).distance(this.linkDistance))
+            .force('charge', d3.forceManyBody().strength(this.charge))
+            .force('center', d3.forceCenter(this.width / 2, this.height / 2))
 
         this.interceptClickHandler = this.interceptClick()
     }
 
     ticked() {
-        if (this.domLinks && this.domNodes && this.domLabels) {
+        if (this.domLinks && this.domNodes) {
             this.domLinks
-                .attr('x1', (d: d3GraphLink) => d.source.x)
-                .attr('y1', (d: d3GraphLink) => d.source.y)
-                .attr('x2', (d: d3GraphLink) => d.target.x)
-                .attr('y2', (d: d3GraphLink) => d.target.y)
+                .attr('x1', (d: any) => d.source.x)
+                .attr('y1', (d: any) => d.source.y)
+                .attr('x2', (d: any) => d.target.x)
+                .attr('y2', (d: any) => d.target.y)
 
             this.domNodes
-                .attr('cx', (d: d3GraphNode) => Math.max(30 / (d.depth + 1), Math.min(this.width - 30 / (d.depth + 1), d.x)))
-                .attr('cy', (d: d3GraphNode) => Math.max(30 / (d.depth + 1), Math.min(this.width - 30 / (d.depth + 1), d.y)))
-
-            // this.domLabels
-            //     .attr('x', (d: d3GraphNode) => d.x)
-            //     .attr('y', (d: d3GraphNode) => d.y)
-            this.domLabelsTSpan
-                .attr('x', (d: d3GraphNode) => d.x)
-                .attr('y', (d: d3GraphNode) => d.y)
+                .attr('cx', (d: any) => Math.min(this.width, d.x))
+                .attr('cy', (d: any) => Math.min(this.width, d.y))
         }
     }
 
@@ -128,62 +111,98 @@ export class ConceptGraph extends React.Component<Props, State> {
     // It updates our local parameters and simulates the forces we defined previously.
     updateSimulation() {
         let {width, height} = this.props.dimensions
-        let {nodes, links, labels, searchedConcept} = this.props
+        let {data} = this.props
 
-        this.width = width
-        this.height = height
+        let articles = data ? (data.articles ? data.articles.hits.hits : []) : []
+        let article = data ? (data.article ? data.article.hits.hits[0]._source : null) : null
 
-        if (!this.nodes || this.nbReceivedNodes != nodes.length) {
-            // Here, one deduces there is a change in the data when the length actually changes.
-            // This can be problematic in the future.
-            this.nbReceivedNodes = nodes.length
+        this.nodes = []
+        this.links = []
 
-            this.data.nodes = nodes
-            this.data.links = links
-            this.data.labels = labels
+        if (this.props.tfidf && article) {
+            let nodes = articles ? _.map(articles, (n: any) => n._source) : []
+
+            let rootCids = article.links.map((l: any) => l.cid)
+            rootCids.push(article.cid)
+            console.log(rootCids)
+
+            let rootNodes: any = []
+            let selectedCids: any = []
+            rootCids.forEach((cid: any) => {
+                selectedCids.push(cid)
+
+                nodes.forEach((n: any) => {
+                    if (n.cid == cid) {
+                        rootNodes.push(n)
+                        selectedCids.push(_.map(n.neighbors, (l: any) => l.cid))
+                        selectedCids.push(_.map(n.links, (l: any) => l.cid))
+                    }
+                })
+            })
+            selectedCids = _.flattenDepth(selectedCids, 2)
+            console.log(selectedCids)
+            console.log(rootNodes)
+
+            this.nodes = _.filter(nodes, (n: any) => {
+                return selectedCids.indexOf(n.cid) != -1
+            })
+            console.log(this.nodes)
+
+            this.links = _.flattenDepth(_.map(rootNodes, (n: any) => {
+                return _.map(n.neighbors, (l: any) => {
+                    return {
+                        'source': n.cid,
+                        'target': l.cid,
+                    }
+                })
+            }), 2)
+
+            // this.links = _.flattenDepth(_.map(rootNodes, (n: any) => {
+            //     return _.concat(
+            //         _.map(n.links, (l: any) => {
+            //             return {
+            //                 'source': n.cid,
+            //                 'target': l.cid,
+            //             }
+            //         }),
+            //         _.map(n.neighbors, (nn: any) => {
+            //             return {
+            //                 'source': n.cid,
+            //                 'target': nn.cid,
+            //             }
+            //         })
+            //     )
+            // }), 2)
+            // console.log(this.links)
         } else {
-            // Update simulation data in order to keep track of the coordinates of our objects.
-            let nodeMap = _.mapKeys(this.nodes, (value: d3GraphNode) => value.slug)
-            let linkMap = _.mapKeys(this.links, (value: d3GraphLink) => value.key)
-            let labelMap = _.mapKeys(this.labels, (value: d3GraphNode) => value.key)
-
-            this.data.nodes = _.map(this.data.nodes, (n: d3GraphNode) => nodeMap[n.slug] ? nodeMap[n.slug] : n)
-            this.data.links = _.map(this.data.links, (l: d3GraphLink) => linkMap[l.key] ? linkMap[l.key] : l)
-            this.data.labels = _.map(this.data.labels, (l: d3GraphNode) => labelMap[l.key] ? labelMap[l.key] : l)
+            this.nodes = articles ? _.map(articles, (n: any) => n._source) : []
+            this.links = _.flattenDepth(_.map(this.nodes, (n: any) => {
+                return _.map(n.links, (l: any) => {
+                    return {
+                        'source': n.cid,
+                        'target': l.cid,
+                    }
+                })
+            }), 2)
         }
-
-        // Internalize parameters so that they gan be fed to a d3 simulation
-        // (which will eventually alter these variables, which is the reason why
-        // one wants to take them away from React).
-        const filterNodes = searchedConcept ? _.filter(this.data.nodes, (n: d3GraphNode) => n.slug.startsWith(searchedConcept)) : this.data.nodes
-
-        this.cc = (_.map(_.uniqBy(filterNodes, 'connexComponent'), (n: d3GraphNode) => n.connexComponent)).sort()
-
-        this.nodes = _.filter(this.data.nodes, (n: d3GraphNode) => this.cc.indexOf(n.connexComponent) != -1)
-        this.links = _.filter(this.data.links, (l: d3GraphLink) => this.cc.indexOf(l.connexComponent) != -1)
-        this.labels = _.filter(this.data.nodes, (n: d3GraphNode) => this.cc.indexOf(n.connexComponent) != -1)
+        this.labels = this.nodes
 
         this.simulation.nodes(this.nodes).on('tick', this.ticked.bind(this))
         this.simulation.force('link')
             .links(this.links)
-            .distance(60 + (this.cc.length > 0 ? (50 / this.cc.length ) : 0))
+            .distance(this.linkDistance)
         this.simulation.force('charge')
-            .strength(-400 - (this.cc.length > 0 ? (100 / this.cc.length ) : 0))
+            .strength(this.charge)
 
         d3.dragDisable(window)
     }
 
-    customClick(d: d3GraphNode) {
+    customClick(d: any) {
         this.selectNode(d)
     }
 
-    customDoubleClick(d: d3GraphNode) {
-        // It is important that this action is dispatched first as it erases
-        // the list of displayed slugs from the Redux state.
-        this.props.dispatch(actions.changeDisplayedConceptNav(d))
-        // TODO: associate correct container instead of default cp1
-        this.props.dispatch(actions.fetchConcept('concepts/' + d.slug, 'cp1'))
-        this.props.dispatch(actions.toggleNavPanel())
+    customDoubleClick(d: any) {
+
     }
 
     // This function draws elements (in this specific case, circles) in the
@@ -192,10 +211,11 @@ export class ConceptGraph extends React.Component<Props, State> {
     // Before drawing new elements, it will make sure to remove from the DOM
     //  elements which may have been created previously.
     renderNodes() {
+        console.log('rendernodes')
         // Create or update circles in the DOM with our data.
         this.domNodes = this.domContainer
             .selectAll('circle')
-            .data(this.nodes, (d: d3GraphNode) => d.id)
+            .data(this.nodes, (d: any) => d.cid)
 
         // Remove circles that are no longer needed from the DOM.
         this.domNodes.exit().remove()
@@ -205,16 +225,13 @@ export class ConceptGraph extends React.Component<Props, State> {
             .enter()
                 .append('circle')
             .merge(this.domNodes)
-                .attr('cx', (d: d3GraphNode) => d.x)
-                .attr('cy', (d: d3GraphNode) => d.y)
-                .attr('r', (d: d3GraphNode) => 30 / (d.depth + 1))
+                .attr('cx', (d: any) => d.x)
+                .attr('cy', (d: any) => d.y)
+                .attr('r', (d: any) => 5)
                 .attr('opacity',
-                    (d: d3GraphNode) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3
+                    (d: any) => !this.state.selected || this.highlightedNodes[d.key] ? 1 : 0.3
                 )
-                .attr('class', (d: d3GraphNode) =>
-                    'node ' +
-                    ((this.props.searchedConcept && d.slug.startsWith(this.props.searchedConcept)) ? 'searchedNode' : '')
-                )
+                .attr('class', 'node')
                 .call(this.interceptClickHandler
                     .on('customClick', this.customClick.bind(this))
                     .on('customDoubleClick', this.customDoubleClick.bind(this))
@@ -223,12 +240,10 @@ export class ConceptGraph extends React.Component<Props, State> {
 
     wrap(texts: any) {
         let width = 100
-        // console.log(texts)
 
         // TODO: investigate why function() {} and () => {}
         // don't yield the same value for `this`...
         texts.each(function() {
-            // console.log(d3.select(this as any))
             let text = d3.select(this as any),
                 words = text.text().split(/\s+/).reverse(),
                 word,
@@ -244,7 +259,6 @@ export class ConceptGraph extends React.Component<Props, State> {
                             .attr('x', x)
                             .attr('y', y)
                             .attr('dy', dy + 'em')
-            // console.log([y, x, dy])
 
             while (word = words.pop()) {
                 line.push(word)
@@ -270,7 +284,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     renderLabels() {
         this.domLabels = this.domContainer
             .selectAll('text')
-            .data(this.labels, (d: d3GraphNode) => d.id)
+            .data(this.labels, (d: any) => d.cid)
 
         this.domLabels.exit().remove()
 
@@ -279,9 +293,9 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .append('text')
                 .classed('label', true)
             .merge(this.domLabels)
-                .attr('x', (d: d3GraphNode) => d.x)
-                .attr('y', (d: d3GraphNode) => d.y)
-                .text((d: d3GraphNode) => d.name)
+                .attr('x', (d: any) => d.x)
+                .attr('y', (d: any) => d.y)
+                .text((d: any) => d.cid)
                 .call(this.wrap)
 
         this.domLabelsTSpan = this.domContainer
@@ -292,7 +306,7 @@ export class ConceptGraph extends React.Component<Props, State> {
     renderLinks() {
         this.domLinks = this.domContainer
             .selectAll('line')
-            .data(this.links, (d: d3GraphLink) => d.key)
+            .data(this.links, (d: any) => d)
 
         this.domLinks.exit().remove()
 
@@ -301,29 +315,20 @@ export class ConceptGraph extends React.Component<Props, State> {
                 .insert('line', 'circle')
                 .classed('link', true)
             .merge(this.domLinks)
-                .attr('stroke-width', (d: d3GraphLink) => 2)
-                .attr('x1', (d: d3GraphLink) => d.source.x)
-                .attr('x2', (d: d3GraphLink) => d.target.x)
-                .attr('y1', (d: d3GraphLink) => d.source.y)
-                .attr('y2', (d: d3GraphLink) => d.target.y)
+                .attr('stroke-width', (d: any) => 1)
+                .attr('x1', (d: any) => d.source.x)
+                .attr('x2', (d: any) => d.target.x)
+                .attr('y1', (d: any) => d.source.y)
+                .attr('y2', (d: any) => d.target.y)
                 .attr('opacity',
-                    (d: d3GraphLink) => !this.state.selected || this.highlightedLinks[d.key] ? 0.5 : 0.2)
+                    (d: any) => !this.state.selected || this.highlightedLinks[d.key] ? 0.5 : 0.2)
     }
 
     // Unite all previous rendering functions in just one function.
     renderD3DomElements() {
         this.renderLinks()
         this.renderNodes()
-        this.renderLabels()
-    }
-
-    // This function is used as a util function so as to unitialize x-forces
-    // which will help untanggle the different connex components of our graph.
-    isolate(force: any, filter: any, step: number, totalSteps: number) {
-        var initialize = force.initialize
-        force.initialize = () => { initialize.call(force, this.nodes.filter(filter)) }
-        force.x(this.width * (step + 1) / (totalSteps + 1)).strength(.15)
-        return force
+        // this.renderLabels()
     }
 
     // This function is used to update three dictionaries which
@@ -353,7 +358,7 @@ export class ConceptGraph extends React.Component<Props, State> {
         }
     }
 
-    selectNode(node: d3GraphNode) {
+    selectNode(node: any) {
         if (node.key === this.state.selected) {
             this.setState({selected: null})
         } else {
@@ -366,7 +371,6 @@ export class ConceptGraph extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selected: null}
-
         this.selectNode = this.selectNode.bind(this)
     }
 
@@ -395,18 +399,18 @@ export class ConceptGraph extends React.Component<Props, State> {
     // new data comes in. This we check keeping track of the version of our data
     // (the version comes as a prop, given by the parent component).
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextProps.version === this.props.version) {
-            this.calculateHighlights(nextState.selected)
-
-            this.domNodes.attr('opacity',
-                (d: d3GraphNode) => !nextState.selected || this.highlightedNodes[d.key] ? 1 : 0.2)
-            this.domLinks.attr('opacity',
-                (d: d3GraphLink) => !nextState.selected || this.highlightedLinks[d.key] ? 0.5 : 0.1)
-            this.domLabels.attr('opacity',
-                (d: d3GraphNode) => !nextState.selected || this.highlightedLabels[d.key] ? 1 : 0.1)
-
-            return false
-        }
+        // if (nextProps.version === this.props.version) {
+        //     this.calculateHighlights(nextState.selected)
+        //
+        //     this.domNodes.attr('opacity',
+        //         (d: any) => !nextState.selected || this.highlightedNodes[d.key] ? 1 : 0.2)
+        //     this.domLinks.attr('opacity',
+        //         (d: any) => !nextState.selected || this.highlightedLinks[d.key] ? 0.5 : 0.1)
+        //     this.domLabels.attr('opacity',
+        //         (d: any) => !nextState.selected || this.highlightedLabels[d.key] ? 1 : 0.1)
+        //
+        //     return false
+        // }
 
         return true
     }
@@ -415,27 +419,12 @@ export class ConceptGraph extends React.Component<Props, State> {
     // at this stage, only the container is created. One thus updates the simulation
     // and re-renders all possible DOM components which will populate the container.
     componentDidUpdate() {
-        const previousCC = this.cc
-
         this.updateSimulation()
         // this.calculateHighlights(this.state.selected)
         this.renderD3DomElements()
 
-        // In particular, this part of the code is used to define forces which will
-        // separate (untanggle) our graphs on the page.
-        const totalConnexComponents: number = this.cc.length
-
         if (this.width > 0) {
-            _.each(previousCC, (c: number, i: number) => {
-                this.simulation.force('x' + i, null)
-            })
-
-            _.each(this.cc, (c: number, i: number) => {
-                this.simulation
-                    .force('x' + i, this.isolate(d3.forceX(), (d: d3GraphNode) => (d.connexComponent == c), i, totalConnexComponents))
-            })
-
-            this.simulation.alphaTarget(0.2).restart()
+            this.simulation.alphaTarget(0.01).restart()
         }
     }
 
