@@ -159,6 +159,7 @@ export class JOSearch extends React.Component<Props, State> {
         const {selectedSummaryIndex} = this.state
 
         let summaries = (data && data.summaries) ? data.summaries.hits.hits : []
+        const selectedSummary = (selectedSummaryIndex != null) ? summaries[selectedSummaryIndex] : null
 
         let summariesLi = summaries.map((s: any, index: number) => {
             let date = s._source.url.split('/')
@@ -169,7 +170,6 @@ export class JOSearch extends React.Component<Props, State> {
                 key={index}>{strDate}</li>
         })
 
-        const selectedSummary = (selectedSummaryIndex != null) ? summaries[selectedSummaryIndex] : null
         const hierarchy = (selectedSummaryIndex != null) ? this.buildHierarchy(summaries[selectedSummaryIndex]._source.array) : {}
 
         let summaryRecursiveLi = (hierarchy.children) ? hierarchy.children.map(this.buildRecursiveLi.bind(this, 0)) : null
