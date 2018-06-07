@@ -1,2 +1,3 @@
 dist/test
 --timeout 50000
+--exit
