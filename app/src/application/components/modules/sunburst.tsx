@@ -12,6 +12,10 @@ interface Props {
     options?: any,
     sources?: any,
     data?: any,
+    dimensions: {
+        height: number,
+    }
+    hideComplements?: boolean,
 }
 
 interface State {
@@ -36,16 +40,22 @@ export class SunburstModule extends React.Component<Props, State> {
 
     render () {
         const title = 'Projet de Loi de Finance 2017'
-        const {data} = this.props
+        const {data, hideComplements} = this.props
+
+        let titleDiv = <span>
+            <h4>{title}</h4>
+        </span>
+
+        if (hideComplements) {
+            titleDiv = null
+        }
 
         return (
             <div
                 className={'block'}
                 style={{flexGrow: 2}}
             >
-                <span>
-                    <h4>{title}</h4>
-                </span>
+                {titleDiv}
                 <div>
                     <Measure
                         bounds
@@ -66,7 +76,7 @@ export class SunburstModule extends React.Component<Props, State> {
                                     <Sunburst
                                         dimensions={{
                                             width: this.state.dimensions.width,
-                                            height: window.innerHeight * 3 / 4,
+                                            height: this.props.dimensions.height,
                                             toolbox_width: 120,
                                             toolbox_height: 30,
                                         }}
@@ -79,6 +89,7 @@ export class SunburstModule extends React.Component<Props, State> {
                                         version={this.state.dimensions.width}
                                         colors={colorScheme}
                                         data={data}
+                                        hideComplements={hideComplements}
                                     />
                                 </div>
                         }

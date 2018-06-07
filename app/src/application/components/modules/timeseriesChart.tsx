@@ -12,6 +12,7 @@ interface Props {
     options?: any,
     chartjs_datasets?: any,
     sources?: any,
+    hideComplements?: boolean,
 }
 
 interface State {
@@ -75,7 +76,7 @@ export class TimeseriesChart extends React.Component<Props, State> {
     }
 
     render () {
-        var {chartjs_datasets, sources, options} = this.props
+        var {chartjs_datasets, sources, options, hideComplements} = this.props
         const title = 'timeseries title'
 
         const source_list = _.map(sources, (v: any, k: any) => {
@@ -84,7 +85,7 @@ export class TimeseriesChart extends React.Component<Props, State> {
             </li>
         })
 
-        const descriptions = _.map(sources, (v: any, k: any) => {
+        let descriptions = _.map(sources, (v: any, k: any) => {
             return <li key={k}>
                 <span>
                     <h6 style={{color: options.colors[k]}}>{v.name} : </h6>
@@ -93,18 +94,25 @@ export class TimeseriesChart extends React.Component<Props, State> {
             </li>
         })
 
+        let sourcesDiv = <span>
+            <h4>{title}</h4> - <h6>Source(s) :
+                <ul className={'inline-list'}>
+                    {source_list}
+                </ul>
+            </h6>
+        </span>
+
+        if (hideComplements) {
+            sourcesDiv = null
+            descriptions = null
+        }
+
         return (
             <div
                 className={'block timeseries_chart'}
                 style={{flexGrow: 2}}
             >
-                <span>
-                    <h4>{title}</h4> - <h6>Source(s) :
-                        <ul className={'inline-list'}>
-                            {source_list}
-                        </ul>
-                    </h6>
-                </span>
+                {sourcesDiv}
                 {descriptions}
                 <div>
                     <Measure
@@ -127,7 +135,7 @@ export class TimeseriesChart extends React.Component<Props, State> {
                                         data={chartjs_datasets}
                                         dimensions={{
                                             width: this.state.dimensions.width,
-                                            height: window.innerHeight / 2,
+                                            height: window.innerHeight / 3,
                                             toolbox_width: 120,
                                             toolbox_height: 30,
                                         }}

@@ -12,6 +12,7 @@ import {PLF} from './containers/views/plf'
 import {JO} from './containers/views/jo'
 import {JOGraphView} from './containers/views/jograph'
 import {JOTFIDFView} from './containers/views/jotfidf'
+import {Dashboard} from './containers/views/dashboard'
 
 const Routes = () => (
     <BrowserRouter>
@@ -22,6 +23,7 @@ const Routes = () => (
             <Route path='/jo' component={JO}/>
             <Route path='/jograph' component={JOGraphView}/>
             <Route path='/jotfidf' component={JOTFIDFView}/>
+            <Route path='/dashboard' component={Dashboard}/>
         </Switch>
     </BrowserRouter>
 )

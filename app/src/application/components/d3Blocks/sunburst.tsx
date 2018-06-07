@@ -25,6 +25,7 @@ interface Props {
     },
     colors: any,
     data: any,
+    hideComplements?: boolean,
 }
 
 interface State {
@@ -410,26 +411,39 @@ export class Sunburst extends React.Component<Props, State> {
             </li>
         })
 
+        const {hideComplements} = this.props
+        // undefined -> show
+        // true -> hide
+        // false -> show
+        let filterDiv = <div className='block'>
+            <div className='pt-input-group searchBar'>
+                <span className='pt-icon pt-icon-search'></span>
+                <input className='pt-input' placeholder='Recherche...'
+                    onFocus={this.searchInputFocused.bind(this)}
+                    onChange={this.searchInputUpdated.bind(this)}
+                />
+            </div>
+            <div id='foundResults' className={'search-results ' + (this.state.displaySearchResults ? '' : 'hidden')}>
+                <ul>
+                    {selectedResultsLi}
+                </ul>
+            </div>
+        </div>
+
+        let switchDiv = <div id='toolbox'>
+            <Switch checked={this.state.displayValue} label='Surface proportionnelle à la valeur' onChange={this.changeDisplayValue.bind(this)} />
+        </div>
+
+        if (hideComplements) {
+            filterDiv = null
+            switchDiv = null
+        }
+
         return (
             <div id='main'>
-                <div className='block'>
-                    <div className='pt-input-group searchBar'>
-                        <span className='pt-icon pt-icon-search'></span>
-                        <input className='pt-input' placeholder='Recherche...'
-                            onFocus={this.searchInputFocused.bind(this)}
-                            onChange={this.searchInputUpdated.bind(this)}
-                        />
-                    </div>
-                    <div id='foundResults' className={'search-results ' + (this.state.displaySearchResults ? '' : 'hidden')}>
-                        <ul>
-                            {selectedResultsLi}
-                        </ul>
-                    </div>
-                </div>
+                {filterDiv}
                 <div className={(this.state.displaySearchResults ? 'hidden' : '')}>
-                    <div id='toolbox'>
-                        <Switch checked={this.state.displayValue} label='Surface proportionnelle à la valeur' onChange={this.changeDisplayValue.bind(this)} />
-                    </div>
+                    {switchDiv}
                     <div className={'flex-box '}>
                         <div id='svgDiv'>
                             <div id='values'>

@@ -13,7 +13,7 @@ import {TimeseriesValuesReducer} from './components/modules/timeseriesChart'
 import {navPanelReducer} from './components/utils/navPanel'
 import {ConceptHierarchyReducer} from './components/d3Blocks/conceptHierarchy'
 
-const containers = ['cp1', 'app', 'test', 'plf', 'jo', 'jographview']
+const containers = ['cp1', 'app', 'test', 'plf', 'jo', 'jographview', 'dashboard']
 
 const initialAppState: appState = {
     conceptGraph: {

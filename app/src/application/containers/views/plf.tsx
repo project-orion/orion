@@ -77,14 +77,14 @@ export class PLF extends React.Component<appState, any> {
 
         return (
             <div>
-                <NavBar
-                    left_text={'Visualisation et documentation de données socio-économiques'}
-                />
-
                 <div id={'app-container'}>
                     <SunburstModule
                         key={key}
                         data={data}
+                        dimensions={{
+                            height: window.innerHeight * 3 / 4,
+                        }}
+                        hideComplements={true}
                     />
                 </div>
             </div>

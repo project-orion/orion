@@ -85,6 +85,9 @@ export class Test extends React.Component<appState, any> {
                     <SunburstModule
                         key={key}
                         data={data}
+                        dimensions={{
+                            height: window.innerHeight * 3 / 4,
+                        }}
                     />
                 </div>
             </div>

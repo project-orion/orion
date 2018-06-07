@@ -12,6 +12,7 @@ interface Props {
     options?: any,
     chartjs_datasets?: any,
     sources?: any,
+    hideComplements?: boolean,
 }
 
 interface State {
@@ -85,7 +86,7 @@ export class HistogramChart extends React.Component<Props, State> {
             </li>
         })
 
-        const descriptions = _.map(sources, (v: any, k: any) => {
+        let descriptions = _.map(sources, (v: any, k: any) => {
             return <li key={k}>
                 <span>
                     <h6 style={{color: options.colors[k]}}>{v.name} : </h6>
@@ -94,18 +95,25 @@ export class HistogramChart extends React.Component<Props, State> {
             </li>
         })
 
+        let titleDiv = <span>
+            <h4>{title}</h4> - <h6>Source(s) :
+                <ul className={'inline-list'}>
+                    {source_list}
+                </ul>
+            </h6>
+        </span>
+
+        if (this.props.hideComplements) {
+            titleDiv = null
+            descriptions = null
+        }
+
         return (
             <div
                 className={'block timeseries_chart'}
                 style={{flexGrow: 2}}
             >
-                <span>
-                    <h4>{title}</h4> - <h6>Source(s) :
-                        <ul className={'inline-list'}>
-                            {source_list}
-                        </ul>
-                    </h6>
-                </span>
+                {titleDiv}
                 {descriptions}
                 <div>
                     <Measure
@@ -128,7 +136,7 @@ export class HistogramChart extends React.Component<Props, State> {
                                         data={chartjs_datasets}
                                         dimensions={{
                                             width: this.state.dimensions.width,
-                                            height: window.innerHeight / 2,
+                                            height: window.innerHeight / 3,
                                         }}
                                         padding={{
                                             top: 40,
